@@ -1,0 +1,17 @@
+can't install: HTTP exception InvalidCertificateException error #39
+Basically, it's an issue with the way some certificates are handled, I fixed it by using curl as the default downloader for package control.
+
+Select Preferences: Package Control Settings - User from the command palette, and add:
+
+// I'm on Linux, so I moved "curl" to the start, but change for your OS.
+"downloader_precedence": {
+	"linux": [
+		"curl",
+		"wget",
+		"urllib"
+	],
+	"osx": ["urllib"],
+	"windows": ["wininet"]
+},
+// ...
+Select Preferences: Package Control Settings - Default in order to see all the options and their explanations.

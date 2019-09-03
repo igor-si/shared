@@ -1,0 +1,4 @@
+
+#=====Make grains stick?
+On the POP Solver you have Collision Behavior. 
+Set that to "Stick" and they'll stick when they collide.

@@ -1,0 +1,235 @@
+
+attribwrangle/snippet
+	xyzdist_findDistance
+	//run over prims
+	//check distance by xyzdist +
+	float maxSearchRad = chf("radius");
+
+	int prim;
+	vector primuv;
+	float dist = xyzdist(1,"",v@P,prim,primuv,maxSearchRad);
+	@dist = dist;
+	//vector primP = primuv(1,"P",prim,primuv);
+	//vector primN = primuv(1,"N",prim,primuv);
+
+attribwrangle/snippet
+	nearpoint_removeByDistance
+	//run over points
+	//check distance by nearpoint +
+	float dist = -1;
+	float maxSearchRad = chf("radius");
+	int nPt = nearpoint(1,v@P,maxSearchRad);
+
+	if (nPt!=-1)
+	{
+
+		//dist=distance(v@P,point(1,"P",nPt));
+		removepoint(0,@ptnum);
+
+	}
+	//f@dist=dist;
+
+attribwrangle/snippet
+	nearpoint_findClosestPoint
+	//run over points
+	int nearp = nearpoint(0,point(1,"P",0));
+	if (@ptnum == nearp) v@Cd = set(1,0,0);
+	
+
+
+=====remove weighet dist by ramp
+int i = 0
+
+--------------------
+
+------------improved clister system-----------
+int colums = chi("colums")+1;
+int rows = chi("rows")+1;
+float cl,clx,clz;
+
+vector brel = relbbox(0,v@P);
+float brx = brel.x;
+float brz = brel.z;
+
+for (int j=0;j<rows-1;j++)
+{
+	clx = ceil(brx*(j+1));
+
+	for (int i=0;i<colums-1;i++)
+	{
+		clz = ceil(brz*(i+1));
+		clz = clx*rows+clz;
+
+	}
+
+}
+v@Cd = rand(clz+chf("color_seed"));
+@cluster = clz;
+
+==============================================
+
+
+
+------------array of names-----------
+string im[];
+for(int j=0;j<npoints(1);j++)
+{
+	string curS = point(0,"name",j);
+
+	if (match(s@name,sprintf("%s",curS))==1)
+	{
+		@rm=-1;	
+	}
+
+}
+if (@rm!=-1) removepoint(0,@ptnum);
+==============================================
+
+
+============curlnoise
+=========================================
+
+
+=====================wedgenum by primintrinsic========
+string filepath = primintrinsic(0,"filename",@primnum);
+i@wedge_num = atoi(split(split(filepath,'/')[-2],".")[1]);
+
+======================================================
+
+==============curve fraction
+int np = npoints(0);
+float fraction = 1.0/np;
+float weight = (@ptnum+1)*fraction;
+======================================================
+
+========find string hscript
+strcasematch("prim_debris",stamps("..","OBJNAME",""))
+------------------------------------------------------
+
+==================transfer closest name-------
+int pt = nearpoint(1,v@P,chf("max_dist"));
+int pr = pointprims(1,pt)[0];
+s@nameTmp = prim(1,"name",pr);
+------------------------------------------------------
+
+================transfer closest name
+int closept[] = pcfind(1,"P",v@P,chf("max_dist"),1);
+int pt = closept[0];
+
+int pr = pointprims(1,pt)[0];
+s@nameTmp = prim(1,"name",pr);
+------------------------------------------------------
+
+===========sturdy form from prim name------
+i@fork = 0;
+int val = findattribval(1,"prim","name",s@name);
+if (val!=-1)
+{
+	int pr = primpoints(0,@primnum)[0];
+	setpointattrib(0,"fork",pr,1,"set")
+
+}
+------------------------------------------------------
+
+===============sample functions-----------------
+float mt = chf("ammount");
+float angle = radians(chf("angle"));
+vector up = set(0,1,0);
+vector ss;
+v@N = {1,0,0};
+
+ss = sample_sphere_uniform(rand(@ptnum))*mt;
+ss = sample_direction_uniform(rand(@ptnum))*mt;
+ss = sample_sphere_cone(up,angle,rand(@ptnum))*mt;
+ss = sample_direction_cone(set(0,1,0),angle,rand(@ptnum))*mt;
+ss = sample_circle_uniform(rand(@ptnum));
+
+ss = sample_circle_slice(set(0,1),angle,rand(@ptnum));
+matrix rot = dihedral(set(0,0,1),v@N);
+ss*=rot;
+ss = sample_circle_arc(set(0,1),angle,rand(@ptnum));
+v@P+=ss;
+
+p@orient = sample_orientation_cone(set(1,0,0,0),radians(rand(@ptnum)*180),rand(@ptnum));
+
+------------------------------------------------------
+
+
+=====================matrix detail matchmove
+matrix xf_stat = detail(0,"xf",0);
+matrix xf_anim = detail(1,"xf_anim",0);
+
+matrix xform = invert(xf_stat)*xf_anim;
+v@P*=xform
+------------------------------------------------------
+
+
+======================distanced ramp fitted
+vector c = getbbox_center(0);
+vector sz = getbbox_size(0);
+float max = max(max(sz.x,sz.y),sz.z)/2;
+f@dist = chramp("ramp",fit(distance(v@P,c),0,max,0,1));
+
+------------------------------------------------------
+
+==================rotate geo by maketransform--
+ //float seed = chf("seed");
+ v@P-=root;
+ vector angle = chv("angle");//*addShake
+vector t = set(0,0,0); //translation
+vector s = set(1,1,1); // scale
+vector p = set(0,0,0); //pivot
+matrix m = maketransform(0,0,t,angle,s,p); //matrix4
+translate(m,root);
+v@P = v@P*m;
+translate(m,-root);
+v@v*=m;
+
+================error switch---
+strmatch("*Error:*",run("opinfo " + opinputpath(".",0))) + ($FF-$FF)+1
+================================
+
+======drag neighbours---------
+int neigs[] = point(0,"neighbors",@ptnum);
+foreach (int pt; i[]@neighbors){
+    setpointattrib(0,"v",pt,chf("drag"),"mult");
+    setpointattrib(0,"Cd",pt,{1,0,0});
+}
+
+--------------------------------------
+
+
+===============find two pts with longest distance-----
+float d[];
+for(int i;i<npoints(0);i++)
+{
+	float curD = point(0,"dist",i);
+	append(d,curdD);
+}
+d = sort(d)[-2:];
+for(int j;j<npoints(0);j++)
+{
+	float curD = point(0,"dist",j);
+	int check = find(d,curD);
+	if (check<0)
+	{
+		removepoint(0,j);
+	}
+
+}
+
+
+
+
+
+
+
+
+
+------------------------------------------------------
+
+
+======================================================
+======================================================
+======================================================
+======================================================

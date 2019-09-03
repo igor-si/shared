@@ -1,0 +1,33 @@
+//
+//  File:    vih_math.vfl
+//  Version: 0001
+//  Author:  Shawn Lipowski
+//  Date:    2014 08 14
+//  Note:    Generic math functions and constants to 32 bits of precision.
+//
+
+// math constants
+#define PI           3.141592653589793238462643383
+#define HALF_PI      1.570796326794896619231321691
+#define QUARTER_PI   0.785398163397448309615660845
+#define TAU          6.283185307179586476925286766
+#define DEG_PER_RAD  57.29577951308232087679815481
+#define RAD_PER_DEG  0.017453292519943295769236907
+#define E            2.718281828459045235360287471
+#define GOLDEN_RATIO 1.618033988749894848204586834
+#define LOG2         0.693147180559945309417232121
+
+vector polar_cart(float theta, radius) {
+    return set( cos(theta) * radius,
+                sin(theta) * radius,
+                0 );
+}
+
+vector sphere_to_cart(float theta, phi, radius) {
+    // where ranges are radius [0,inf], theta [0, pi], phi [0, 2pi]
+    // theta = inclination
+    // phi   = alzimuth
+    return set( sin(theta) * cos(phi) * radius,
+                sin(theta) * sin(phi) * radius,
+                cos(theta) * radius );
+}

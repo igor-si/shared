@@ -1,0 +1,908 @@
+// Magic: 203261d1
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug  4 17:46:16 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+tangent_method.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Set Tangent Use", "tangent_method") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    tangent_method.menu;
+
+    { HSTRETCH }
+
+}
+
+align_normal_method.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Align Normal Use", "align_normal_method") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    align_normal_method.menu;
+
+    { HSTRETCH }
+
+}
+
+up_vector_use.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Up Vector Use", "up_vector_use") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    up_vector_use.menu;
+
+    { HSTRETCH }
+
+}
+
+up.gad = ROW
+{
+   HSTRETCH
+
+   up.label = PARM_LABEL("Up Vector", "up") WIDTH(1.5);
+   PARM(float, 3, "up", none, none, "X,Y,Z")
+	RANGE(0,1)  LABELREF(up.label)
+	HSTRETCH;
+
+}
+
+attr_to_up.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    attr_to_up.label = PARM_LABEL("Attr to Up Vector", "attr_to_up") WIDTH(1.5);
+    PARM_FIELD(string, "attr_to_up") VALUE(attr_to_up.val) 
+	LABELREF(attr_to_up.label) HSTRETCH;
+
+    attr_to_up.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+make_frame_orthogonal.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("make_frame_orthogonal", "Make Frame Orthogonal") toggle VALUE(make_frame_orthogonal.val);
+
+    { HSTRETCH }
+
+}
+
+x_axis_color.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    x_axis_color.label = PARM_LABEL("Tangent", "x_axis_color") WIDTH(1.5);
+    PARM(float, 3, "x_axis_color", none, COLOR, "R,G,B") 
+	LABELREF(x_axis_color.label) HSTRETCH;
+
+}
+
+y_axis_color.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    y_axis_color.label = PARM_LABEL("Bitangent", "y_axis_color") WIDTH(1.5);
+    PARM(float, 3, "y_axis_color", none, COLOR, "R,G,B") 
+	LABELREF(y_axis_color.label) HSTRETCH;
+
+}
+
+z_axis_color.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    z_axis_color.label = PARM_LABEL("Normal", "z_axis_color") WIDTH(1.5);
+    PARM(float, 3, "z_axis_color", none, COLOR, "R,G,B") 
+	LABELREF(z_axis_color.label) HSTRETCH;
+
+}
+
+length_scale.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ length_scale.label = PARM_LABEL("Length Scale", "length_scale") WIDTH(1.5);
+ PARM(float, 1, "length_scale", none, none) RANGE(0,1)
+	LOCK_RANGE_MIN LABELREF(length_scale.label) HSTRETCH;
+
+}
+
+wrap_axis.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Wrap Axis", "wrap_axis") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    wrap_axis.menu;
+
+    { HSTRETCH }
+
+}
+
+reference_center.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Reference Center", "reference_center") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    reference_center.menu;
+
+    { HSTRETCH }
+
+}
+
+mode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Wrap Mode", "mode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    mode.menu;
+
+    { HSTRETCH }
+
+}
+
+end_mode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("End Mode", "end_mode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    end_mode.menu;
+
+    { HSTRETCH }
+
+}
+
+offset.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ offset.label = PARM_LABEL("Offset (%)", "offset") WIDTH(1.5);
+ PARM(float, 1, "offset", none, none) RANGE(0,100)
+	 LABELREF(offset.label) HSTRETCH;
+
+}
+
+from.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ from.label = PARM_LABEL("From (%)", "from") WIDTH(1.5);
+ PARM(float, 1, "from", none, none) RANGE(0,100)
+	 LABELREF(from.label) HSTRETCH;
+
+}
+
+to.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ to.label = PARM_LABEL("To (%)", "to") WIDTH(1.5);
+ PARM(float, 1, "to", none, none) RANGE(0,100)
+	 LABELREF(to.label) HSTRETCH;
+
+}
+
+banking.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ banking.label = PARM_LABEL("Banking", "banking") WIDTH(1.5);
+ PARM(float, 1, "banking", none, none) RANGE(-180,180)
+	 LABELREF(banking.label) HSTRETCH;
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+attribs.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    attribs.label = PARM_LABEL("Attrs to Transform", "attribs") WIDTH(1.5);
+    PARM_FIELD(string, "attribs") VALUE(attribs.val) 
+	LABELREF(attribs.label) HSTRETCH;
+
+    attribs.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+vlength.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("vlength", "Preserve Normal Length") toggle VALUE(vlength.val);
+
+    { HSTRETCH }
+
+}
+
+enable_scale.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("enable_scale", "Enable Scale") toggle VALUE(enable_scale.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm4.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+scale_by_rail.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("scale_by_rail", "Scale by Rail") toggle VALUE(scale_by_rail.val);
+
+    { HSTRETCH }
+
+}
+
+geo_scale.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ geo_scale.label = PARM_LABEL("Geo Scale", "geo_scale") WIDTH(1.5);
+ PARM(float, 1, "geo_scale", none, none) RANGE(0,5)
+	LOCK_RANGE_MIN LABELREF(geo_scale.label) HSTRETCH;
+
+}
+
+geo_scale_ramp.si_rampedit = FLOAT_RAMP VALUE(geo_scale_ramp.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+geo_scale_ramp.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	geo_scale_ramp.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(geo_scale_ramp.pointno.val) HSTRETCH;
+    }
+}
+
+geo_scale_ramp.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(geo_scale_ramp.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(geo_scale_ramp.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    geo_scale_ramp.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(geo_scale_ramp.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    geo_scale_ramp.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(geo_scale_ramp.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+geo_scale_ramp.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    geo_scale_ramp.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	geo_scale_ramp.buttons.gad VSTRETCH;
+
+	geo_scale_ramp.si_rampedit HSTRETCH;
+    }
+}
+
+geo_scale_ramp.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Geo Scale Ramp", "geo_scale_ramp");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	geo_scale_ramp.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(geo_scale_ramp.hideparms.val) HSTRETCH
+	    geo_scale_ramp.multiramp;
+	    {}
+	}
+    }
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+curve_scale.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ curve_scale.label = PARM_LABEL("Curve Scale", "curve_scale") WIDTH(1.5);
+ PARM(float, 1, "curve_scale", none, none) RANGE(0,5)
+	LOCK_RANGE_MIN LABELREF(curve_scale.label) HSTRETCH;
+
+}
+use_cuve_scale_attr.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+use_cuve_scale_attr.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+use_cuve_scale_attr.gad = PARM_BUTTON("use_cuve_scale_attr", "") toggle VALUE(use_cuve_scale_attr.val);
+
+curve_scale_attr.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    curve_scale_attr.label = PARM_LABEL("Curve Scale Attr", "curve_scale_attr") WIDTH(1.32);
+    PARM_FIELD(string, "curve_scale_attr") VALUE(curve_scale_attr.val) 
+	LABELREF(curve_scale_attr.label) HSTRETCH;
+
+    curve_scale_attr.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+}	
+}	// Template join.bot
+
+
+curve_scale_ramp.si_rampedit = FLOAT_RAMP VALUE(curve_scale_ramp.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+curve_scale_ramp.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	curve_scale_ramp.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(curve_scale_ramp.pointno.val) HSTRETCH;
+    }
+}
+
+curve_scale_ramp.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(curve_scale_ramp.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(curve_scale_ramp.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    curve_scale_ramp.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(curve_scale_ramp.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    curve_scale_ramp.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(curve_scale_ramp.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+curve_scale_ramp.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    curve_scale_ramp.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	curve_scale_ramp.buttons.gad VSTRETCH;
+
+	curve_scale_ramp.si_rampedit HSTRETCH;
+    }
+}
+
+curve_scale_ramp.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Curve Scale Ramp", "curve_scale_ramp");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	curve_scale_ramp.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(curve_scale_ramp.hideparms.val) HSTRETCH
+	    curve_scale_ramp.multiramp;
+	    {}
+	}
+    }
+}
+
+enable_rot.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("enable_rot", "Enable Rotation") toggle VALUE(enable_rot.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm5.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+geo_rot.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ geo_rot.label = PARM_LABEL("Geo Rot", "geo_rot") WIDTH(1.5);
+ PARM(float, 1, "geo_rot", none, none) RANGE(-180,180)
+	 LABELREF(geo_rot.label) HSTRETCH;
+
+}
+
+geo_rot_ramp.si_rampedit = FLOAT_RAMP VALUE(geo_rot_ramp.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+geo_rot_ramp.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	geo_rot_ramp.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(geo_rot_ramp.pointno.val) HSTRETCH;
+    }
+}
+
+geo_rot_ramp.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(geo_rot_ramp.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(geo_rot_ramp.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    geo_rot_ramp.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(geo_rot_ramp.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    geo_rot_ramp.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(geo_rot_ramp.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+geo_rot_ramp.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    geo_rot_ramp.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	geo_rot_ramp.buttons.gad VSTRETCH;
+
+	geo_rot_ramp.si_rampedit HSTRETCH;
+    }
+}
+
+geo_rot_ramp.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Geo Rot Ramp", "geo_rot_ramp");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	geo_rot_ramp.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(geo_rot_ramp.hideparms.val) HSTRETCH
+	    geo_rot_ramp.multiramp;
+	    {}
+	}
+    }
+}
+
+sepparm3.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+curve_rot.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ curve_rot.label = PARM_LABEL("Curve Rot", "curve_rot") WIDTH(1.5);
+ PARM(float, 1, "curve_rot", none, none) RANGE(-180,180)
+	 LABELREF(curve_rot.label) HSTRETCH;
+
+}
+
+curve_rot_ramp.si_rampedit = FLOAT_RAMP VALUE(curve_rot_ramp.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+curve_rot_ramp.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	curve_rot_ramp.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(curve_rot_ramp.pointno.val) HSTRETCH;
+    }
+}
+
+curve_rot_ramp.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(curve_rot_ramp.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(curve_rot_ramp.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    curve_rot_ramp.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(curve_rot_ramp.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    curve_rot_ramp.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(curve_rot_ramp.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+curve_rot_ramp.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    curve_rot_ramp.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	curve_rot_ramp.buttons.gad VSTRETCH;
+
+	curve_rot_ramp.si_rampedit HSTRETCH;
+    }
+}
+
+curve_rot_ramp.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Ramp", "curve_rot_ramp");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	curve_rot_ramp.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(curve_rot_ramp.hideparms.val) HSTRETCH
+	    curve_rot_ramp.multiramp;
+	    {}
+	}
+    }
+}
+
+folder1.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder1.gad"
+    { 
+	VALUE(folder1.gad.val) STRETCH(1,0)
+
+	TAB "Scale"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    enable_scale.gad;		
+	    sepparm4.gad;		
+	    scale_by_rail.gad;		
+	    geo_scale.gad;		
+	    geo_scale_ramp.gad;		
+	    sepparm2.gad;		
+	    curve_scale.gad;		
+	    use_cuve_scale_attr.row.join;		
+	    curve_scale_ramp.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Rotation"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    enable_rot.gad;		
+	    sepparm5.gad;		
+	    geo_rot.gad;		
+	    geo_rot_ramp.gad;		
+	    sepparm3.gad;		
+	    curve_rot.gad;		
+	    curve_rot_ramp.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder6.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder6.gad"
+    { 
+	VALUE(folder6.gad.val) STRETCH(1,0)
+
+	TAB "Geo Transform"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    wrap_axis.gad;		
+	    reference_center.gad;		
+	    mode.gad;		
+	    end_mode.gad;		
+	    offset.gad;		
+	    from.gad;		
+	    to.gad;		
+	    banking.gad;		
+	    sepparm.gad;		
+	    attribs.gad;		
+	    vlength.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder0.gad = 
+GROUP collapsible "Frame Visualize"
+{ 
+    VALUE(folder0.gad.val) LAYOUT(vertical) HSTRETCH
+	    x_axis_color.gad;		
+	    y_axis_color.gad;		
+	    z_axis_color.gad;		
+	    length_scale.gad;		
+} 
+
+folder3_1.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder3_1.gad"
+    { 
+	VALUE(folder3_1.gad.val) STRETCH(1,0)
+
+	TAB "Curve Frame"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    tangent_method.gad;		
+	    align_normal_method.gad;		
+	    up_vector_use.gad;		
+	    up.gad;		
+	    attr_to_up.gad;		
+	    make_frame_orthogonal.gad;		
+	    folder0.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    folder3_1.gad; 
+    folder6.gad; 
+    folder1.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

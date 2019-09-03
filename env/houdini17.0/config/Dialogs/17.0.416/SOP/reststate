@@ -1,0 +1,59 @@
+// Magic: d6648bc6
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Mon Aug 12 01:18:21 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+resttype.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+resttype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    PARM_LABEL_SIMPLE("Rest Type", "resttype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    resttype.menu;
+
+    {  }
+
+}
+
+restframe.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ restframe.label = PARM_LABEL("Rest Frame", "restframe") ;
+ PARM(float, 1, "restframe", none, none) RANGE(0,10)
+	 LABELREF(restframe.label) HSTRETCH;
+
+}
+}	// Template join.bot
+
+
+reststate_fld.gad = 
+GROUP simple "Rest State"
+{ 
+    VALUE(reststate_fld.gad.val) LAYOUT(vertical) HSTRETCH 
+	    resttype.row.join;		
+} 
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    reststate_fld.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

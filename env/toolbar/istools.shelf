@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="istools_shelf" label="ISTools">
+    <memberTool name="isMagicWand"/>
+    <memberTool name="legendManager"/>
+    <memberTool name="test"/>
+    <memberTool name="addLegentToSubnet"/>
+  </toolshelf>
+
+  <tool name="isMagicWand" label="isMagicWand" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import ismagicwand_utils
+reload (ismagicwand_utils)
+ismagicwand_utils.magicWand()]]></script>
+  </tool>
+
+  <tool name="legendManager" label="legendManager" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+      <contextNetType>SOP</contextNetType>
+      <contextNetType>DOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import issop_utils
+reload (issop_utils)
+issop_utils.legendManager()]]></script>
+  </tool>
+
+  <tool name="test" label="test" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts.issop import notes
+reload (notes)
+notes.legendManager()]]></script>
+  </tool>
+
+  <tool name="addLegentToSubnet" label="addLegentToSubnet" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+      <contextNetType>SOP</contextNetType>
+      <contextNetType>ROP</contextNetType>
+      <contextNetType>SHOP</contextNetType>
+      <contextNetType>DOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts.issop import notes
+reload (notes)
+notes.legendManager(action_legend="credit",action_nodes="subchildrens+")
+notes.legendManager(action_legend="update",action_nodes="node")
+]]></script>
+  </tool>
+</shelfDocument>

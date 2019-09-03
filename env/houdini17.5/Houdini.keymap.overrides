@@ -1,0 +1,115 @@
+h.pane.wsheet.tool:hpaste	HPaste	"Shelf Tool: HPaste"	 Ctrl+Shift+PadSlash
+h.pane.wsheet.tool:hpastecollection	Collection	"Shelf Tool: Collection"	 Alt+Ctrl+P
+exprmgr.textport	Textport	"Open textport"	 Ctrl+Shift+T
+h.compare	"Show Changes"	"Show Changes from file saved on disk"	 Alt+Ctrl+9
+h.pane.perfmon.open_profile	"Open Profile"	"Open a profile from disk."	
+HCONTEXT	h.pane.gview.state.lop.sidefx_lop_edit	"sidefx_lop_edit Operation"	"These keys apply to the sidefx_lop_edit operation."
+h.pane.gview.state.lop.sidefx_lop_edit.log_state	"Log state"	"Log state attributes"	 8
+h.tool:openFileFolder	openFileFolder	"Shelf Tool: openFileFolder"	 Alt+Ctrl+O
+HCONTEXT	h.pane.gview.state.sop.sidefx_stroke	"sidefx_stroke Operation"	"These keys apply to the sidefx_stroke operation."
+h.pane.gview.state.sop.sidefx_stroke.log_state	"Log state"	"Log state attributes"	 8
+h.pane.wsheet.opmenu.flag_cook	"Toggle Cook"	"Toggle the Cook flag of the selected node"	 Alt+Ctrl+5
+h.tool:test	test	"Shelf Tool: test"	 Ctrl+Shift+F
+h.pane.menubar	"Move Menu Bar Here"	"Move the main menu bar to this pane"	 Ctrl+Shift+M
+h.pane.imgui.view2d.hwipe	"Horizontal Wipe"	"Diff: Horizontal Wipe"	
+HCONTEXT	h.pane.gview.state.sop.sidefx_bend	"sidefx_bend Operation"	"These keys apply to the sidefx_bend operation."
+h.pane.gview.state.sop.sidefx_bend.length	"Length Scaling"	"Modulate length scale parameter with mouse wheel"	 3
+h.tool:visVToggle	visVToggle	"Shelf Tool: visVToggle"	 Alt+Shift+V
+h.pane.gview.state.lop.sidefx_lop_edit.start_prim_selector	start_prim_selector	start_prim_selector	 1
+h.pane.wsheet.jump_mark_3	"Jump to Quickmark 3"	"Jumps to the quickmark 3 view"	 F3
+h.pane.wsheet.change_wire_style	"Change Network Wiring Style"	"Switch the style of wires used to connect nodes in this network"	
+h.pane.prevtab	"Previous Tab"	"Previous pane tab"	 Ctrl+PageUp
+h.reset_sim	"Reset Simulations"	"Recook simulations in open viewers"	 Alt+Ctrl+6
+h.tool:visOrientToggle	visOrientToggle	"Shelf Tool: visOrientToggle"	 Alt+Shift+N
+h.tool:itemH-	itemH-	"Shelf Tool: itemH-"	 Alt+(
+h.pane.wsheet.tool:hpasteweb	HPasteWeb	"Shelf Tool: HPasteWeb"	 Ctrl+Shift+Home
+h.mat_palette	"Shader Palette"	"Open shader palette"	
+h.pane.wsheet.opmenu.spareparms	"Edit Parameter Interface"	"Edit the node's parameter interface"	 ~
+h.pane.wsheet.time_dep	"Show Time-Dependent Nodes"	"Highlight time-dependent nodes and input connections to time-dependent nodes"	 Shift+T
+h.update_mode_always	"Update Mode 'Always'"	"Update mode 'Always'"	 Alt+Ctrl+1
+h.pane.wsheet.open_node_info	"Current Node Info"	"Opens the node information window for the current node"	 Ctrl+Shift+I
+h.pane.wsheet.align_vertical	"Align Nodes Vertically"	"Align the selected nodes vertically"	 Ctrl+Shift+V
+h.open_takemanager	"Open Take Manager"	"Open take manager"	 Alt+Ctrl+Shift+T
+h.tool:managerOld	managerOld	"Shelf Tool: managerOld"	 Alt+F3
+h.tool:itemB-	itemB-	"Shelf Tool: itemB-"	 Ctrl+(
+h.pane.wsheet.tool:gmManagerWindow	gmManagerWindow	"Shelf Tool: gmManagerWindow"	 Alt+Shift+Q
+h.pane.gview.state.sop.sidefx_bend.twist	Twisting	"Modulate twist parameter with mouse wheel"	 2
+h.pane.wsheet.set_mark_2	"Set Quickmark 2"	"Saves the current view as quickmark 2"	 Shift+F2
+h.pane.gview.state.sop.sidefx_bend.squish	Squishing	"Modulate squish parameter with mouse wheel"	 5
+h.pane.gview.state.sop.sidefx_stroke.set_viewport_brush	"Set viewport brush"	"Set viewport brush"	 3
+h.aliases	Aliases/Variables	"Open aliases/variables"	 Alt+Shift+H
+h.pane.gview.state.sop.sidefx_stroke.debug_msg	"Debug messages"	"Enable debug messages"	 7
+h.pane.gview.state.lop.sidefx_lop_edit.trace	"Trace callbacks"	"Enable trace for callbacks"	 6
+deskmgr.save	Save	"Save current changes"	 S
+h.pane.wsheet.open_treeview	"Show Tree Viewer"	"Open OP tree view"	
+h.pane.parmsheet.open_tree	"Open Operator Tree"	"Open operator tree"	
+h.tool:saveSessionToInfo	saveSessionToInfo	"Shelf Tool: saveSessionToInfo"	 Ctrl+Shift+D
+h.pane.wsheet.tool:gmLoad	gmLoad	"Shelf Tool: gmLoad"	 Shift+Tab
+h.tool:itemH+	itemH+	"Shelf Tool: itemH+"	 Alt+)
+h.pane.wsheet.set_mark_1	"Set Quickmark 1"	"Saves the current view as quickmark 1"	 Shift+F1
+h.tool:itemB+	itemB+	"Shelf Tool: itemB+"	 Ctrl+)
+h.pane.wsheet.tool:loadPkg	loadPkg	"Shelf Tool: loadPkg"	 Alt+L
+h.tool:ptsFromSelection	ptsFromSelection	"Shelf Tool: ptsFromSelection"	 Alt+Z
+h.pane.gview.state.lop.sidefx_lop_edit.reload_state	"Reload state"	"Reload state"	 9
+h.pane.gview.state.sop.sidefx_bend.taper	Tapering	"Modulate taper parameter with mouse wheel"	 4
+h.pane.wsheet.align_horizontal	"Align Nodes Horizontally"	"Align the selected nodes horizontally"	 Alt+Ctrl+V
+h.tool:fileToName	fileToName	"Shelf Tool: fileToName"	 Alt+Ctrl+G
+h.pane.gview.state.sop.sidefx_bend.bend	Bending	"Modulate bend parameter with mouse wheel"	 1
+h.pane.wsheet.open_sidebar	"Show Tool Palette"	"Open TAB and gallery side bar"	 Shift+E
+h.pane.parms.copy_parm	"Copy Parameter"	"Copy parameter"	 Ctrl+Shift+C
+h.pane.gview.state.sop.sidefx_bend.trace	"Trace callbacks"	"Enable trace for callbacks"	 6
+h.pane.wsheet.opmenu.spreadsheet	Spreadsheet	"Open a spreadsheet window for the selected node"	 Alt+Ctrl+S
+h.pane.wsheet.tool:gmSave	gmSave	"Shelf Tool: gmSave"	 Shift+Q
+h.tool:visNameToggle	visNameToggle	"Shelf Tool: visNameToggle"	 Alt+Shift+X
+h.pane.wsheet.showdepselected	"Show Selected Dependency"	"Show dependency links for selected nodes"	 Shift+S
+h.pane.parmsheet.paste_rel_refs	"Paste Copied Relative References"	"Paste copied relative references"	 Alt+E
+h.tool:visItToggle	visItToggle	"Shelf Tool: visItToggle"	 Alt+Shift+B
+h.pane.gview.state.sop.sidefx_stroke.reload_state	"Reload state"	"Reload state"	 9
+h.pane.wsheet.tool:hcopyweb	HCopyWeb	"Shelf Tool: HCopyWeb"	 Alt+Ctrl+Shift+C
+h.pane.wsheet.opmenu.edit_comment	"Edit Comment"	"Edit the comment of the selected node"	 Shift+N
+h.pane.wsheet.set_mark_4	"Set Quickmark 4"	"Saves the current view as quickmark 4"	 Shift+F4
+h.pane.gview.state.sop.sidefx_bend.debug_msg	"Debug messages"	"Enable debug messages"	 7
+h.pane.wsheet.set_mark_3	"Set Quickmark 3"	"Saves the current view as quickmark 3"	 Shift+F3
+h.pane.wsheet.jump_mark_5	"Jump to Quickmark 5"	"Jumps to the quickmark 5 view"	 F5
+h.pane.parms.open_external_editor	"External Expression Editor"	"Custom Menu Operation: External Expression Editor"	 Alt+E
+h.pane.gview.state.sop.sidefx_bend.reload_state	"Reload state"	"Reload state"	 9
+h.pane.parmsheet.copy_parm	"Copy Parameters"	"Copy parameters"	 Alt+Q
+h.pane.gview.state.sop.sidefx_stroke.cycle_brushes	"Cycle brushes"	"Cycle stroke tools"	 1
+h.pane.wsheet.opmenu.flag_render	"Toggle Render"	"Toggle the Render flag of the selected node"	 2
+h.pane.wsheet.jump_mark_4	"Jump to Quickmark 4"	"Jumps to the quickmark 4 view"	 F4
+h.pane.gview.state.sop.sidefx_bend.log_state	"Log state"	"Log state attributes"	 8
+h.pane.bundle.remove	Remove	"Remove selected items from bundle"	 Shift+Del
+h.pane.gview.state.sop.sidefx_stroke.trace	"Trace callbacks"	"Enable trace for callbacks"	 6
+h.tool:saveAndIncrement	saveAndIncrement	"Shelf Tool: saveAndIncrement"	 Alt+S
+h.pane.to_python_shell	"Python Shell"	"Switch to python shell"	 Alt+Ctrl+0
+h.tool:htMagicWand	htMagicWand	"Shelf Tool: htMagicWand"	 Alt+Ctrl+E
+h.context_help	"Context Help"	"Brings up context help"	
+h.enable_sim	"Enable/Disable Simulations"	"Toggle cooking of simulations"	 Alt+Ctrl+4
+h.pane.statusbar	"Move Status Bar Here"	"Move the status bar to this pane"	 Ctrl+Shift+P
+h.tool:exprHelper	exprHelper	"Shelf Tool: exprHelper"	 Alt+Ctrl+Q
+h.pane.wsheet.jump_mark_1	"Jump to Quickmark 1"	"Jumps to the quickmark 1 view"	 F1
+h.pane.wsheet.jump_mark_2	"Jump to Quickmark 2"	"Jumps to the quickmark 2 view"	 F2
+h.pane.wsheet.opmenu.flag_bypass	"Toggle Bypass"	"Toggle the Bypass flag of the selected node"	 Shift+B
+h.pane.wsheet.opmenu.flag_display	"Toggle Display"	"Toggle the Display flag of the selected node"	 1
+h.pane.wsheet.set_mark_5	"Set Quickmark 5"	"Saves the current view as quickmark 5"	 Shift+F5
+h.pane.wsheet.opmenu.parameters	Parameters	"Open a Parameters window for the node"	 Alt+Ctrl+A
+h.pane.wsheet.expose	"Unhide All"	"Expose all hidden operators"	
+inputfield.context_help	"Popup Context Help"	"Popup Context Help"	
+h.pane.wsheet.mode_switch	"Show List Mode"	"Switch between worksheet and list"	
+h.pane.gview.state.sop.sidefx_stroke.set_wireframe_brush	"Set wireframe brush"	"Set wireframe brush"	 2
+h.pane.parms.paste_rel_refs	"Paste Copied Relative Refs"	"Paste copied relative refs"	 Ctrl+Shift+V
+h.update_mode_never	"Update Mode 'Never'"	"Update mode 'Never'"	 Alt+Ctrl+3
+h.update_mode_changes	"Update Mode 'Changes'"	"Update mode 'Changes'"	 Alt+Ctrl+2
+h.pane.to_takelist	"Take List"	"Switch to take list"	 Alt+Ctrl+Y
+h.python_source_editor	"Python Source Editor"	"Python Source Editor"	 Alt+Shift+O
+h.gallery_mgr	"Gallery Manager"	"Open gallery manager dialog"	 Alt+G
+h.pane.gview.state.lop.sidefx_lop_edit.debug_msg	"Debug messages"	"Enable debug messages"	 7
+h.prefs_exttools	"External Tools Preferences"	"Open external tools preferences dialog"	 Ctrl+Shift+
+h.update_now	"Force Update"	"Force update"	 Alt+Ctrl+F
+h.save	Save	"Save current file"	 Ctrl+S
+h.pane.gview.state.sop.sidefx_stroke.realtime_mode	realtime	"Enable realtime mode"	 0
+h.pane.wsheet.tool:attribwrangle10	attribwrangle1	"Shelf Tool: attribwrangle1"	 Alt+Ctrl+W
+h.quit	Quit	"Quit the appication"	
+h.open_bundlelist	"Open Bundle List"	"Open bundle list"	 Alt+Ctrl+B
+h.save_as	"Save As"	"Specify name for saved file"	 Ctrl+Shift+S
+h.pane.wsheet.rename_node	"Rename Node"	"Edit the name of the current node"	

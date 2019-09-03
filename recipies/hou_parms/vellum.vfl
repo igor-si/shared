@@ -1,0 +1,7 @@
+
+
+// you can use following point attributes on your vellum geometry 
+// to control collisions per point
+
+i@disableself = 1; // to disable self collisions 
+i@disableexternal = 1; // to disable collisions with external objects

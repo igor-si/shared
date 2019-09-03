@@ -1,0 +1,5 @@
+**/.idea
+**/backup
+**/*.pyc
+*token.tok
+venv

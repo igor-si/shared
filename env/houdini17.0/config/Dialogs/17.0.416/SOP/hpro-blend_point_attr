@@ -1,0 +1,156 @@
+// Magic: 2f24e73b
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug  4 22:59:19 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+info.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    info.label = PARM_LABEL("Info", "info") WIDTH(1.5);
+    PARM_FIELD(string, "info") VALUE(info.val) 
+	LABELREF(info.label) HSTRETCH;
+
+}
+
+group.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    group.label = PARM_LABEL("Group", "group") WIDTH(1.5);
+    PARM_FIELD(string, "group") VALUE(group.val) 
+	LABELREF(group.label) HSTRETCH;
+
+    group.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+float_attr.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    float_attr.label = PARM_LABEL("Float Attr", "float_attr") WIDTH(1.5);
+    PARM_FIELD(string, "float_attr") VALUE(float_attr.val) 
+	LABELREF(float_attr.label) HSTRETCH;
+
+    float_attr.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+match_by_attr.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("match_by_attr", "Match by Attr") toggle VALUE(match_by_attr.val);
+
+    { HSTRETCH }
+
+}
+
+attr_to_match.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    attr_to_match.label = PARM_LABEL("Attr to Match", "attr_to_match") WIDTH(1.5);
+    PARM_FIELD(string, "attr_to_match") VALUE(attr_to_match.val) 
+	LABELREF(attr_to_match.label) HSTRETCH;
+
+    attr_to_match.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+blend_mode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Blend Mode", "blend_mode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    blend_mode.menu;
+
+    { HSTRETCH }
+
+}
+
+blend_origin.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    blend_origin.label = PARM_LABEL("Origin", "blend_origin") WIDTH(1.5);
+    PARM_FIELD(string, "blend_origin") VALUE(blend_origin.val) 
+	LABELREF(blend_origin.label) HSTRETCH;
+
+}
+
+blend_target.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    blend_target.label = PARM_LABEL("Target", "blend_target") WIDTH(1.5);
+    PARM_FIELD(string, "blend_target") VALUE(blend_target.val) 
+	LABELREF(blend_target.label) HSTRETCH;
+
+}
+
+blend_bias.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ blend_bias.label = PARM_LABEL("Opacity", "blend_bias") WIDTH(1.5);
+ PARM(float, 1, "blend_bias", none, none) RANGE(0,1)
+	LOCK_RANGE LABELREF(blend_bias.label) HSTRETCH;
+
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    info.gad; 
+    group.gad; 
+    float_attr.gad; 
+    sepparm.gad; 
+    match_by_attr.gad; 
+    attr_to_match.gad; 
+    sepparm2.gad; 
+    blend_mode.gad; 
+    blend_origin.gad; 
+    blend_target.gad; 
+    blend_bias.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

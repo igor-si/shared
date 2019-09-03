@@ -1,0 +1,37 @@
+<snippet>
+	<content><![CDATA[
+	"/obj/s_explosion/isTubeGuide_v2_${1:001}":{
+		"parms":{
+			"temperature":{
+				"val":${2:1.0}
+			},
+			"velocity":{
+				"val":${3:1.0}
+			},
+			"fuel":{
+				"val":${4:1.0}
+			},
+			"explosion_offset":{
+				"val":${5:1.0}
+			},
+			"density":{
+				"val":${6:1.0}
+			},
+			"scatter":{
+				"val":${7:1000}
+			},
+			"voxelsize":{
+				"val":${8:0.05}
+			}
+		},
+		"pos":[
+			${9:0},
+			${10:0}
+		]
+	},
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>tube</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.json</scope>
+</snippet>

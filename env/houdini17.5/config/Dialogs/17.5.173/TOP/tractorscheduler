@@ -1,0 +1,302 @@
+// Magic: 9ef1cfd1
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Mon Sep  2 01:58:00 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_workingdir.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    pdg_workingdir.label = PARM_LABEL("Working Directory", "pdg_workingdir") WIDTH(1.5);
+    PARM_FIELD(string, "pdg_workingdir") VALUE(pdg_workingdir.val) 
+	LABELREF(pdg_workingdir.label) HSTRETCH;
+
+}
+tractor_hostname.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+tractor_hostname.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    tractor_hostname.label = PARM_LABEL("Tractor Server Hostname", "tractor_hostname") WIDTH(1.5);
+    PARM_FIELD(string, "tractor_hostname") VALUE(tractor_hostname.val) 
+	LABELREF(tractor_hostname.label) HSTRETCH;
+
+}
+
+tractor_port.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ tractor_port.label = PARM_LABEL("Tractor Server Port", "tractor_port") ;
+ PARM(integer, 1, "tractor_port", none, none) RANGE(0,10)
+	 LABELREF(tractor_port.label) HSTRETCH;
+
+    ACTION_ICONBUTTON "BUTTONS_hq_browser" VALUE(tractor_port.script_action)
+	HELP("")
+	UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+}
+}	// Template join.bot
+
+
+localsharedroot.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ localsharedroot.label = PARM_LABEL("Local Shared Root Path", "localsharedroot") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "localsharedroot") LABELREF(localsharedroot.label)
+	VALUE(localsharedroot.val) HSTRETCH;
+
+    localsharedroot.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(localsharedroot.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+tractor_debug.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("tractor_debug", "Tractor Debug") toggle VALUE(tractor_debug.val);
+
+    { HSTRETCH }
+
+}
+
+tractor_user.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    tractor_user.label = PARM_LABEL("Tractor User", "tractor_user") WIDTH(1.5);
+    PARM_FIELD(string, "tractor_user") VALUE(tractor_user.val) 
+	LABELREF(tractor_user.label) HSTRETCH;
+
+}
+
+tractor_pass.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    tractor_pass.label = PARM_LABEL("Tractor Password", "tractor_pass") WIDTH(1.5);
+    PARM_FIELD(string, "tractor_pass") VALUE(tractor_pass.val) 
+	LABELREF(tractor_pass.label) HSTRETCH;
+
+}
+overrideportrange.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+overrideportrange.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+overrideportrange.gad = PARM_BUTTON("overrideportrange", "") toggle VALUE(overrideportrange.val);
+
+callbackportrange.gad = ROW
+{
+   HSTRETCH
+
+   callbackportrange.label = PARM_LABEL("Callback Port Range", "callbackportrange") WIDTH(1.32);
+   PARM(integer, 2, "callbackportrange", none, none, "#1,#2")
+	RANGE(0,65535)  LABELREF(callbackportrange.label)
+	HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+tractor_servicekeys.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    tractor_servicekeys.label = PARM_LABEL("Service Key Expression", "tractor_servicekeys") WIDTH(1.5);
+    PARM_FIELD(string, "tractor_servicekeys") VALUE(tractor_servicekeys.val) 
+	LABELREF(tractor_servicekeys.label) HSTRETCH;
+
+}
+
+tractor_limittags.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    tractor_limittags.label = PARM_LABEL("Limit Tags", "tractor_limittags") WIDTH(1.5);
+    PARM_FIELD(string, "tractor_limittags") VALUE(tractor_limittags.val) 
+	LABELREF(tractor_limittags.label) HSTRETCH;
+
+}
+
+tractor_atleast.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ tractor_atleast.label = PARM_LABEL("At Least Slots", "tractor_atleast") WIDTH(1.5);
+ PARM(integer, 1, "tractor_atleast", none, none) RANGE(1,10)
+	 LABELREF(tractor_atleast.label) HSTRETCH;
+
+}
+
+tractor_atmost.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ tractor_atmost.label = PARM_LABEL("At Most Slots", "tractor_atmost") WIDTH(1.5);
+ PARM(integer, 1, "tractor_atmost", none, none) RANGE(1,10)
+	 LABELREF(tractor_atmost.label) HSTRETCH;
+
+}
+
+tractor_envkeys.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    tractor_envkeys.label = PARM_LABEL("Tractor Env Keys", "tractor_envkeys") WIDTH(1.5);
+    PARM_FIELD(string, "tractor_envkeys") VALUE(tractor_envkeys.val) 
+	LABELREF(tractor_envkeys.label) HSTRETCH;
+
+}
+
+tractor_projects.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    tractor_projects.label = PARM_LABEL("Projects", "tractor_projects") WIDTH(1.5);
+    PARM_FIELD(string, "tractor_projects") VALUE(tractor_projects.val) 
+	LABELREF(tractor_projects.label) HSTRETCH;
+
+}
+
+tractor_tier.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    tractor_tier.label = PARM_LABEL("Tier", "tractor_tier") WIDTH(1.5);
+    PARM_FIELD(string, "tractor_tier") VALUE(tractor_tier.val) 
+	LABELREF(tractor_tier.label) HSTRETCH;
+
+}
+
+tractor_setenv.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    tractor_setenv.label = PARM_LABEL("Environment Override JSON", "tractor_setenv");
+
+    MULTILINE_PARM_FIELD ("tractor_setenv") 
+
+    	LABELREF(tractor_setenv.label) 
+
+    	VALUE(tractor_setenv.val) 
+    	SYNTAX("python") 
+    	LINES(5,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+tractor_dirmap.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    tractor_dirmap.label = PARM_LABEL("Job Dirmap JSON", "tractor_dirmap");
+
+    MULTILINE_PARM_FIELD ("tractor_dirmap") 
+
+    	LABELREF(tractor_dirmap.label) 
+
+    	VALUE(tractor_dirmap.val) 
+    	SYNTAX("python") 
+    	LINES(5,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+folder0.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder0.gad"
+    { 
+	VALUE(folder0.gad.val) STRETCH(1,0)
+
+	TAB "Scheduler"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    pdg_workingdir.gad;		
+	    tractor_hostname.row.join;		
+	    localsharedroot.gad;		
+	    tractor_debug.gad;		
+	    tractor_user.gad;		
+	    tractor_pass.gad;		
+	    overrideportrange.row.join;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Job Parms"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    tractor_servicekeys.gad;		
+	    tractor_limittags.gad;		
+	    tractor_atleast.gad;		
+	    tractor_atmost.gad;		
+	    tractor_envkeys.gad;		
+	    tractor_projects.gad;		
+	    tractor_tier.gad;		
+	    tractor_setenv.gad;		
+	    tractor_dirmap.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    folder0.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

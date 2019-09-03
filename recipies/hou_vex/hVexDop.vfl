@@ -1,0 +1,40 @@
+
+
+//I'm trying to get the DOP object name of an RBD Object 
+//from it object id. Is there a simple way to grab this info?
+//I couldnt find an expression for it.
+// HSCRIPT
+`dopfields("/obj/sphere_object1/dopnet1", 1, "", "Options", 0, "name")`
+
+
+=============================DOP object name from object id?============
+//Aha!!! You can just put object ids into the dopfield expression. (But you need to use dopfields to return a string).
+
+`dopfields("/obj/sphere_object1/dopnet1", 1, "", "Options", 0, "name")`
+==========================================================================
+
+
+===============DOP object name from object id
+`dopfields("../../", 1, "", "Options", 0, "name")`
+
+===============DOP object id from object name 
+`dopfields("../../", "rbd", "", "Options", 0, "objid")`
+--------------------------------------------------------------
+
+==============DOP object how to access impacts
+dopfield("/obj/AutoDopNetwork", "box", "Impacts", "Impacts", 0, "positionx")
+
+--------------------------------------------------------------
+================DOP object list
+dopobjectlist("/obj/dopnet1", "obj? object*", 1)
+`dopobjectlist("/obj/geo1/dopnet2", "*? object*", 1)` // works!!
+Returns a string such as "obj1 obj2 object1 objectfoo".
+---------------------
+
+//You can access DOP geometry information using any of the expressions you use to access SOP 
+dopnet:objname/dataname
+
+
+======get dopobject with id
+s@t = split(s@dopobject,"/")[-1:][0];
+---------------------------------

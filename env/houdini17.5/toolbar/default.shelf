@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <tool name="loadRecentHipfile" label="loadRecentHipfile" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import savescene
+reload(savescene)
+savescene.loadRecentHipfile()
+]]></script>
+  </tool>
+
+  <shelfSetEdit name="shelf_set_1" fileLocation="/opt/hfs17.5.173/houdini/toolbar/ShelfDefinitions.shelf">
+    <addMemberToolshelf name="iscolor_shelf" inPosition="16"/>
+    <addMemberToolshelf name="isdopnodes_shelf" inPosition="17"/>
+    <addMemberToolshelf name="isgallery_shelf" inPosition="18"/>
+    <addMemberToolshelf name="ishotnodes_shelf" inPosition="19"/>
+    <addMemberToolshelf name="isnoise_shelf" inPosition="20"/>
+    <addMemberToolshelf name="ispyro_shelf" inPosition="21"/>
+    <addMemberToolshelf name="isrbd_shelf" inPosition="22"/>
+    <addMemberToolshelf name="isremove_shelf" inPosition="23"/>
+    <addMemberToolshelf name="isscene_shelf" inPosition="24"/>
+    <addMemberToolshelf name="issop_shelf" inPosition="25"/>
+    <addMemberToolshelf name="istools_shelf" inPosition="26"/>
+    <addMemberToolshelf name="isvis_shelf" inPosition="27"/>
+    <addMemberToolshelf name="htools_shelf" inPosition="28"/>
+  </shelfSetEdit>
+
+  <shelfSetEdit name="shelf_set_2" fileLocation="/opt/hfs17.5.173/houdini/toolbar/ShelfDefinitions.master_shelf">
+    <addMemberToolshelf name="constraints" inPosition="17"/>
+    <addMemberToolshelf name="cloud" inPosition="18"/>
+  </shelfSetEdit>
+</shelfDocument>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="isgallery_shelf" label="ISGallery">
+    <memberTool name="gmManager"/>
+    <memberTool name="gmSave"/>
+    <memberTool name="gmLoad"/>
+    <memberTool name="loadPkg"/>
+  </toolshelf>
+
+  <tool name="gmManager" label="gmManager" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import os
+import sys
+
+def do(kwargs):
+    pane=kwargs['pane']
+    if(pane is None or not isinstance(pane,hou.NetworkEditor)):
+        return
+    return pane
+pane = do(kwargs)
+
+print "pane -1",pane
+
+from hutil.Qt import QtWidgets
+from isutils.scripts import gallery_tools
+reload (gallery_tools)
+window = gallery_tools.showManagerWindow(pane)
+]]></script>
+  </tool>
+
+  <tool name="gmSave" label="gmSave" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import os
+import sys
+
+from hutil.Qt import QtWidgets
+from isutils.scripts import gallery_tools
+reload (gallery_tools)
+window = gallery_tools.showSaveWindow()
+]]></script>
+  </tool>
+
+  <tool name="gmLoad" label="gmLoad" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import os
+import sys
+
+def do(kwargs):
+    pane=kwargs['pane']
+    if(pane is None or not isinstance(pane,hou.NetworkEditor)):
+        return
+    return pane
+pane = do(kwargs)
+
+#print "pane -1",pane
+print "init pane",pane
+from hutil.Qt import QtWidgets
+from isutils.scripts import gallery_tools
+reload (gallery_tools)
+window = gallery_tools.showLoadWindow(pane)
+]]></script>
+  </tool>
+
+  <tool name="loadPkg" label="loadPkg" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import os
+import sys
+
+def do(kwargs):
+    pane=kwargs['pane']
+    if(pane is None or not isinstance(pane,hou.NetworkEditor)):
+        return
+    return pane
+pane = do(kwargs)
+
+
+from isutils.scripts import gallery_tools
+reload (gallery_tools)
+#print "init pane",pane
+gallery_tools.loadPkgDirectly(pane=pane)
+
+#print "pane -1",pane
+#from hutil.Qt import QtWidgets
+#from isutils.scripts import gallery_tools
+#reload (gallery_tools)
+#window = gallery_tools.showLoadWindow(pane)
+]]></script>
+  </tool>
+</shelfDocument>

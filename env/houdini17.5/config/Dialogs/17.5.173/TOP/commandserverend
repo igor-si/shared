@@ -1,0 +1,68 @@
+// Magic: f802f2f8
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Mon Sep  2 02:05:47 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_dynamicpartition.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("pdg_dynamicpartition", "Use Dynamic Partitioning") toggle VALUE(pdg_dynamicpartition.val);
+
+    { HSTRETCH }
+
+}
+
+pdg_feedbackbegin.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ pdg_feedbackbegin.label = PARM_LABEL("Server Path", "pdg_feedbackbegin") WIDTH(1.5);
+ PARM_FIELD(pathstring, "pdg_feedbackbegin") VALUE(pdg_feedbackbegin.val) 
+	LABELREF(pdg_feedbackbegin.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(pdg_feedbackbegin.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(pdg_feedbackbegin.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+pdg_partitionaftercook.gad = NULL { }
+pdg_dirtymode.gad = NULL { }
+pdg_partitiondepth.gad = NULL { }
+pdg_partitiontarget.gad = NULL { }
+pdg_alwaysevaluate.gad = NULL { }
+pdg_removestale.gad = NULL { }
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    pdg_dynamicpartition.gad; 
+    pdg_feedbackbegin.gad; 
+    pdg_partitionaftercook.gad; 
+    pdg_dirtymode.gad; 
+    pdg_partitiondepth.gad; 
+    pdg_partitiontarget.gad; 
+    pdg_alwaysevaluate.gad; 
+    pdg_removestale.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

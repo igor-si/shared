@@ -1,0 +1,457 @@
+//remove weighted dist by ramp
+int i = 0;
+int np = npoints(0);
+
+float max_val = -10000;
+for (i=0;i<np;i++)
+{
+	vector curP = point(0,"rP",i)*{1,0,1};
+	vector cP = point(1,"P",0)*{1,0,1};
+	float dist = distance(curP,cP);
+	max_val = max(dist,max_val);
+}
+float dist = distance(v@rP,point(1,"P",0));
+float rpD = chramp("ramp_dist",dD)
+v@Cd = rpD;
+
+int steps = 30;
+float fR = rand(i@ptnum);
+for (int j=0;j<steps;j++)
+{
+	float t1 = rpD/(steps-j)*steps;
+	float res = fit(t1,0,1,1,0);
+	if(fR<res)
+	{removepoint(0,@ptnum);}
+}
+
+-----improved cluster system
+int colums = chi("colums")+1;
+int rows = chi("rows")+1;
+float cl,clx,clz;
+
+vector brel = relbbox(0,v@P);
+float brx = brel.x;
+float brz = brel.z;
+
+for (int j=0;j<rows-1;j++)
+{
+	clx = ceil(brx*(j+1));
+	for (int i=0;i<colums-1:i++)
+	{
+		clz = ceil(brz*(i+1))
+		clz = clx*rows+clz;
+	}
+}
+
+
+=====gridless advection "single"
+int fr = (int)@Frame;
+vector vel = {0,0,0};
+vector pos = v@P;
+
+for (int i=fr;i>0;i--)
+{
+	vel = volumesamplev(1,"vel_"+itoa(i),v@P)*(1.0/24.0);
+	pos -= vel;
+}
+f@density = volumesample((0,0,pos));
+-------
+
+======array of "names"
+string im[];
+for (int j=0;j<npoints(1);j++)
+{
+	string curS = point(0,"name",j);
+	if (match(s@name,sprintf("%s",curS))==1 )
+	{@rm==1;}
+}
+-----------------------
+
+
+==drag neighbours==========
+int neigs[] = point(0,"neighbours",@ptnum);
+foreach (int pt; i@neighbours)
+{
+		setpointattrib(0,"v",pt,chf("drag"),"mult");
+}
+
+===wedgem by primintrinsic 
+string filepath = primintrinsic(0,"filename",@primnum)
+i@wedge_num = atoi(split(split(filepath,'/')[-2],'.')[1]);
+
+
+===how to hide primitives 
+@group__3d_hidden_primitives=1;
+-------
+
+====scale packed opbject
+vector scale = chv("scale");
+matrix trn = primintrinsic(0,"transform",@primnum);
+matrix scalem = maketransform(0,0,{0,0,0},{0,0,0},scale,v@P);
+trn *= matrix3(scalem);
+setprimintrinsic(0,"transform",@primnum,trn);
+----------
+
+====unique id 
+s@name = sprintf("%d_%d_%s",@Frame,@ptnum,i@objectid);
+setpointattrib(0,"name",@primnum,s@name);
+
+======error switch (hscript)
+strmatch("*Error:*",run("opinfo" + opinputpath(".",0))) + ($FF-$FF) +1
+-----
+
+======remove disconnected points 
+neighbourcount(0,@ptnum) == 0 ? removepoint(0,@ptnum) : 0;
+-------
+
+====extract transform from packed
+v@pivot = primintrinsic(0,"pivot",@primnum);
+matrix m = primintrinsic(0,"packedfulltransform",@ptnum);
+p@orient = quaternion(matrix3(m));
+------------
+
+=======rotate geo by maketransform --
+vector angle = chv("angle");
+vector t = set(0,0,0); //translation
+vector s = set(1,1,1); //scale
+vector p = set(0,0,0); //pivot
+matrix m = maketransform(0,0,t,angle,s,p); //matrix 4
+v@P = v@P*m;
+-------
+
+======find string hscript 
+strcasematch("prim_debris",stamps("..","OBJNAME",""))
+--------
+
+=======matrix detail matchmove 
+matrix xf_stat = detail(0,"xf",0);
+matrix xf_anim = detail(0,"xf_anim",0);
+matrix xform = invert(xf_stat)*xf_anim;
+v@P*=xform;
+--
+
+=====simple matrix ==
+matrix xf =ident();
+int ptNum = chi("pt");
+vector pivot = point(0,"P",ptNum);
+vector N = point(0,"N",ptNum);
+vector P = point(0,"P",ptNum);
+vector tangent = point(0,"tangentu",ptNum);
+translate(xf,-pivot);
+xf = maketransform(N,tangent,P);
+setdetailattrib(0,"xf",xf,"set");
+-----
+
+=====sample functions
+float mt = chf("ammount");
+float angle = radians(chf("angle"));
+vector up = set(0,1,0);
+vector ss;
+v@N = {1,0,0};
+
+ss = sample_sphere_uniform(rand(@ptnum))*mt;
+ss = sample_direction_uniform(rand(@ptnum))*mt;
+ss = sample_sphere_cone(up,angle,rand(@ptnum))*mt;
+ss = sample_direction_cone(set(0,1,0),angle,rand(@ptnun))*mt;
+ss = sample_circle_uniform(rand(@ptnum));
+
+ss = sample_circle_slice(set(0,1),angle,rand(@ptnum));
+matrix rot = dihedral(set(0,0,1),v@N);
+ss *= rot;
+
+ss = sample_circle_arc(set(0,1),angle,rand(@ptnum));
+v@P+=ss;
+
+p@orient = sample_orientation_cone(set(1,0,0,0), radians(rand(@ptnun)*180),rand(@ptnum) );
+
+
+======transfer closest name -
+int closept[] = pcfind(1,"P",v@P,chf("max_dist"),1);
+int pt = closept[0];
+int pr = pointprims(1,pt)[0];
+s@nameTmp = prim(1,"name",pr);
+--------
+
+
+====remove by act frame --
+int ppts[] = primpoints(0,@primnum);
+foreach (int pt;ppts){
+	int actFrame = point(0,"actFrame",pt);
+	if (@Frame>actFrame) 
+	{removeprim(0,@primnum,1);}
+}
+---
+
+=====vel mult -------
+vector v = v@v;
+vector vN = normalize(v);
+float vL = length(v);
+v@v = clamp(vL*chf("v_mult"),chf("min"),chf("max"));
+-----
+
+===line to near point 
+float maxdist =10000;
+int nrpts = nearpoints(0,v@P,maxdist,2)[1];
+int newPrim = addprim(0,"poly");
+vector vecD = (v@P-point(0,"P",nrpts));
+setpointattrib(0,"vecD",@ptnum,vecD,"set");
+addvertex(0,newPrim,@ptnum);
+addvertex(0,newPrim,nrpts);
+------
+
+
+=========camera intersect in front if camera  
+vector camP = point(1,"P",0);
+vector dir = normalize(camP-v@P);
+f@distCam = distance(camP,dir);
+float bias = 0.1;
+vector hit_ps[];
+int hits = intersect_all(2,v@P,dir*1000,hit_ps,{},{});
+if (hits && distance(v@P,hit_ps[-1])>bias)
+{v@Cd = {1,0,0};}
+----------------------------------
+
+=======average attrib from neighbours  
+i[]@neighbours = neighbours(0,@ptnum);
+float icMin = 1;
+float icSumm = 0;
+
+float nbcount = neighbourcount(0,@ptnum);
+foreach (int nb;@neighbours){
+	int inCam = point(0,"inCam",nb);
+	icSumm += inCam;
+}
+float icAv = icSumm/nbcount;
+----------------
+
+===========refer to chan from input --
+string path = "`opinputpath(".",0)`";
+i@version = chi(concat(path,"/version"));
+i@element = chs(concat(path,"/element"));
+
+
+===========add global variable name
+addvariablename(0,"objid","OBJID");
+
+
+=======edge detect  
+int nb[] = neighbours(0,@ptnum);
+int nbc = neighbourcount(0,@ptnum);
+float cnt = 0;
+foreach (int num; nb){
+	float cutProb = point(1,"prob",num);
+	cnt += curProb;
+}
+float cntAb = cnt/nbc;
+if (cntAv>0 && cntAb<1)
+{@border =1;}
+
+------
+
+=======set packed to highres  
+---for lr
+v@pivot = primintrinsic(0,"pivot",@ptnum);
+3@transform = primintrinsic(0,"transform",@ptnun);
+---for hr 
+setprimintrinsic(0,"transform",@ptnum,3@transform);
+setprimintrinsic(0,"pivot",@ptnum,v@pivot);
+---------------
+
+======extract matrix  orient components 
+matrix m = qconvert(@orient);
+vector trans = cracktransform(0,0,0, {0,0,0},m);
+vector rot = cracktransform(0,0,1, {0,0,0},m);
+vector scale = cracktransform(0,0,2, {0,0,0},m);
+v@rotationPP = rot;
+-----------------------------
+
+========scale vdb DO NOT WORK WITH VOLUMES
+vector scale = chv("scale");
+matrix xform4 = primintrinsic(0,"transform",@ptnum);
+scale(xform4,scale);
+setprimintrinsic(0,"transform",@ptnum,xform4,"set");
+-----------------
+
+
+=======scale geo 
+matrix3 m = ident();
+scale(m,chv("scale"));
+v@P*=m
+-----
+
+
+
+==========vector angle. extract angles from vector 
+vector compVec = normalize(v@v);
+vector ax_x = {1,0,0};
+vector ax_y = {0,1,0};
+vector ax_z = {0,0,1};
+vector angle = {0,0,0};
+v@angle.x = degrees( acos( dot( normalize(compVec),normalize(ax_x) )) );
+v@angle.y = degrees( acos( dot( normalize(compVec),normalize(ax_y) )) );
+v@angle.z = degrees( acos( dot( normalize(compVec),normalize(ax_z) )) );
+--------
+
+==============get angle and sign btw two vectors ---
+vector axis_main = {0,0,1};
+vector vN = normalize(v@v);
+vector v_plain = normalize(vN*{1,0,1});
+float dp = dot(v_plain,axis_main);
+vector up = {0,1,0};
+float angle_dif = degrees(acos(dp));
+float _sign = dot(up,cross(v_plain,axis_main));
+@angle = angle_dif*sign(_sign);
+-------------------------------
+
+======simple rotate by orient 
+float rN = fit01(rand(@id),.75,1.25);
+matrix3 m = dihedral({0,1,0},v@N);
+float angle = @Frame*chf("speed")*rN;
+float angle_rad = radians(angle);
+rotate(m,angle,rad,v@N);
+p@orient = quaternion(m);
+-----------------------
+
+=============check hit path 
+int check = match("*Geometry",s@hitpath);
+if (check) v@Cd = {1,0,0};
+
+------------------------------
+
+====sample hf heighfield 
+vector hf = point(1,"center",0);
+float vs = volumesample(1,0,set(v@P.x,hf.y,v@P.z));
+if(v@P.y<vs) removepoint(0,@ptnum);
+-----------------
+
+=====reproject "vector" onto "surfaces"
+vector vecD =v@vecD-v@N*dot(v@vecD*v@N);
+
+---------------------------------------
+
+=====custom replication along vector 
+float incr = float(chi("increment"));
+float dist = chf("dist");
+
+vector vecD = v@vecD;
+for(int i=0;i<4;i++){
+	float add_incr = dist/incr*i;
+	vector add_pos = v@P+vecD*add_incr;
+	int tmp_pt = addpoint(0,add_pos);}
+---------------------------------------
+
+
+=====find neighbour prims 
+int prim_edge, edge,prim,i,n,num;
+string neighbours = "";
+int list[] = {};
+
+i=0;
+prim_edge = primhedge(0,@primnum);
+while(1<primvertexcount(0,@primnum))
+{
+
+	num = hedge_equivcount(0,prim_edge);
+	n =0;
+	while(n<num)
+	{
+		edge = hedge_nextequiv(0,prim_edge);
+		prim = hedge_prim(0,edge);
+		if (prim!=@primnum)
+			push(list,prim);
+		
+		prim_edge = edge;
+		n++;
+	}
+
+	prim_edge = hedge_next(0,prim_edge);
+	i++;
+}
+setdetailattrib(0,"neighbours",list);
+----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

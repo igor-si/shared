@@ -1,0 +1,49 @@
+//
+//  File:    vih_coord.vfl
+//  Version: 0001
+//  Author:  Shawn Lipowski
+//  Date:    2014 09 15
+//  Note:    Functions for dealing with coordinate lookups at boundries of 2D
+//           grids or images.
+//
+
+//  mirror_coord:
+//          Given a square grid or image of dimension 'dim', we often want to
+//          find an intiger point on the grid which neighbors 'coord'. Thus,
+//          to get the point to the right of of coordinate 4 in a 1D array
+//          storing a 512 by 512 pixel or point 2D image we would call:
+//              mirror_coord(4, 1, 512)
+//          the return coordinate would be 5. No surprise. But if we have:
+//              mirror_coord(511, 1, 512)
+//          there is no valid point to the right, so mirror returns the
+//          point in the other direction: 511 - 1 = 510.
+//      parms:
+//          coord  : the point we want to find a neighbor of
+//          offset : distance to neighbor, often 1
+//          dim    : the height and width of the grid or image
+//      returns:
+//          int    : the offset coordinate
+int mirror_coord(int coord; int offset; int dim) {
+    int new_coord = coord + offset;
+
+    if ((new_coord >= dim) || (new_coord < 0))
+        return coord - offset; // mirror at boundry
+
+    return new_coord;
+}
+
+//  wrap_coord:
+//          Same as mirror coord in all respects except this function
+//          returns the coordinate on the other side of the grid when an
+//          offset point is requested beyond the valid boundry.
+int wrap_coord(int coord; int offset; int dim) {
+    int new_coord = coord + offset;
+
+    if (new_coord >= dim)
+        return new_coord - dim; // wrapped at max boundry
+
+    else if (new_coord < 0)
+        return dim + new_coord; // wrapped at min boundry
+
+    return new_coord;
+}

@@ -1,0 +1,1 @@
+{"body": [{"body": [{"body": [{"indent": 4, "type": "para", "extent": [56, 140], "text": ["The path to the SOP node with the initial connectivity, position and velocity."]}], "indent": 0, "text": ["Initial State"], "attrs": {"channels": "/soppath"}, "extent": [16, 31], "type": "dt"}], "container": true, "type": "dt_group"}], "type": "root", "attrs": {"type": "include"}}

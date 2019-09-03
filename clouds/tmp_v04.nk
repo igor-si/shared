@@ -1,0 +1,711 @@
+#! /studio/tools/nk/nuke6.2v1/Nuke6.2 -nx
+version 6.2 v1
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="2108" y="29" w="1920" h="1144" screen="0">
+        <splitter orientation="1">
+            <split size="976"></split>
+            <splitter orientation="1">
+                <split size="45"></split>
+                <dock id="" activePageId="Toolbar.1">
+                    <page id="Toolbar.1"></page>
+                </dock>
+                <split size="927"></split>
+                <splitter orientation="2">
+                    <split size="903"></split>
+                    <dock id="" activePageId="Viewer.1">
+                        <page id="Viewer.1"></page>
+                    </dock>
+                    <split size="180"></split>
+                    <dock id="" activePageId="DopeSheet.1">
+                        <page id="Curve Editor.1"></page>
+                        <page id="DopeSheet.1"></page>
+                    </dock>
+                </splitter>
+            </splitter>
+            <split size="940"></split>
+            <dock id="" activePageId="DAG.1">
+                <page id="DAG.1"></page>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name /home/depth/Documents/tmp_v04.nk
+ frame 72
+ format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+}
+Constant {
+ inputs 0
+ channels rgb
+ color {0.1221999973 0.1537839919 0.2349999994 0}
+ name Constant1
+ xpos -630
+ ypos 481
+}
+Reformat {
+ format "960 540 0 0 960 540 1 "
+ name Reformat1
+ xpos -630
+ ypos 566
+}
+Read {
+ inputs 0
+ file /home/depth/Documents/temp/h2043_09.exr
+ format "960 540 0 0 960 540 1 "
+ origset true
+ name Read1
+ xpos -512
+ ypos -273
+}
+set N6982a10 [stack 0]
+NoOp {
+ name NoOp1
+ xpos -428
+ ypos -96
+}
+set N67072e0 [stack 0]
+add_layer {sun_direct_comp_volume sun_direct_comp_volume.red sun_direct_comp_volume.green sun_direct_comp_volume.blue}
+Shuffle {
+ in sun_direct_comp_volume
+ name Shuffle4
+ xpos -967
+ ypos -13
+}
+set N84a9fe0 [stack 0]
+ColorCorrect {
+ gamma 0.78
+ gain {2.5 1.883940935 0.7554997206 2.5}
+ name ColorCorrect1
+ xpos -1040
+ ypos 38
+ disable true
+}
+Read {
+ inputs 0
+ file /home/depth/Documents/temp/blue-sky.jpg
+ format "1920 1272 0 0 1920 1272 1 "
+ origset true
+ name Read4
+ xpos -833
+ ypos 689
+}
+Reformat {
+ format "960 540 0 0 960 540 1 "
+ name Reformat2
+ xpos -833
+ ypos 775
+}
+push $N67072e0
+NoOp {
+ name NoOp2
+ xpos 567
+ ypos -127
+}
+set N5d1eb30 [stack 0]
+add_layer {sun_direct_comp_diffuse sun_direct_comp_diffuse.red sun_direct_comp_diffuse.green sun_direct_comp_diffuse.blue}
+Shuffle {
+ in sun_direct_comp_diffuse
+ name Shuffle5
+ xpos 292
+ ypos 25
+}
+ColorCorrect {
+ gamma 0.78
+ gain 2.8
+ name ColorCorrect3
+ xpos 292
+ ypos 51
+}
+set N85f3f30 [stack 0]
+push $N5d1eb30
+add_layer {fil_direct_comp_diffuse fil_direct_comp_diffuse.red fil_direct_comp_diffuse.green fil_direct_comp_diffuse.blue}
+Shuffle {
+ in fil_direct_comp_diffuse
+ name Shuffle6
+ xpos 408
+ ypos 54
+}
+Merge2 {
+ inputs 2
+ operation plus
+ name Plus4
+ xpos 369
+ ypos 142
+}
+push $N5d1eb30
+add_layer {sky_direct_comp_diffuse sky_direct_comp_diffuse.red sky_direct_comp_diffuse.green sky_direct_comp_diffuse.blue}
+Shuffle {
+ in sky_direct_comp_diffuse
+ name Shuffle7
+ xpos 541
+ ypos 91
+}
+Grade {
+ white {1.000999928 1.29102993 1.299999952 1.299999952}
+ gamma 0.9
+ name Grade2
+ xpos 541
+ ypos 117
+}
+ColorCorrect {
+ saturation 0.62
+ gain 2
+ name ColorCorrect4
+ xpos 541
+ ypos 143
+}
+Merge2 {
+ inputs 2
+ operation plus
+ name Plus5
+ xpos 483
+ ypos 210
+}
+set N88ceb70 [stack 0]
+push $N5d1eb30
+add_layer {Ce Ce.red Ce.green Ce.blue}
+Shuffle {
+ in Ce
+ name Shuffle8
+ xpos 677
+ ypos 72
+}
+Merge2 {
+ inputs 2
+ operation plus
+ name Plus6
+ xpos 685
+ ypos 198
+}
+Read {
+ inputs 0
+ file /home/depth/Documents/temp/h2042_08.exr
+ format "960 540 0 0 960 540 1 "
+ origset true
+ name Read3
+ xpos -331
+ ypos -264
+}
+Copy {
+ inputs 0
+ from0 rgba.alpha
+ to0 rgba.alpha
+ name Copy2
+ xpos 969
+ ypos 875
+}
+push $N67072e0
+Shuffle {
+ in Ce
+ name Shuffle3
+ xpos -466
+ ypos 75
+}
+ColorCorrect {
+ gain {0.6764000058 1.084731817 1.779999971 1}
+ name ColorCorrect7
+ xpos -466
+ ypos 101
+}
+Grade {
+ white 3.1
+ gamma 0.86
+ name Grade5
+ xpos -466
+ ypos 127
+}
+set N5a9e840 [stack 0]
+Grade {
+ name Grade6
+ xpos -445
+ ypos 541
+}
+Grade {
+ channels alpha
+ white 20
+ name Grade7
+ xpos -445
+ ypos 582
+}
+Glow {
+ size 9.4
+ name Glow3
+ xpos -445
+ ypos 622
+}
+push $N67072e0
+push $N84a9fe0
+ColorCorrect {
+ saturation 0.88
+ contrast 1.2
+ gamma 0.78
+ gain {2.450000048 2.385320187 2.156000137 1}
+ name ColorCorrect8
+ xpos -967
+ ypos 76
+}
+set N8ab7a20 [stack 0]
+Glow {
+ name Glow1
+ xpos -1028
+ ypos 198
+}
+push $N8ab7a20
+push $N67072e0
+add_layer {fil_direct_comp_volume fil_direct_comp_volume.red fil_direct_comp_volume.green fil_direct_comp_volume.blue}
+Shuffle {
+ in fil_direct_comp_volume
+ name Shuffle1
+ xpos -772
+ ypos 22
+}
+Grade {
+ white 3.8
+ gamma 1.08
+ name Grade4
+ xpos -772
+ ypos 50
+}
+ColorCorrect {
+ saturation 0.68
+ gain 2.2
+ name ColorCorrect5
+ xpos -772
+ ypos 86
+}
+Merge2 {
+ inputs 2
+ operation plus
+ name Plus
+ xpos -807
+ ypos 141
+}
+push $N67072e0
+add_layer {sky_direct_comp_volume sky_direct_comp_volume.red sky_direct_comp_volume.green sky_direct_comp_volume.blue}
+Shuffle {
+ in sky_direct_comp_volume
+ name Shuffle2
+ xpos -614
+ ypos 61
+}
+Grade {
+ white {1.000999928 1.29102993 1.299999952 1.299999952}
+ gamma 0.84
+ name Grade1
+ xpos -614
+ ypos 87
+}
+ColorCorrect {
+ saturation 0.62
+ gain 0.41
+ name ColorCorrect2
+ xpos -614
+ ypos 113
+}
+Merge2 {
+ inputs 2
+ operation plus
+ name Plus2
+ xpos -656
+ ypos 198
+}
+push $N5a9e840
+Merge2 {
+ inputs 2
+ operation plus
+ name Plus3
+ xpos -514
+ ypos 239
+}
+Merge2 {
+ inputs 2
+ operation plus
+ mix 0.23
+ name Plus1
+ xpos -514
+ ypos 303
+}
+Copy {
+ inputs 2
+ from0 rgba.alpha
+ to0 rgba.alpha
+ name Copy1
+ xpos -369
+ ypos 350
+}
+set N8ae1970 [stack 0]
+Read {
+ inputs 0
+ file /home/depth/Documents/temp/h2038_plane_02.exr
+ format "960 540 0 0 960 540 1 "
+ origset true
+ name Read2
+ xpos 754
+ ypos -263
+}
+push $N85f3f30
+Glow {
+ name Glow2
+ xpos 227
+ ypos 156
+}
+push $N88ceb70
+Merge2 {
+ inputs 2
+ operation plus
+ mix 0.43
+ name Plus7
+ xpos 483
+ ypos 282
+}
+Copy {
+ inputs 2
+ from0 rgba.alpha
+ to0 rgba.alpha
+ name Copy3
+ xpos 785
+ ypos 325
+}
+set N5d71260 [stack 0]
+LightWrap {
+ inputs 2
+ name LightWrap3
+ xpos 481
+ ypos 472
+ Diffuse 21.5
+ Intensity 100
+ onlywrap true
+ master 1
+ shadows 1
+ midtones 1
+ highlights 1
+}
+push $N5d71260
+Dot {
+ name Dot1
+ xpos 263
+ ypos 373
+}
+Merge2 {
+ inputs 2
+ operation plus
+ mix 0.43
+ name Plus10
+ xpos 229
+ ypos 514
+}
+push $N8ae1970
+Grade {
+ black 0.012
+ maskChannelInput rgba.alpha
+ name Grade8
+ xpos -300
+ ypos 519
+}
+Merge2 {
+ inputs 2
+ name Merge2
+ xpos -265
+ ypos 622
+ disable true
+}
+set N8cc0430 [stack 0]
+Merge2 {
+ inputs 2
+ operation plus
+ name Merge5
+ xpos -265
+ ypos 724
+ disable true
+}
+Constant {
+ inputs 0
+ channels rgb
+ color {0.09078013897 0.1932979226 0.3000000119 0}
+ format "960 540 0 0 960 540 1 "
+ name Constant4
+ xpos -484
+ ypos 1555
+}
+Constant {
+ inputs 0
+ channels rgb
+ color {0.1560000032 0.2395199835 0.3000000119 0}
+ format "960 540 0 0 960 540 1 "
+ name Constant2
+ xpos -1287
+ ypos 721
+}
+Shuffle {
+ alpha black
+ name Shuffle9
+ xpos -1257
+ ypos 844
+}
+set N6e975e0 [stack 0]
+Ramp {
+ replace true
+ p0 {97 525}
+ p1 {100 263}
+ type smooth
+ name Ramp2
+ xpos -1337
+ ypos 1050
+}
+push $N6e975e0
+Ramp {
+ output alpha
+ p0 {100 203}
+ p1 {100 2}
+ type smooth
+ name Ramp1
+ xpos -1373
+ ypos 919
+}
+push $N6e975e0
+Constant {
+ inputs 0
+ channels rgb
+ color {0.06480000168 0.1284119934 0.2700000107 0}
+ format "960 540 0 0 960 540 1 "
+ name Constant3
+ xpos -1132
+ ypos 715
+}
+Shuffle {
+ alpha black
+ name Shuffle10
+ xpos -1149
+ ypos 842
+}
+Merge2 {
+ inputs 2+1
+ operation copy
+ name Merge3
+ xpos -1178
+ ypos 936
+}
+Merge2 {
+ inputs 2
+ operation multiply
+ mix 0.635
+ name Merge6
+ xpos -1169
+ ypos 1068
+}
+NoOp {
+ name NoOp3
+ xpos -445
+ ypos 1213
+}
+ColorCorrect {
+ saturation 1.6
+ gain 0.92
+ name ColorCorrect9
+ xpos -445
+ ypos 1239
+}
+Grade {
+ white {1.258729219 1.765333056 1.899999976 0.8057479858}
+ name Grade3
+ xpos -445
+ ypos 1283
+}
+set N8e17710 [stack 0]
+push $N67072e0
+NoOp {
+ name NoOp4
+ xpos 94
+ ypos 613
+}
+set Na342700 [stack 0]
+add_layer {AOV1 AOV1.red AOV1.green AOV1.blue}
+Shuffle {
+ in AOV1
+ name Shuffle11
+ xpos 355
+ ypos 689
+}
+set Naedad00 [stack 0]
+push $Na342700
+Copy {
+ inputs 2
+ from0 rgba.red
+ to0 rgba.alpha
+ name Copy5
+ xpos 274
+ ypos 778
+}
+Premult {
+ name Premult1
+ xpos 274
+ ypos 818
+}
+push $Naedad00
+push $Na342700
+ChannelMerge {
+ inputs 2
+ A AOV1.red
+ operation stencil
+ name ChannelMerge1
+ xpos 94
+ ypos 728
+}
+push $N8cc0430
+Copy {
+ inputs 2
+ from0 rgba.alpha
+ to0 rgba.alpha
+ name Copy4
+ xpos -80
+ ypos 740
+}
+Merge2 {
+ inputs 2
+ name Merge7
+ xpos -246
+ ypos 892
+}
+set N9fcba60 [stack 0]
+Ramp {
+ replace true
+ p0 {135.5 309}
+ p1 {135 184}
+ type plinear
+ name Ramp4
+ xpos -75
+ ypos 1021
+}
+push $N9fcba60
+Ramp {
+ replace true
+ p0 {134 170}
+ p1 {133 462}
+ type plinear
+ name Ramp3
+ xpos -378
+ ypos 946
+}
+push $N9fcba60
+ColorCorrect {
+ inputs 1+1
+ saturation 1.64
+ gain {1.245600104 1.335023999 1.440000057 1.320000052}
+ name ColorCorrect10
+ xpos -227
+ ypos 990
+}
+Unpremult {
+ name Unpremult1
+ xpos -227
+ ypos 1035
+}
+Grade {
+ inputs 1+1
+ channels alpha
+ white 1.22
+ name Grade9
+ xpos -227
+ ypos 1100
+}
+Premult {
+ name Premult2
+ xpos -231
+ ypos 1204
+}
+push $N8e17710
+Merge2 {
+ inputs 2
+ name Merge1
+ xpos -223
+ ypos 1278
+}
+set N8e80a50 [stack 0]
+LightWrap {
+ inputs 2
+ name LightWrap2
+ xpos -423
+ ypos 1426
+ Diffuse 21.5
+ Intensity 21
+ onlywrap true
+ master 1
+ shadows 1
+ midtones 1
+ highlights 1
+}
+push $N8e17710
+push $N8e80a50
+LightWrap {
+ inputs 2
+ name LightWrap1
+ xpos -324
+ ypos 1385
+ Diffuse 3
+ Intensity 5.5
+ onlywrap true
+ FGBlur 2.6
+ master 1
+ shadows 1
+ midtones 1
+ highlights 1
+}
+push $N8e80a50
+Merge2 {
+ inputs 2
+ operation plus
+ mix 0.08
+ name Plus8
+ xpos -235
+ ypos 1425
+}
+Merge2 {
+ inputs 2
+ operation plus
+ mix 0.075
+ name Plus9
+ xpos -235
+ ypos 1498
+}
+Merge2 {
+ inputs 2
+ mix 0.085
+ name Merge4
+ xpos -235
+ ypos 1588
+}
+ColorCorrect {
+ gamma 0.92
+ name ColorCorrect6
+ xpos -235
+ ypos 1638
+}
+set Na6b1cb0 [stack 0]
+push 0
+push $N6982a10
+push $N8ab7a20
+Viewer {
+ inputs 4
+ frame 72
+ input_number 3
+ input_process false
+ name Viewer1
+ xpos -40
+ ypos -10
+}
+push $Na6b1cb0
+Write {
+ file /home/depth/Documents/tmp/t08.jpg
+ file_type jpeg
+ _jpeg_quality 1
+ checkHashOnRead false
+ version 6
+ name Write1
+ xpos -235
+ ypos 1691
+}

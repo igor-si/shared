@@ -1,0 +1,163 @@
+// Magic: 21f38baf
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Fri Aug  2 12:57:22 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+cam.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ cam.label = PARM_LABEL("Camera", "cam") WIDTH(1.5);
+ PARM_FIELD(pathstring, "cam") VALUE(cam.val) 
+	LABELREF(cam.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(cam.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(cam.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+
+lineWidth.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ lineWidth.label = PARM_LABEL("Line Width", "lineWidth") WIDTH(1.5);
+ PARM(float, 1, "lineWidth", none, none) RANGE(0,10)
+	 LABELREF(lineWidth.label) HSTRETCH;
+
+}
+
+endDist.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ endDist.label = PARM_LABEL("Frustum Distance", "endDist") WIDTH(1.5);
+ PARM(float, 1, "endDist", none, none) RANGE(0,10)
+	 LABELREF(endDist.label) HSTRETCH;
+
+}
+
+horizontalBuffer.gad = ROW
+{
+   HSTRETCH
+
+   horizontalBuffer.label = PARM_LABEL("Horizontal Buffer", "horizontalBuffer") WIDTH(1.5);
+   PARM(float, 2, "horizontalBuffer", none, none, "#1,#2")
+	RANGE(0,10)  LABELREF(horizontalBuffer.label)
+	HSTRETCH;
+
+}
+
+verticalBuffer.gad = ROW
+{
+   HSTRETCH
+
+   verticalBuffer.label = PARM_LABEL("Vertical Buffer", "verticalBuffer") WIDTH(1.5);
+   PARM(float, 2, "verticalBuffer", none, none, "#1,#2")
+	RANGE(0,10)  LABELREF(verticalBuffer.label)
+	HSTRETCH;
+
+}
+
+zStart.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ zStart.label = PARM_LABEL("Z Start Location", "zStart") WIDTH(1.5);
+ PARM(float, 1, "zStart", none, none) RANGE(0,1)
+	 LABELREF(zStart.label) HSTRETCH;
+
+}
+
+frustumOp.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Operation", "frustumOp") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    frustumOp.menu;
+
+    { HSTRETCH }
+
+}
+
+res.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ res.label = PARM_LABEL("CropVolume Resolution", "res") WIDTH(1.5);
+ PARM(float, 1, "res", none, none) RANGE(0,10)
+	 LABELREF(res.label) HSTRETCH;
+
+}
+
+fade.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("fade", "Apply Fade Around Edges") toggle VALUE(fade.val);
+
+    { HSTRETCH }
+
+}
+
+fadeDist.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ fadeDist.label = PARM_LABEL("Fade Distance", "fadeDist") WIDTH(1.5);
+ PARM(float, 1, "fadeDist", none, none) RANGE(0,10)
+	 LABELREF(fadeDist.label) HSTRETCH;
+
+}
+
+invert.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("invert", "Invert") toggle VALUE(invert.val);
+
+    { HSTRETCH }
+
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    cam.gad; 
+    lineWidth.gad; 
+    endDist.gad; 
+    horizontalBuffer.gad; 
+    verticalBuffer.gad; 
+    zStart.gad; 
+    frustumOp.gad; 
+    res.gad; 
+    fade.gad; 
+    fadeDist.gad; 
+    invert.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

@@ -1,0 +1,67 @@
+// Magic: 33736e3
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Thu Aug  1 19:51:25 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+overridechoice.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    overridechoice.menu;
+
+    {  }
+
+}
+
+intoverride.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ PARM(integer, 1, "intoverride", none, none) RANGE(0,2000) 
+	LOCK_RANGE_MIN HSTRETCH;
+
+}
+
+floatverride.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ PARM(float, 1, "floatverride", none, none) RANGE(0,10) 
+	LOCK_RANGE_MIN HSTRETCH;
+
+}
+
+apply.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    {  }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("apply", "Apply")
+	push VALUE(apply.val);
+
+}
+
+# warning cpp warning: "GenV3/subdialog.top.ui":12 Macro "PARMSPACING" redefined.  Using later definition
+# warning cpp warning: "GenV3/subdialog.top.ui":13 Macro "LAYOUTDIR" redefined.  Using later definition
+# warning cpp warning: "GenV3/subdialog.top.ui":14 Macro "LOOK_PLAIN" redefined.  Using later definition
+# warning cpp warning: "GenV3/subdialog.top.ui":15 Macro "DO_JUSTIFY" redefined.  Using later definition
+dialog_norm.gad = 
+{
+    LAYOUT(horizontal) SPACING(0.05) HSTRETCH  JUSTIFY(left, center)
+    overridechoice.gad; 
+    intoverride.gad; 
+    floatverride.gad; 
+    apply.gad; 
+} 
+// dialog.bot.ui
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) VALUE(open.val) HSTRETCH
+
+    dialog_norm.gad;
+}

@@ -1,0 +1,100 @@
+// Magic: f0e3655d
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug  4 17:46:28 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+info.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    info.label = PARM_LABEL("Info", "info") WIDTH(1.5);
+    PARM_FIELD(string, "info") VALUE(info.val) 
+	LABELREF(info.label) HSTRETCH;
+
+}
+
+ptdel.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    ptdel.label = PARM_LABEL("Point Attributes", "ptdel") WIDTH(1.5);
+    PARM_FIELD(string, "ptdel") VALUE(ptdel.val) 
+	LABELREF(ptdel.label) HSTRETCH;
+
+    ptdel.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+vtxdel.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    vtxdel.label = PARM_LABEL("Vertex Attributes", "vtxdel") WIDTH(1.5);
+    PARM_FIELD(string, "vtxdel") VALUE(vtxdel.val) 
+	LABELREF(vtxdel.label) HSTRETCH;
+
+    vtxdel.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+primdel.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    primdel.label = PARM_LABEL("Primitive Attributes", "primdel") WIDTH(1.5);
+    PARM_FIELD(string, "primdel") VALUE(primdel.val) 
+	LABELREF(primdel.label) HSTRETCH;
+
+    primdel.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+dtldel.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    dtldel.label = PARM_LABEL("Detail Attributes", "dtldel") WIDTH(1.5);
+    PARM_FIELD(string, "dtldel") VALUE(dtldel.val) 
+	LABELREF(dtldel.label) HSTRETCH;
+
+    dtldel.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+updatevar.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("updatevar", "Update Local Variables") toggle VALUE(updatevar.val);
+
+    { HSTRETCH }
+
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    info.gad; 
+    ptdel.gad; 
+    vtxdel.gad; 
+    primdel.gad; 
+    dtldel.gad; 
+    updatevar.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

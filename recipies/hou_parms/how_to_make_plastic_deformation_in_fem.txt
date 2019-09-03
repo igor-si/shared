@@ -1,0 +1,20 @@
+https://forums.odforce.net/topic/24208-h15-cloth-plastic-deformation/
+
+
+its really easy to implement in 15, just add a sop solver to update rest if tet deforms too much
+
+each tet has primitive intrinsic attribs measuredarea, perimeter, volume
+
+you can use them to mix your restP and your newrestP
+
+the only catch is you need to transform your deformed tets to initial position in order to get good blends
+
+since restP can be vertex you can update each tet separately from its neighbors
+
+it works really good, i did a few tests w crashing car juts few days ago
+
+and since in 15 fem is so much faster its starting to become usable
+=============================================================================
+
+
+/studio/Dropbox/tools/dev/isutils/toolbar/isvis.shelf

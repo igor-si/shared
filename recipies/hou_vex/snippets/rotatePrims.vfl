@@ -1,0 +1,86 @@
+//********************************************************************
+//*******  Start Declare/Define Function *****************************
+//********************************************************************
+
+function int PolyLine_From_Vector_Array(vector Imported_Vector_Array[])
+{
+
+int    Int_List [];
+int    Range;
+int    Tprim;
+int    Count;
+
+Range = len(Imported_Vector_Array);
+
+if(Range == 0)
+        {
+        return len(Int_List);
+        }
+
+Tprim = addprim(geoself(), "poly" );
+
+
+for(Count = 0; Count < Range; Count++)
+        {
+        push(Int_List, addpoint(geoself(), Imported_Vector_Array[Count]));
+        }
+
+
+for(Count = 0; Count < Range; Count++)
+        {
+        addvertex( geoself(), Tprim, Int_List[Count] );
+        }
+
+
+return len(Int_List);
+
+}
+
+
+//********************************************************************
+//*******  End Declare/Define Function *******************************
+//********************************************************************
+
+int    Point_List[];
+int    Count;
+vector Temp;
+vector Point_Positions[];
+vector New_Positions[];
+float  Rotation_Range;
+
+matrix3 Matrix_Applied;
+vector  axis;
+float   angle;
+
+
+//***********************************
+
+Rotation_Range = chf("rotation_range");
+
+Point_List = primpoints( 1, @primnum);
+
+for(Count = 0; Count < len(Point_List); Count++)
+{
+Temp = point(1,"P", Point_List[Count]);
+push(Point_Positions, Temp);
+}
+
+
+Matrix_Applied = ident();
+
+angle = radians(rand(@primnum) * Rotation_Range);
+
+axis = normalize(@N);
+ 
+rotate(Matrix_Applied, angle, axis);
+
+for(Count = 0; Count < len(Point_Positions); Count++)
+    {
+    Temp = Point_Positions[Count];
+    Temp *= Matrix_Applied;
+    push(New_Positions, Temp);
+    }
+
+
+PolyLine_From_Vector_Array(New_Positions);
+

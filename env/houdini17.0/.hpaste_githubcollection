@@ -1,0 +1,17 @@
+{
+    "collections": [
+        {
+            "token": "976c6ee2641f66fe900cda70a82deb88619f344a", 
+            "enabled": true, 
+            "user": "igor-si"
+        }
+    ], 
+    "ver": "1.3", 
+    "publiccollections": [
+        {
+            "token": "", 
+            "enabled": true, 
+            "user": "hpaste-demo-collection"
+        }
+    ]
+}

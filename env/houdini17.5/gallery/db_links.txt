@@ -1,0 +1,11 @@
+=========================- 
+gallery -	https://www.dropbox.com/sh/70g78awejngty84/AAC9tqAqoZsRYl1jU5JcBv7Ga?dl=0
+presets	-	https://www.dropbox.com/sh/huw66xzxq5ppyih/AABzM0W1_bVRBjRgsmfAMZ-la?dl=0 
+toolbar	-	https://www.dropbox.com/sh/avgd81ij9wql93a/AAAnBPGJwE6kMdS8bSWa0uXsa?dl=0 
+otls	-	https://www.dropbox.com/sh/ii645m4sdx69t6f/AABfz_BqAZuk-0r5CjMaGtcaa?dl=0 
+vex		-	https://www.dropbox.com/sh/eggg8kjo9bzqzgx/AABqrlu5Gtn_UnBmQxva_wZra?dl=0
+=========================-
+
+
+
+/home/hquser/hqclient $ ./hqclientd restart

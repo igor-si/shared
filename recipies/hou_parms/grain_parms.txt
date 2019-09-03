@@ -1,0 +1,23 @@
+
+#============ grain update
+--friction
+we may change them only if we work with clothes (we can decrease these parms)
+
+1) with colliders
+2) with particles 
+
+scale kinetic 
+1) the powew how strong particles will push each other
+2) when higher "scale kinetic" when more strong/sturdy sand would be.
+
+mass shock
+1) makes particles ligher depends on how far particles fly
+
+
+constraint iterations
+1) according to ammount of particles. when we have more particles, we need more 
+constraint iterations.
+
+velocity blend
+1) decrease if we want to get mor stong feedbak from grain
+

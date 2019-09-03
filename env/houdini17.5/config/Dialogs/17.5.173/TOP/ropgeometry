@@ -1,0 +1,705 @@
+// Magic: 4a3b72eb
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Sun Sep  1 18:43:55 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+framegeneration.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Evaluate Using", "framegeneration") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    framegeneration.menu;
+
+    { HSTRETCH }
+
+}
+useframeoverride.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+useframeoverride.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+useframeoverride.gad = PARM_BUTTON("useframeoverride", "") toggle VALUE(useframeoverride.val);
+
+frameoverride.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ frameoverride.label = PARM_LABEL("Override Frame", "frameoverride") WIDTH(1.32);
+ PARM(float, 1, "frameoverride", none, none) RANGE(0,10)
+	 LABELREF(frameoverride.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+f.gad = ROW
+{
+   HSTRETCH
+
+   f.label = PARM_LABEL("Frame Range", "f") WIDTH(1.5);
+   PARM(float, 3, "f", none, none, "#1,#2,#3")
+	RANGE(0,10)  LABELREF(f.label)
+	HSTRETCH;
+
+}
+
+expandinputs.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("expandinputs", "Expand Input Files Across Frame Range") toggle VALUE(expandinputs.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm3.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+take.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Render with Take", "take") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    take.menu;
+
+    { HSTRETCH }
+
+}
+
+usesoppath.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("usesoppath", "Use External SOP") toggle VALUE(usesoppath.val);
+
+    { HSTRETCH }
+
+}
+
+soppath.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ soppath.label = PARM_LABEL("SOP Path", "soppath") WIDTH(1.5);
+ PARM_FIELD(pathstring, "soppath") VALUE(soppath.val) 
+	LABELREF(soppath.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(soppath.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(soppath.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+
+sopoutput.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ sopoutput.label = PARM_LABEL("Output File", "sopoutput") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "sopoutput") LABELREF(sopoutput.label)
+	VALUE(sopoutput.val) HSTRETCH;
+
+    sopoutput.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(sopoutput.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+xformtype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Transform", "xformtype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    xformtype.menu;
+
+    { HSTRETCH }
+
+}
+
+mkpath.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("mkpath", "Create Intermediate Directories") toggle VALUE(mkpath.val);
+
+    { HSTRETCH }
+
+}
+
+initsim.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("initsim", "Initialize Simulation OPs") toggle VALUE(initsim.val);
+
+    { HSTRETCH }
+
+}
+
+alfprogress.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("alfprogress", "Alfred Style Progress") toggle VALUE(alfprogress.val);
+
+    { HSTRETCH }
+
+}
+
+reportnetwork.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("reportnetwork", "Report Network Use") toggle VALUE(reportnetwork.val);
+
+    { HSTRETCH }
+
+}
+
+saveretry.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ saveretry.label = PARM_LABEL("Save Retries", "saveretry") WIDTH(1.5);
+ PARM(integer, 1, "saveretry", none, none) RANGE(0,5)
+	LOCK_RANGE_MIN LABELREF(saveretry.label) HSTRETCH;
+
+}
+
+savebackground.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("savebackground", "Save in Background") toggle VALUE(savebackground.val);
+
+    { HSTRETCH }
+
+}
+tprerender.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+tprerender.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+tprerender.gad = PARM_BUTTON("tprerender", "") toggle VALUE(tprerender.val);
+
+prerender.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ prerender.label = PARM_LABEL("Pre-Render Script", "prerender") WIDTH(1.32);
+
+ PARM_FIELD (pathstring, "prerender") LABELREF(prerender.label)
+	VALUE(prerender.val) HSTRETCH;
+
+    prerender.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(prerender.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+}	
+
+lprerender.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    lprerender.menu;
+
+    {  }
+
+}
+}	// Template join.bot
+
+tpreframe.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+tpreframe.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+tpreframe.gad = PARM_BUTTON("tpreframe", "") toggle VALUE(tpreframe.val);
+
+preframe.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ preframe.label = PARM_LABEL("Pre-Frame Script", "preframe") WIDTH(1.32);
+
+ PARM_FIELD (pathstring, "preframe") LABELREF(preframe.label)
+	VALUE(preframe.val) HSTRETCH;
+
+    preframe.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(preframe.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+}	
+
+lpreframe.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    lpreframe.menu;
+
+    {  }
+
+}
+}	// Template join.bot
+
+tpostframe.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+tpostframe.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+tpostframe.gad = PARM_BUTTON("tpostframe", "") toggle VALUE(tpostframe.val);
+
+postframe.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ postframe.label = PARM_LABEL("Post-Frame Script", "postframe") WIDTH(1.32);
+
+ PARM_FIELD (pathstring, "postframe") LABELREF(postframe.label)
+	VALUE(postframe.val) HSTRETCH;
+
+    postframe.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(postframe.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+}	
+
+lpostframe.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    lpostframe.menu;
+
+    {  }
+
+}
+}	// Template join.bot
+
+tpostwrite.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+tpostwrite.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+tpostwrite.gad = PARM_BUTTON("tpostwrite", "") toggle VALUE(tpostwrite.val);
+
+postwrite.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ postwrite.label = PARM_LABEL("Post-Write Script", "postwrite") WIDTH(1.32);
+
+ PARM_FIELD (pathstring, "postwrite") LABELREF(postwrite.label)
+	VALUE(postwrite.val) HSTRETCH;
+
+    postwrite.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(postwrite.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+}	
+
+lpostwrite.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    lpostwrite.menu;
+
+    {  }
+
+}
+}	// Template join.bot
+
+tpostrender.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+tpostrender.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+tpostrender.gad = PARM_BUTTON("tpostrender", "") toggle VALUE(tpostrender.val);
+
+postrender.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ postrender.label = PARM_LABEL("Post-Render Script", "postrender") WIDTH(1.32);
+
+ PARM_FIELD (pathstring, "postrender") LABELREF(postrender.label)
+	VALUE(postrender.val) HSTRETCH;
+
+    postrender.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(postrender.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+}	
+
+lpostrender.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    lpostrender.menu;
+
+    {  }
+
+}
+}	// Template join.bot
+
+
+pdg_workitemgeneration.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Work Item Generation", "pdg_workitemgeneration") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_workitemgeneration.menu;
+
+    { HSTRETCH }
+
+}
+
+pdg_cachemode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Cache Mode", "pdg_cachemode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_cachemode.menu;
+
+    { HSTRETCH }
+
+}
+
+sethip.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sethip", "Reset $HIP On Cook") toggle VALUE(sethip.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+batchall.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("batchall", "All Frames in One Batch") toggle VALUE(batchall.val);
+
+    { HSTRETCH }
+
+}
+
+framesperbatch.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ framesperbatch.label = PARM_LABEL("Frames per Batch", "framesperbatch") WIDTH(1.5);
+ PARM(integer, 1, "framesperbatch", none, none) RANGE(0,10)
+	 LABELREF(framesperbatch.label) HSTRETCH;
+
+}
+
+cookwhen.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Cook Batch When", "cookwhen") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    cookwhen.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+distribute.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("distribute", "Distributed Sim") toggle VALUE(distribute.val);
+
+    { HSTRETCH }
+
+}
+
+control.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ control.label = PARM_LABEL("Control DOP", "control") WIDTH(1.5);
+ PARM_FIELD(pathstring, "control") VALUE(control.val) 
+	LABELREF(control.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(control.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(control.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+
+slicetype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Slice Type", "slicetype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    slicetype.menu;
+
+    { HSTRETCH }
+
+}
+
+slicecount.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ slicecount.label = PARM_LABEL("Slice Count", "slicecount") WIDTH(1.5);
+ PARM(integer, 1, "slicecount", none, none) RANGE(0,10)
+	 LABELREF(slicecount.label) HSTRETCH;
+
+}
+
+slicedivs.gad = ROW
+{
+   HSTRETCH
+
+   slicedivs.label = PARM_LABEL("Slice Divisions", "slicedivs") WIDTH(1.5);
+   PARM(integer, 3, "slicedivs", none, none, "X,Y,Z")
+	RANGE(-1,1)  LABELREF(slicedivs.label)
+	HSTRETCH;
+
+}
+
+verbosetracker.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("verbosetracker", "Verbose Tracker Logging") toggle VALUE(verbosetracker.val);
+
+    { HSTRETCH }
+
+}
+
+execute.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    { WIDTH(1.5) }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("execute", "Save to Disk")
+	push VALUE(execute.val);
+
+}
+
+executebackground.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    { WIDTH(1.5) }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("executebackground", "Save to Disk in Background")
+	push VALUE(executebackground.val);
+
+}
+
+trange.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Valid Frame Range", "trange") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    trange.menu;
+
+    { HSTRETCH }
+
+}
+
+ropgeometry.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "ropgeometry.gad"
+    { 
+	VALUE(ropgeometry.gad.val) STRETCH(1,0)
+
+	TAB "ROP Geometry"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    framegeneration.gad;		
+	    useframeoverride.row.join;		
+	    f.gad;		
+	    expandinputs.gad;		
+	    sepparm3.gad;		
+	    take.gad;		
+	    usesoppath.gad;		
+	    soppath.gad;		
+	    sopoutput.gad;		
+	    xformtype.gad;		
+	    mkpath.gad;		
+	    initsim.gad;		
+	    alfprogress.gad;		
+	    reportnetwork.gad;		
+	    saveretry.gad;		
+	    savebackground.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "ROP Fetch"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    pdg_workitemgeneration.gad;		
+	    pdg_cachemode.gad;		
+	    sethip.gad;		
+	    sepparm.gad;		
+	    batchall.gad;		
+	    framesperbatch.gad;		
+	    cookwhen.gad;		
+	    sepparm2.gad;		
+	    distribute.gad;		
+	    control.gad;		
+	    slicetype.gad;		
+	    slicecount.gad;		
+	    slicedivs.gad;		
+	    verbosetracker.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Manual Render"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    execute.gad;		
+	    executebackground.gad;		
+	    trange.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    ropgeometry.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

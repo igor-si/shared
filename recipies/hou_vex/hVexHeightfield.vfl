@@ -1,0 +1,11 @@
+
+============sample highfield hf============
+vecgor hf = point(1,"center",0); //center of heighfield
+float vs = volumesample(1,0,set(v@P.x,hf.y,v@P.z));
+if (v@P.y<vs)
+{removepoint(0,@ptnum);}
+------------------------------------------
+
+
+
+

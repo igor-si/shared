@@ -1,0 +1,162 @@
+
+============Line - Archimedean Spiral
+//attribexpression/snippet
+set(ch("radius")*relbbox(@P).y*cos(relbbox(@P).y*ch("turns")*2*$PI),ch("radius")*relbbox(@P).y*sin(relbbox(@P).y*ch("turns")*2*$PI),self.z)
+====================================
+
+============Line - Helix
+//attribexpression/snippet
+    set(chramp("width",relbbox(@P).y)*ch("radius")*sin(relbbox(@P).y*2*$PI*ch("turns")),ch("height")*relbbox(@P).y,chramp("width",relbbox(@P).y)*ch("radius")*cos(relbbox(@P).y*2*$PI*ch("turns")))
+====================================
+
+
+===========Spiral===============
+float angle;
+vector pos = {0,0,0};
+int npoints = chi('number_of_points');
+float step = radians(ch('sweep'))/npoints;
+
+for (int n=0; n<npoints; n++) {  
+    angle = step * n; // Or: angle += step;
+    
+    pos.x = cos(angle);
+    pos.y = angle/10 ;
+    pos.z = sin(angle);
+
+    addpoint(0, pos);
+}
+================================
+
+
+============== advanced spiral
+float r         = chf("radius");
+float spirals   = chf("spirals");
+float end_size  = chf("end_size");
+float height    = 1;
+
+int num_pts     = npoints(0);
+float zerotoone = @ptnum / ((float)num_pts-1); ; 
+float theta = radians(fit01(zerotoone, 0, spirals * 360));
+
+// modify r by radius multiplier
+r *= chramp("radius_variation", zerotoone);
+
+// change angle and radius into x,y coords
+float x     = r*cos(theta);
+float z     = r*sin(theta);
+
+// create height
+float y     = fit(chramp("height_variation", zerotoone), 0, 1, end_size, 1 -end_size);
+
+@P = set(x,y,z);
+
+vector center = set(0,y,0);
+@N = normalize(@P - center); 
+================================
+
+
+
+
+============Helix curve in VEX
+//This code works on Y-axis oriented line. 
+//You will also have to create spare parameters for deformation control.
+float freq, amp;
+vector pos = @P;
+
+freq = chf("freq");
+amp = chf("amp");
+
+pos.x += sin(pos.y * freq) * amp;
+pos.z += cos(pos.y * freq) * amp;
+
+@P = pos;
+
+
+===========Spiral grow========
+float angle;
+vector pos = {0,0,0}; 
+int npoints = chi('number_of_points');
+float step = radians(ch('sweep'))/npoints;
+
+for (int n=0; n<npoints; n++) {
+    angle = step * n;
+
+    pos.x = sin(angle) * angle; 
+    pos.y = angle;
+    pos.z = cos(angle) * angle;
+
+    addpoint(0, pos);
+}
+================================
+
+===========Phylotaxis===========
+int count = 400;
+float bound = 10.0;
+float tau = 6.28318530; // 2*$PI
+float phi = (1+ sqrt(5))/2; // Golden ratio = 1.618
+float golden_angle = (2 - phi)*tau; // In radians(*tau)
+vector pos = {0,0,0};
+float radius = 1.0;
+float theta = 0;
+int pt;
+
+
+vector polar_to_cartesian(float theta; float radius){
+    return set(cos(theta)*radius, 0, sin(theta)*radius);
+}
+
+for (int n=0; n<count; n++){
+    radius = bound * pow(float(n)/float(count), ch('power'));
+    theta += golden_angle;
+    
+    pos = polar_to_cartesian(theta, radius);
+
+    // Create UP, pscale and N attr
+    pt = addpoint(0, pos);
+    setpointattrib(0, "pscale", pt, pow(radius,0.5));
+    setpointattrib(0, "N", pt, normalize(-pos));
+    setpointattrib(0, "up", pt, set(0,1,0));
+}
+================================
+
+
+
+================line curve
+float dist = 0;int del_post=0;int del_pre=1;
+
+float start = ch("test2")+snoise(@primnum)*10+@Time;
+float end = ch("test")+snoise(@primnum)*10+@Time;
+
+//PRIMPOINTS
+int points[] = primpoints(geoself(),@primnum);
+vector point_P = point(geoself(),"P",points[0]);
+
+foreach(int cc;int point; points){
+//COMPUTE
+vector new_P = point(geoself(),"P",point);
+dist+=distance(new_P,point_P);
+
+//DELETE PREV
+if(del_pre){
+    removepoint(geoself(),points[cc-2]);
+    if(dist>start){    
+        vector posit = new_P - (start-dist)*normalize(point_P-new_P);
+        setpointattrib(geoself(),"P",points[cc-1],posit);
+        //CHANGE MODE TO NOT DEL
+        del_pre=0;
+    }
+}
+
+//DELETE POST
+if(del_post)removepoint(geoself(),point);
+else{
+    if(dist>end){
+        vector posit = new_P + (end-dist)*normalize(new_P-point_P);
+        setpointattrib(geoself(),"P",point,posit);
+        //CHANGE MODE TO DEL GEO
+        del_post=1;
+    }
+}
+point_P = new_P;
+}
+-------------------------------------------------

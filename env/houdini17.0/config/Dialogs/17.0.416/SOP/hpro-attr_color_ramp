@@ -1,0 +1,240 @@
+// Magic: 5ff28a28
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug  4 22:57:45 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+info.gad = NULL { }
+
+group.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    group.label = PARM_LABEL("Group", "group") WIDTH(1.5);
+    PARM_FIELD(string, "group") VALUE(group.val) 
+	LABELREF(group.label) HSTRETCH;
+
+    group.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+grouptype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Group Type", "grouptype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    grouptype.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm3.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+attr_class.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Attr Class", "attr_class") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    attr_class.menu;
+
+    { HSTRETCH }
+
+}
+
+attr_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    attr_name.label = PARM_LABEL("Float Attr", "attr_name") WIDTH(1.5);
+    PARM_FIELD(string, "attr_name") VALUE(attr_name.val) 
+	LABELREF(attr_name.label) HSTRETCH;
+
+    attr_name.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+auto_range_attr.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("auto_range_attr", "Auto Range Attr") toggle VALUE(auto_range_attr.val);
+
+    { HSTRETCH }
+
+}
+
+input_range.gad = ROW
+{
+   HSTRETCH
+
+   input_range.label = PARM_LABEL("Input Range", "input_range") WIDTH(1.5);
+   PARM(float, 2, "input_range", none, none, "Min,Max")
+	RANGE(0,10)  LABELREF(input_range.label)
+	HSTRETCH;
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+color_preset.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Color Preset", "color_preset") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    color_preset.menu;
+
+    { HSTRETCH }
+
+}
+
+color_ramp.si_rampedit = COLOR_RAMP VALUE(color_ramp.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+color_ramp.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	color_ramp.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(color_ramp.pointno.val) HSTRETCH;
+    }
+}
+
+color_ramp.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(color_ramp.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(color_ramp.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    color_ramp.toggleparms.gad
+      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+	HELP("Hide Controls")
+	VALUE(color_ramp.toggle.val)
+	SENDSKEY("h.pane.parms.toggle_ramp_parms")
+	LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+}
+
+color_ramp.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    color_ramp.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	color_ramp.buttons.gad VSTRETCH;
+
+	color_ramp.si_rampedit HSTRETCH;
+    }
+}
+
+color_ramp.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Color Ramp", "color_ramp");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(lightline) HSTRETCH
+
+	color_ramp.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(color_ramp.hideparms.val) HSTRETCH
+	    color_ramp.multiramp;
+	    {}
+	}
+    }
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    info.gad; 
+    group.gad; 
+    grouptype.gad; 
+    sepparm3.gad; 
+    attr_class.gad; 
+    attr_name.gad; 
+    sepparm.gad; 
+    auto_range_attr.gad; 
+    input_range.gad; 
+    sepparm2.gad; 
+    color_preset.gad; 
+    color_ramp.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

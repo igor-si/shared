@@ -1,0 +1,1000 @@
+// Magic: 27c3cc84
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug  4 22:59:05 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+info.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    info.label = PARM_LABEL("Info", "info") WIDTH(1.5);
+    PARM_FIELD(string, "info") VALUE(info.val) 
+	LABELREF(info.label) HSTRETCH;
+
+}
+
+point_group.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    point_group.label = PARM_LABEL("Points to Effect", "point_group") WIDTH(1.5);
+    PARM_FIELD(string, "point_group") VALUE(point_group.val) 
+	LABELREF(point_group.label) HSTRETCH;
+
+    point_group.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+initial_active_points.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    initial_active_points.label = PARM_LABEL("Initial Active Points", "initial_active_points") WIDTH(1.5);
+    PARM_FIELD(string, "initial_active_points") VALUE(initial_active_points.val) 
+	LABELREF(initial_active_points.label) HSTRETCH;
+
+    initial_active_points.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+show_solver_geo_guide.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+show_solver_geo_guide.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+show_solver_geo_guide.gad = PARM_BUTTON("show_solver_geo_guide", "") toggle VALUE(show_solver_geo_guide.val);
+
+solver_geo_guide_color.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    solver_geo_guide_color.label = PARM_LABEL("Geo in Solver", "solver_geo_guide_color") WIDTH(1.32);
+    PARM(float, 3, "solver_geo_guide_color", none, COLOR, "R,G,B") 
+	LABELREF(solver_geo_guide_color.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+effect_attr.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    effect_attr.label = PARM_LABEL("Effect Strength", "effect_attr") WIDTH(1.5);
+    PARM_FIELD(string, "effect_attr") VALUE(effect_attr.val) 
+	LABELREF(effect_attr.label) HSTRETCH;
+
+}
+
+effect_age_attr.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    effect_age_attr.label = PARM_LABEL("Effect Age (sec)", "effect_age_attr") WIDTH(1.5);
+    PARM_FIELD(string, "effect_age_attr") VALUE(effect_age_attr.val) 
+	LABELREF(effect_age_attr.label) HSTRETCH;
+
+}
+
+enable_blend.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("enable_blend", "Blend Input Effect Strength") toggle VALUE(enable_blend.val);
+
+    { HSTRETCH }
+
+}
+blend_mode.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+blend_mode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    PARM_LABEL_SIMPLE("Blend Mode", "blend_mode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    blend_mode.menu;
+
+    {  }
+
+}
+
+blend_bias.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ blend_bias.label = PARM_LABEL("Opacity", "blend_bias") ;
+ PARM(float, 1, "blend_bias", none, none) RANGE(0,1)
+	LOCK_RANGE LABELREF(blend_bias.label) HSTRETCH;
+
+}
+}	// Template join.bot
+
+
+dist_metric.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Distance Metric", "dist_metric") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    dist_metric.menu;
+
+    { HSTRETCH }
+
+}
+
+radius_value.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ radius_value.label = PARM_LABEL("Spread Radius", "radius_value") WIDTH(1.5);
+ PARM(float, 1, "radius_value", none, none) RANGE(0,1)
+	LOCK_RANGE_MIN LABELREF(radius_value.label) HSTRETCH;
+
+}
+
+mul_attr_to_radius.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("mul_attr_to_radius", "Multiply Attr to Radius") toggle VALUE(mul_attr_to_radius.val);
+
+    { HSTRETCH }
+
+}
+
+radius_attr.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    radius_attr.label = PARM_LABEL("Point Float Attr", "radius_attr") WIDTH(1.5);
+    PARM_FIELD(string, "radius_attr") VALUE(radius_attr.val) 
+	LABELREF(radius_attr.label) HSTRETCH;
+
+    radius_attr.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+kernel.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Kernel Function", "kernel") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    kernel.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+ramp_effect_falloff.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("ramp_effect_falloff", "Ramp Falloff in Spread") toggle VALUE(ramp_effect_falloff.val);
+
+    { HSTRETCH }
+
+}
+
+ramp_preset.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Ramp Presets", "ramp_preset") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    ramp_preset.menu;
+
+    { HSTRETCH }
+
+}
+
+falloff_ramp.si_rampedit = FLOAT_RAMP VALUE(falloff_ramp.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+falloff_ramp.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	falloff_ramp.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(falloff_ramp.pointno.val) HSTRETCH;
+    }
+}
+
+falloff_ramp.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(falloff_ramp.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(falloff_ramp.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    falloff_ramp.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(falloff_ramp.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    falloff_ramp.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(falloff_ramp.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+falloff_ramp.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    falloff_ramp.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	falloff_ramp.buttons.gad VSTRETCH;
+
+	falloff_ramp.si_rampedit HSTRETCH;
+    }
+}
+
+falloff_ramp.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Ramp", "falloff_ramp");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	falloff_ramp.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(falloff_ramp.hideparms.val) HSTRETCH
+	    falloff_ramp.multiramp;
+	    {}
+	}
+    }
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+spread_threshold.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ spread_threshold.label = PARM_LABEL("Spread Threshold", "spread_threshold") WIDTH(1.5);
+ PARM(float, 1, "spread_threshold", none, none) RANGE(0,1)
+	LOCK_RANGE LABELREF(spread_threshold.label) HSTRETCH;
+
+}
+
+mul_attr_to_threshold.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("mul_attr_to_threshold", "Multiply Attr to Threshold") toggle VALUE(mul_attr_to_threshold.val);
+
+    { HSTRETCH }
+
+}
+
+threshold_attr.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    threshold_attr.label = PARM_LABEL("Point Float Attr", "threshold_attr") WIDTH(1.5);
+    PARM_FIELD(string, "threshold_attr") VALUE(threshold_attr.val) 
+	LABELREF(threshold_attr.label) HSTRETCH;
+
+    threshold_attr.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+add_noise.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("add_noise", "Noise Spread by Noise Pos in Solver") toggle VALUE(add_noise.val);
+
+    { HSTRETCH }
+
+}
+
+input_dimension.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Input", "input_dimension") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    input_dimension.menu;
+
+    { HSTRETCH }
+
+}
+
+_3d_input_attr.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    _3d_input_attr.label = PARM_LABEL("3D Input Attr", "_3d_input_attr") WIDTH(1.5);
+    PARM_FIELD(string, "_3d_input_attr") VALUE(_3d_input_attr.val) 
+	LABELREF(_3d_input_attr.label) HSTRETCH;
+
+    _3d_input_attr.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+basis.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Noise Type", "basis") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    basis.menu;
+
+    { HSTRETCH }
+
+}
+
+freq.gad = ROW
+{
+   HSTRETCH
+
+   freq.label = PARM_LABEL("Frequency", "freq") WIDTH(1.5);
+   PARM(float, 4, "freq", none, none, "#1,#2,#3,#4")
+	RANGE(0,10)  LABELREF(freq.label)
+	HSTRETCH;
+
+}
+
+offset.gad = ROW
+{
+   HSTRETCH
+
+   offset.label = PARM_LABEL("Offset", "offset") WIDTH(1.5);
+   PARM(float, 4, "offset", none, none, "#1,#2,#3,#4")
+	RANGE(0,10)  LABELREF(offset.label)
+	HSTRETCH;
+
+}
+
+periodic.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("periodic", "Periodic") toggle VALUE(periodic.val);
+
+    { HSTRETCH }
+
+}
+
+period.gad = ROW
+{
+   HSTRETCH
+
+   period.label = PARM_LABEL("Period", "period") WIDTH(1.5);
+   PARM(float, 4, "period", none, none, "#1,#2,#3,#4")
+	RANGE(0,10)  LABELREF(period.label)
+	HSTRETCH;
+
+}
+
+fractal.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Fractal Type", "fractal") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    fractal.menu;
+
+    { HSTRETCH }
+
+}
+
+oct.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ oct.label = PARM_LABEL("Max Octaves", "oct") WIDTH(1.5);
+ PARM(float, 1, "oct", none, none) RANGE(0,16)
+	 LABELREF(oct.label) HSTRETCH;
+
+}
+
+lac.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ lac.label = PARM_LABEL("Lacunarity", "lac") WIDTH(1.5);
+ PARM(float, 1, "lac", none, none) RANGE(0,4)
+	LOCK_RANGE_MIN LABELREF(lac.label) HSTRETCH;
+
+}
+
+rough.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ rough.label = PARM_LABEL("Roughness", "rough") WIDTH(1.5);
+ PARM(float, 1, "rough", none, none) RANGE(0,1)
+	LOCK_RANGE_MIN LABELREF(rough.label) HSTRETCH;
+
+}
+
+dolwarp.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("dolwarp", "Enable Lattice Warp") toggle VALUE(dolwarp.val);
+
+    { HSTRETCH }
+
+}
+
+accuml.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("accuml", "Accumulate Lattice Warp") toggle VALUE(accuml.val);
+
+    { HSTRETCH }
+
+}
+disp.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+disp.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ disp.label = PARM_LABEL("Lattice Warp", "disp") WIDTH(1.5);
+ PARM(float, 1, "disp", none, none) RANGE(-0.5,0.5)
+	 LABELREF(disp.label) HSTRETCH;
+
+}
+
+dispfreq.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ dispfreq.label = PARM_LABEL("Freq", "dispfreq") ;
+ PARM(float, 1, "dispfreq", none, none) RANGE(0,1)
+	 LABELREF(dispfreq.label) HSTRETCH;
+
+}
+}	// Template join.bot
+
+
+dogwarp.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("dogwarp", "Enable Gradient Warp") toggle VALUE(dogwarp.val);
+
+    { HSTRETCH }
+
+}
+
+accumg.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("accumg", "Accumulate Gradient Warp") toggle VALUE(accumg.val);
+
+    { HSTRETCH }
+
+}
+
+gflow.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ gflow.label = PARM_LABEL("Gradient Warp", "gflow") WIDTH(1.5);
+ PARM(float, 1, "gflow", none, none) RANGE(-0.5,0.5)
+	 LABELREF(gflow.label) HSTRETCH;
+
+}
+
+flowrot.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ flowrot.label = PARM_LABEL("Flow Rotation", "flowrot") WIDTH(1.5);
+ PARM(float, 1, "flowrot", none, none) RANGE(0,1)
+	 LABELREF(flowrot.label) HSTRETCH;
+
+}
+
+cc_fold.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("cc_fold", "Fold") toggle VALUE(cc_fold.val);
+
+    { HSTRETCH }
+
+}
+
+cc_dobias.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("cc_dobias", "Do Bias") toggle VALUE(cc_dobias.val);
+
+    { HSTRETCH }
+
+}
+
+cc_bias.gad = ROW
+{
+   HSTRETCH
+
+   cc_bias.label = PARM_LABEL("Bias", "cc_bias") WIDTH(1.5);
+   PARM(float, 3, "cc_bias", none, none, "#1,#2,#3")
+	RANGE(0,10)  LABELREF(cc_bias.label)
+	HSTRETCH;
+
+}
+
+cc_dogain.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("cc_dogain", "Do Gain") toggle VALUE(cc_dogain.val);
+
+    { HSTRETCH }
+
+}
+
+cc_gain.gad = ROW
+{
+   HSTRETCH
+
+   cc_gain.label = PARM_LABEL("Gain", "cc_gain") WIDTH(1.5);
+   PARM(float, 3, "cc_gain", none, none, "#1,#2,#3")
+	RANGE(0,10)  LABELREF(cc_gain.label)
+	HSTRETCH;
+
+}
+
+cc_inv.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("cc_inv", "Complement") toggle VALUE(cc_inv.val);
+
+    { HSTRETCH }
+
+}
+
+cc_dorng.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("cc_dorng", "Output Range (Clamped)") toggle VALUE(cc_dorng.val);
+
+    { HSTRETCH }
+
+}
+
+cc_rnglo.gad = ROW
+{
+   HSTRETCH
+
+   cc_rnglo.label = PARM_LABEL("New Minimum", "cc_rnglo") WIDTH(1.5);
+   PARM(float, 3, "cc_rnglo", none, none, "#1,#2,#3")
+	RANGE(0,10)  LABELREF(cc_rnglo.label)
+	HSTRETCH;
+
+}
+
+cc_rnghi.gad = ROW
+{
+   HSTRETCH
+
+   cc_rnghi.label = PARM_LABEL("New Maximum", "cc_rnghi") WIDTH(1.5);
+   PARM(float, 3, "cc_rnghi", none, none, "#1,#2,#3")
+	RANGE(0,10)  LABELREF(cc_rnghi.label)
+	HSTRETCH;
+
+}
+
+cc_amp.gad = ROW
+{
+   HSTRETCH
+
+   cc_amp.label = PARM_LABEL("Final Amplitude", "cc_amp") WIDTH(1.5);
+   PARM(float, 3, "cc_amp", none, none, "#1,#2,#3")
+	RANGE(0,10)  LABELREF(cc_amp.label)
+	HSTRETCH;
+
+}
+
+scale_amp_by_attr.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("scale_amp_by_attr", "Scale Amp by Attr") toggle VALUE(scale_amp_by_attr.val);
+
+    { HSTRETCH }
+
+}
+
+attr_to_scale_amp.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    attr_to_scale_amp.label = PARM_LABEL("Float Attr", "attr_to_scale_amp") WIDTH(1.5);
+    PARM_FIELD(string, "attr_to_scale_amp") VALUE(attr_to_scale_amp.val) 
+	LABELREF(attr_to_scale_amp.label) HSTRETCH;
+
+    attr_to_scale_amp.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+fscale.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ fscale.label = PARM_LABEL("Filter Scale", "fscale") WIDTH(1.5);
+ PARM(float, 1, "fscale", none, none) RANGE(0,2)
+	 LABELREF(fscale.label) HSTRETCH;
+
+}
+
+resimulate.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    { WIDTH(1.5) }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("resimulate", "Reset Simulation")
+	push VALUE(resimulate.val);
+
+}
+
+startframe.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ startframe.label = PARM_LABEL("Start Frame", "startframe") WIDTH(1.5);
+ PARM(integer, 1, "startframe", none, none) RANGE(1,240)
+	 LABELREF(startframe.label) HSTRETCH;
+
+}
+
+substep.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ substep.label = PARM_LABEL("Sub Steps", "substep") WIDTH(1.5);
+ PARM(integer, 1, "substep", none, none) RANGE(1,10)
+	LOCK_RANGE_MIN LABELREF(substep.label) HSTRETCH;
+
+}
+
+cacheenabled.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("cacheenabled", "Cache Simulation") toggle VALUE(cacheenabled.val);
+
+    { HSTRETCH }
+
+}
+
+cachemaxsize.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ cachemaxsize.label = PARM_LABEL("Cache Memory (MB)", "cachemaxsize") WIDTH(1.5);
+ PARM(integer, 1, "cachemaxsize", none, none) RANGE(0,15000)
+	LOCK_RANGE_MIN LABELREF(cachemaxsize.label) HSTRETCH;
+
+}
+
+folder0_1.gad = 
+GROUP simple "Output Correction"
+{ 
+    VALUE(folder0_1.gad.val) LAYOUT(vertical) HSTRETCH 
+	    cc_fold.gad;		
+	    cc_dobias.gad;		
+	    cc_bias.gad;		
+	    cc_dogain.gad;		
+	    cc_gain.gad;		
+	    cc_inv.gad;		
+	    cc_dorng.gad;		
+	    cc_rnglo.gad;		
+	    cc_rnghi.gad;		
+	    cc_amp.gad;		
+	    scale_amp_by_attr.gad;		
+	    attr_to_scale_amp.gad;		
+} 
+
+folder2.gad = 
+GROUP simple "Warping"
+{ 
+    VALUE(folder2.gad.val) LAYOUT(vertical) HSTRETCH 
+	    dolwarp.gad;		
+	    accuml.gad;		
+	    disp.row.join;		
+	    dogwarp.gad;		
+	    accumg.gad;		
+	    gflow.gad;		
+	    flowrot.gad;		
+} 
+
+folder1.gad = 
+GROUP simple "Fractal"
+{ 
+    VALUE(folder1.gad.val) LAYOUT(vertical) HSTRETCH 
+	    fractal.gad;		
+	    oct.gad;		
+	    lac.gad;		
+	    rough.gad;		
+} 
+
+folder0.gad = 
+GROUP simple "Noise Pos in Solver"
+{ 
+    VALUE(folder0.gad.val) LAYOUT(vertical) HSTRETCH 
+	    input_dimension.gad;		
+	    _3d_input_attr.gad;		
+	    basis.gad;		
+	    freq.gad;		
+	    offset.gad;		
+	    periodic.gad;		
+	    period.gad;		
+	    folder1.gad;		
+	    folder2.gad;		
+	    folder0_1.gad;		
+	    fscale.gad;		
+} 
+
+folder4.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder4.gad"
+    { 
+	VALUE(folder4.gad.val) STRETCH(1,0)
+
+	TAB "Noise"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    add_noise.gad;		
+	    folder0.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder7.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder7.gad"
+    { 
+	VALUE(folder7.gad.val) STRETCH(1,0)
+
+	TAB "Settings"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    dist_metric.gad;		
+	    radius_value.gad;		
+	    mul_attr_to_radius.gad;		
+	    radius_attr.gad;		
+	    kernel.gad;		
+	    sepparm2.gad;		
+	    ramp_effect_falloff.gad;		
+	    ramp_preset.gad;		
+	    falloff_ramp.gad;		
+	    sepparm.gad;		
+	    spread_threshold.gad;		
+	    mul_attr_to_threshold.gad;		
+	    threshold_attr.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder3.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder3.gad"
+    { 
+	VALUE(folder3.gad.val) STRETCH(1,0)
+
+	TAB "Attributes"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    effect_attr.gad;		
+	    effect_age_attr.gad;		
+	    enable_blend.gad;		
+	    blend_mode.row.join;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder8.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder8.gad"
+    { 
+	VALUE(folder8.gad.val) STRETCH(1,0)
+
+	TAB "Main"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    folder3.gad;		
+	    folder7.gad;		
+	    folder4.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Solver"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    resimulate.gad;		
+	    startframe.gad;		
+	    substep.gad;		
+	    cacheenabled.gad;		
+	    cachemaxsize.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    info.gad; 
+    point_group.gad; 
+    initial_active_points.gad; 
+    show_solver_geo_guide.row.join; 
+    folder8.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

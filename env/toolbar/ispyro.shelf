@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="ispyro_shelf" label="ISPyro">
+    <memberTool name="subnet11"/>
+  </toolshelf>
+
+  <tool name="subnet11" label="isVdbMerge" icon="SOP_subnet">
+    <helpURL>operator:Sop/subnet</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/subnet</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('subnet'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_grout_slice_plane_isVdbMerge (Sop/subnet)
+set _obj_grout_slice_plane_isVdbMerge = `run("opadd -e -n -v subnet isVdbMerge")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_grout_slice_plane_isVdbMerge
+opspareds '    parm {         name    "label1"         baseparm         label   "Input #1 Label"         invisible         export  all     }     parm {         name    "label2"         baseparm         label   "Input #2 Label"         invisible         export  all     }     parm {         name    "label3"         baseparm         label   "Input #3 Label"         invisible         export  all     }     parm {         name    "label4"         baseparm         label   "Input #4 Label"         invisible         export  all     }     parm {         name    "grouptype"         label   "Group Type"         type    ordinal         default { "points" }         menu {             "guess"         "Guess from Group"             "breakpoints"   "Breakpoints"             "edges"         "Edges"             "points"        "Points"             "prims"         "Primitives"         }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "operation"         label   "Operation"         type    ordinal         default { "sdfunion" }         menu {             "copya"             "Copy A"             "copyb"             "Copy B"             "inverta"           "Invert A"             "add"               "Add"             "subtract"          "Subtract"             "multiply"          "Multiply"             "divide"            "Divide"             "maximum"           "Maximum"             "minimum"           "Minimum"             "compatimesb"       "(1 - A) * B"             "apluscompatimesb"  "A + (1 - A) * B"             "sdfunion"          "SDF Union"             "sdfintersect"      "SDF Intersection"             "sdfdifference"     "SDF Difference"             "replacewithactive" "Replace A with Active B"             "topounion"         "Activity Union"             "topointersect"     "Activity Intersection"             "topodifference"    "Activity Difference"         }         parmtag { "autoscope" "0000000000000000" }     } ' $_obj_grout_slice_plane_isVdbMerge
+opparm -V 17.0.416 $_obj_grout_slice_plane_isVdbMerge grouptype ( prims ) operation ( add )
+opcomment -c 'Created from Gallery Entry: htVdbMerge\n\nCustomized Subnetwork Sop node.' $_obj_grout_slice_plane_isVdbMerge
+opcolor -c 0.15000000596046448 0.34999999403953552 0.75 $_obj_grout_slice_plane_isVdbMerge
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge
+opcf $_obj_grout_slice_plane_isVdbMerge
+
+# Node $_obj_grout_slice_plane_isVdbMerge_keep_pts_1 (Sop/blast)
+set _obj_grout_slice_plane_isVdbMerge_keep_pts_1 = `run("opadd -e -n -v blast keep_pts_1")`
+oplocate -x `$arg2 + -1.1187100000000001` -y `$arg3 + 3.4596300000000002` $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+chblockbegin
+chadd -t 0 0 $_obj_grout_slice_plane_isVdbMerge_keep_pts_1 grouptype
+chkey -t 0 -v 3 -m 0 -a 0 -A 0 -T a  -F 'ch("../grouptype")' $_obj_grout_slice_plane_isVdbMerge_keep_pts_1/grouptype
+chblockend
+opparm -V 17.0.416 $_obj_grout_slice_plane_isVdbMerge_keep_pts_1 group ( 0 ) grouptype ( grouptype ) negate ( on )
+opcolor -c 0.5 0.60000002384185791 0.60000002384185791 $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+
+# Node $_obj_grout_slice_plane_isVdbMerge_rm_pts_1 (Sop/blast)
+set _obj_grout_slice_plane_isVdbMerge_rm_pts_1 = `run("opadd -e -n -v blast rm_pts_1")`
+oplocate -x `$arg2 + 0.85475500000000004` -y `$arg3 + 3.4055300000000002` $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+chblockbegin
+chadd -t 0 0 $_obj_grout_slice_plane_isVdbMerge_rm_pts_1 grouptype
+chkey -t 0 -v 3 -m 0 -a 0 -A 0 -T a  -F 'ch("../keep_pts_1/grouptype")' $_obj_grout_slice_plane_isVdbMerge_rm_pts_1/grouptype
+chblockend
+opparm -V 17.0.416 $_obj_grout_slice_plane_isVdbMerge_rm_pts_1 group ( 0 ) grouptype ( grouptype )
+opcolor -c 0.5 0.60000002384185791 0.60000002384185791 $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+
+# Node $_obj_grout_slice_plane_isVdbMerge_vdbcombine2 (Sop/vdbcombine)
+set _obj_grout_slice_plane_isVdbMerge_vdbcombine2 = `run("opadd -e -n -v vdbcombine vdbcombine2")`
+oplocate -x `$arg2 + 0.074784900000000001` -y `$arg3 + 2.57883` $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+chblockbegin
+chadd -t 0 0 $_obj_grout_slice_plane_isVdbMerge_vdbcombine2 operation
+chkey -t 0 -v 11 -m 0 -a 0 -A 0 -T a  -F 'ch("../operation")' $_obj_grout_slice_plane_isVdbMerge_vdbcombine2/operation
+chblockend
+opparm -V 17.0.416 $_obj_grout_slice_plane_isVdbMerge_vdbcombine2 collation ( flattenbtoa ) operation ( operation )
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+
+# Node $_obj_grout_slice_plane_isVdbMerge_IN (Sop/null)
+set _obj_grout_slice_plane_isVdbMerge_IN = `run("opadd -e -n -v null IN")`
+oplocate -x `$arg2 + -1.11759e-08` -y `$arg3 + 4.8419999999999996` $_obj_grout_slice_plane_isVdbMerge_IN
+opcolor -c 0.090000003576278687 0.43000000715255737 0.46000000834465027 $_obj_grout_slice_plane_isVdbMerge_IN
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge_IN
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge_IN
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge_IN
+
+# Node $_obj_grout_slice_plane_isVdbMerge_OUT (Sop/output)
+set _obj_grout_slice_plane_isVdbMerge_OUT = `run("opadd -e -n -v output OUT")`
+oplocate -x `$arg2 + 0.074784900000000001` -y `$arg3 + 1.22437` $_obj_grout_slice_plane_isVdbMerge_OUT
+opcolor -c 0.85000002384185791 0.05000000074505806 0.05000000074505806 $_obj_grout_slice_plane_isVdbMerge_OUT
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge_OUT
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge_OUT
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge_OUT
+oporder -e keep_pts_1 rm_pts_1 vdbcombine2 IN OUT 
+opcf ..
+opset -p on $_obj_grout_slice_plane_isVdbMerge
+
+opcf $arg1
+opcf $_obj_grout_slice_plane_isVdbMerge
+opwire -n $_obj_grout_slice_plane_isVdbMerge_IN -0 $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+opwire -n $_obj_grout_slice_plane_isVdbMerge_IN -0 $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+opwire -n $_obj_grout_slice_plane_isVdbMerge_keep_pts_1 -0 $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+opwire -n $_obj_grout_slice_plane_isVdbMerge_rm_pts_1 -1 $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+opwire -n -i 0 -0 $_obj_grout_slice_plane_isVdbMerge_IN
+opwire -n $_obj_grout_slice_plane_isVdbMerge_vdbcombine2 -0 $_obj_grout_slice_plane_isVdbMerge_OUT
+opcf ..
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_grout_slice_plane_isVdbMerge
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_grout_slice_plane_isVdbMerge
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+</shelfDocument>

@@ -1,0 +1,1277 @@
+// Magic: 3a670dfc
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Thu Aug  1 00:53:26 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+execute.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+execute.gad = NULL { }
+soho_outputmode.gad = NULL { }
+}	// Template join.bot
+
+soho_multiframe.gad = NULL { }
+renderdialog.gad = NULL { }
+submit.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+submit.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    PARM_BUTTON("submit", "Submit")
+	push VALUE(submit.val);
+
+}
+
+start_paused.gad = ROW
+{
+    
+
+    PARM_BUTTON("start_paused", "Start Paused") toggle VALUE(start_paused.val);
+
+    {  }
+
+}
+
+preview_approval.gad = ROW
+{
+    
+
+    {  }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("preview_approval", "Preview Approval") toggle VALUE(preview_approval.val);
+
+    {  }
+
+}
+}	// Template join.bot
+
+
+job_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    job_name.label = PARM_LABEL("Job Name", "job_name") WIDTH(1.5);
+    PARM_FIELD(string, "job_name") VALUE(job_name.val) 
+	LABELREF(job_name.label) HSTRETCH;
+
+}
+
+output_driver.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ output_driver.label = PARM_LABEL("Output Driver", "output_driver") WIDTH(1.5);
+ PARM_FIELD(pathstring, "output_driver") VALUE(output_driver.val) 
+	LABELREF(output_driver.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(output_driver.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(output_driver.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+trange.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Valid Frame Range", "trange") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    trange.menu;
+
+    { HSTRETCH }
+
+}
+
+f.gad = ROW
+{
+   HSTRETCH
+
+   f.label = PARM_LABEL("Start/End/Inc", "f") WIDTH(1.5);
+   PARM(float, 3, "f", none, none, "#1,#2,#3")
+	RANGE(0,1)  LABELREF(f.label)
+	HSTRETCH;
+
+}
+frame_pertask.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+frame_pertask.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ frame_pertask.label = PARM_LABEL("Frames Per Task", "frame_pertask") WIDTH(1.5);
+ PARM(integer, 1, "frame_pertask", none, none) RANGE(1,10)
+	LOCK_RANGE_MIN LABELREF(frame_pertask.label) HSTRETCH;
+
+}
+
+frame_sequential.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ frame_sequential.label = PARM_LABEL("Sequential", "frame_sequential") ;
+ PARM(integer, 1, "frame_sequential", none, none) RANGE(-10,10)
+	 LABELREF(frame_sequential.label) HSTRETCH;
+
+}
+}	// Template join.bot
+
+
+sepparm3.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+take.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Render With Take", "take") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    take.menu;
+
+    { HSTRETCH }
+
+}
+
+independent.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("independent", "Connected Nodes Are Independent") toggle VALUE(independent.val);
+
+    { HSTRETCH }
+
+}
+
+subtaskdepend.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("subtaskdepend", "Allow Sub-Task Dependence") toggle VALUE(subtaskdepend.val);
+
+    { HSTRETCH }
+
+}
+
+check_output_folder.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("check_output_folder", "Check Output Folder") toggle VALUE(check_output_folder.val);
+
+    { HSTRETCH }
+
+}
+
+render_temp_hip.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("render_temp_hip", "Render Temporary HIP File") toggle VALUE(render_temp_hip.val);
+
+    { HSTRETCH }
+
+}
+
+ignore_inputs.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("ignore_inputs", "Ignore ROP Inputs") toggle VALUE(ignore_inputs.val);
+
+    { HSTRETCH }
+
+}
+
+platform.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Platform", "platform") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    platform.menu;
+
+    { HSTRETCH }
+
+}
+
+enable_extended_parameters.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("enable_extended_parameters", "Enable Extended Parameters") toggle VALUE(enable_extended_parameters.val);
+
+    { HSTRETCH }
+
+}
+
+depend_mask.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    depend_mask.label = PARM_LABEL("Depend Mask", "depend_mask") WIDTH(1.5);
+    PARM_FIELD(string, "depend_mask") VALUE(depend_mask.val) 
+	LABELREF(depend_mask.label) HSTRETCH;
+
+}
+
+depend_mask_global.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    depend_mask_global.label = PARM_LABEL("Global Depend Mask", "depend_mask_global") WIDTH(1.5);
+    PARM_FIELD(string, "depend_mask_global") VALUE(depend_mask_global.val) 
+	LABELREF(depend_mask_global.label) HSTRETCH;
+
+}
+
+priority.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ priority.label = PARM_LABEL("Priority", "priority") WIDTH(1.5);
+ PARM(integer, 1, "priority", none, none) RANGE(-1,250)
+	LOCK_RANGE LABELREF(priority.label) HSTRETCH;
+
+}
+
+max_runtasks.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ max_runtasks.label = PARM_LABEL("Max Running Tasks", "max_runtasks") WIDTH(1.5);
+ PARM(integer, 1, "max_runtasks", none, none) RANGE(-1,100)
+	LOCK_RANGE_MIN LABELREF(max_runtasks.label) HSTRETCH;
+
+}
+
+capacity.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ capacity.label = PARM_LABEL("Capacity", "capacity") WIDTH(1.5);
+ PARM(integer, 1, "capacity", none, none) RANGE(-1,10000)
+	LOCK_RANGE_MIN LABELREF(capacity.label) HSTRETCH;
+
+}
+
+capacity_coefficient.gad = ROW
+{
+   HSTRETCH
+
+   capacity_coefficient.label = PARM_LABEL("Capacity Coefficient", "capacity_coefficient") WIDTH(1.5);
+   PARM(integer, 2, "capacity_coefficient", none, none, "#1,#2")
+	RANGE(-1,10) LOCK_RANGE_MIN LABELREF(capacity_coefficient.label)
+	HSTRETCH;
+
+}
+
+maxperhost.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ maxperhost.label = PARM_LABEL("Max Tasks Per Host", "maxperhost") WIDTH(1.5);
+ PARM(integer, 1, "maxperhost", none, none) RANGE(-1,10000)
+	LOCK_RANGE_MIN LABELREF(maxperhost.label) HSTRETCH;
+
+}
+
+maxruntime.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ maxruntime.label = PARM_LABEL("Max Task Run Time", "maxruntime") WIDTH(1.5);
+ PARM(integer, 1, "maxruntime", none, none) RANGE(-1,10000)
+	LOCK_RANGE_MIN LABELREF(maxruntime.label) HSTRETCH;
+
+}
+
+hosts_mask.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    hosts_mask.label = PARM_LABEL("Hosts Mask", "hosts_mask") WIDTH(1.5);
+    PARM_FIELD(string, "hosts_mask") VALUE(hosts_mask.val) 
+	LABELREF(hosts_mask.label) HSTRETCH;
+
+}
+
+hosts_mask_exclude.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    hosts_mask_exclude.label = PARM_LABEL("Hosts Mask Exclude", "hosts_mask_exclude") WIDTH(1.5);
+    PARM_FIELD(string, "hosts_mask_exclude") VALUE(hosts_mask_exclude.val) 
+	LABELREF(hosts_mask_exclude.label) HSTRETCH;
+
+}
+
+min_memory.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ min_memory.label = PARM_LABEL("Min RAM (MB)", "min_memory") WIDTH(1.5);
+ PARM(integer, 1, "min_memory", none, none) RANGE(-1,100000000)
+	LOCK_RANGE_MIN LABELREF(min_memory.label) HSTRETCH;
+
+}
+
+override_service.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    override_service.label = PARM_LABEL("Override Service", "override_service") WIDTH(1.5);
+    PARM_FIELD(string, "override_service") VALUE(override_service.val) 
+	LABELREF(override_service.label) HSTRETCH;
+
+}
+
+override_parser.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    override_parser.label = PARM_LABEL("Override Parser", "override_parser") WIDTH(1.5);
+    PARM_FIELD(string, "override_parser") VALUE(override_parser.val) 
+	LABELREF(override_parser.label) HSTRETCH;
+
+}
+
+ds_node.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ ds_node.label = PARM_LABEL("Controls Node", "ds_node") WIDTH(1.5);
+ PARM_FIELD(pathstring, "ds_node") VALUE(ds_node.val) 
+	LABELREF(ds_node.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(ds_node.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(ds_node.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+
+ds_num_slices.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ ds_num_slices.label = PARM_LABEL("Nuber Of Slices", "ds_num_slices") WIDTH(1.5);
+ PARM(integer, 1, "ds_num_slices", none, none) RANGE(2,8)
+	LOCK_RANGE_MIN LABELREF(ds_num_slices.label) HSTRETCH;
+
+}
+
+sepparm4.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+ds_tracker.sval := 1;
+
+ds_tracker.gad = 
+{
+    LAYOUT(vertical) SPACING(1p) HSTRETCH VMARGIN(0.05, 0)
+
+    SWITCHER tight
+    {
+	VALUE(ds_tracker.sval) HSTRETCH
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+	    LABEL "Tracker Parameters" HSTRETCH;
+
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[6]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[6]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[7]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[6]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[7]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[8]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[6]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[7]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[8]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[9]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[6]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[7]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[8]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[9]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[10]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[6]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[7]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[8]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[9]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[10]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[11]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[6]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[7]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[8]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[9]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[10]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[11]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[12]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[6]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[7]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[8]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[9]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[10]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[11]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[12]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[13]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[6]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[7]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[8]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[9]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[10]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[11]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[12]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[13]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[14]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+        {
+            LAYOUT(horizontal) HSTRETCH
+
+            LABEL "Tracker Parameters":1.5 JUSTIFY(right, center);
+
+            LABEL VALUE(ds_tracker.val[0]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[1]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[2]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[3]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[4]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[5]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[6]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[7]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[8]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[9]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[10]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[11]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[12]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[13]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[14]) JUSTIFY(center,center) HSTRETCH;
+            LABEL VALUE(ds_tracker.val[15]) JUSTIFY(center,center) HSTRETCH;
+        }
+
+    }
+}
+
+ds_tracker_capacity.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ ds_tracker_capacity.label = PARM_LABEL("Capacity", "ds_tracker_capacity") WIDTH(1.5);
+ PARM(integer, 1, "ds_tracker_capacity", none, none) RANGE(1,1000)
+	LOCK_RANGE_MIN LABELREF(ds_tracker_capacity.label) HSTRETCH;
+
+}
+
+ds_tracker_hostmask.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    ds_tracker_hostmask.label = PARM_LABEL("Host Mask", "ds_tracker_hostmask") WIDTH(1.5);
+    PARM_FIELD(string, "ds_tracker_hostmask") VALUE(ds_tracker_hostmask.val) 
+	LABELREF(ds_tracker_hostmask.label) HSTRETCH;
+
+}
+ds_tracker_service.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ds_tracker_service.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    ds_tracker_service.label = PARM_LABEL("Service", "ds_tracker_service") WIDTH(1.5);
+    PARM_FIELD(string, "ds_tracker_service") VALUE(ds_tracker_service.val) 
+	LABELREF(ds_tracker_service.label) HSTRETCH;
+
+}
+
+ds_tracker_parser.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    ds_tracker_parser.label = PARM_LABEL("Parser", "ds_tracker_parser") ;
+    PARM_FIELD(string, "ds_tracker_parser") VALUE(ds_tracker_parser.val) 
+	LABELREF(ds_tracker_parser.label) HSTRETCH;
+
+}
+}	// Template join.bot
+
+
+ds_tracker_manual.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("ds_tracker_manual", "Manual Tracker") toggle VALUE(ds_tracker_manual.val);
+
+    { HSTRETCH }
+
+}
+ds_address.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ds_address.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    ds_address.label = PARM_LABEL("Address", "ds_address") WIDTH(1.5);
+    PARM_FIELD(string, "ds_address") VALUE(ds_address.val) 
+	LABELREF(ds_address.label) HSTRETCH;
+
+}
+
+ds_port.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ ds_port.label = PARM_LABEL("Port", "ds_port") ;
+ PARM(integer, 1, "ds_port", none, none) RANGE(1024,65535)
+	LOCK_RANGE LABELREF(ds_port.label) HSTRETCH;
+
+}
+}	// Template join.bot
+
+
+sep_enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sep_enable", "Enable Separate Render") toggle VALUE(sep_enable.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm9.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+sep_run_rop.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sep_run_rop", "Run ROP") toggle VALUE(sep_run_rop.val);
+
+    { HSTRETCH }
+
+}
+
+sep_join.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sep_join", "Join Render Stages") toggle VALUE(sep_join.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm8.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+sep_read_rop_params.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sep_read_rop_params", "Read Parameters From ROP") toggle VALUE(sep_read_rop_params.val);
+
+    { HSTRETCH }
+
+}
+
+sep_render_arguments.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    sep_render_arguments.label = PARM_LABEL("Render Arguments", "sep_render_arguments") WIDTH(1.5);
+    PARM_FIELD(string, "sep_render_arguments") VALUE(sep_render_arguments.val) 
+	LABELREF(sep_render_arguments.label) HSTRETCH;
+
+}
+
+sep_files.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ sep_files.label = PARM_LABEL("Files", "sep_files") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "sep_files") LABELREF(sep_files.label)
+	VALUE(sep_files.val) HSTRETCH;
+
+    sep_files.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(sep_files.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+sep_del_rop_files.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sep_del_rop_files", "Delete ROP Files On Job Deletion") toggle VALUE(sep_del_rop_files.val);
+
+    { HSTRETCH }
+
+}
+
+sep_images.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ sep_images.label = PARM_LABEL("Images", "sep_images") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "sep_images") LABELREF(sep_images.label)
+	VALUE(sep_images.val) HSTRETCH;
+
+    sep_images.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(sep_images.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+sep_use_tmp_img_folder.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sep_use_tmp_img_folder", "Use Temp Images Forder") toggle VALUE(sep_use_tmp_img_folder.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm7.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+sep_tile.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sep_tile", "Tile Render") toggle VALUE(sep_tile.val);
+
+    { HSTRETCH }
+
+}
+
+sep_tile_div.gad = ROW
+{
+   HSTRETCH
+
+   sep_tile_div.label = PARM_LABEL("Divisions", "sep_tile_div") WIDTH(1.5);
+   PARM(integer, 2, "sep_tile_div", none, none, "X,Y")
+	RANGE(2,4) LOCK_RANGE_MIN LABELREF(sep_tile_div.label)
+	HSTRETCH;
+
+}
+
+cmd_mode.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("cmd_mode", "Custom Command Mode") toggle VALUE(cmd_mode.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm5.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+cmd_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    cmd_name.label = PARM_LABEL("Name", "cmd_name") WIDTH(1.5);
+    PARM_FIELD(string, "cmd_name") VALUE(cmd_name.val) 
+	LABELREF(cmd_name.label) HSTRETCH;
+
+}
+
+cmd_cmd.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    cmd_cmd.label = PARM_LABEL("Command", "cmd_cmd") WIDTH(1.5);
+    PARM_FIELD(string, "cmd_cmd") VALUE(cmd_cmd.val) 
+	LABELREF(cmd_cmd.label) HSTRETCH;
+
+}
+
+cmd_use_afcmdprefix.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("cmd_use_afcmdprefix", "Prefix with $AF_CMD_PREFIX") toggle VALUE(cmd_use_afcmdprefix.val);
+
+    { HSTRETCH }
+
+}
+
+cmd_files.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ cmd_files.label = PARM_LABEL("Files", "cmd_files") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "cmd_files") LABELREF(cmd_files.label)
+	VALUE(cmd_files.val) HSTRETCH;
+
+    cmd_files.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(cmd_files.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+cmd_delete_files.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("cmd_delete_files", "Delete Files On Job Deletion") toggle VALUE(cmd_delete_files.val);
+
+    { HSTRETCH }
+
+}
+
+cmd_preview.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ cmd_preview.label = PARM_LABEL("Preview", "cmd_preview") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "cmd_preview") LABELREF(cmd_preview.label)
+	VALUE(cmd_preview.val) HSTRETCH;
+
+    cmd_preview.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(cmd_preview.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+sepparm6.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+cmd_service.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    cmd_service.label = PARM_LABEL("Service", "cmd_service") WIDTH(1.5);
+    PARM_FIELD(string, "cmd_service") VALUE(cmd_service.val) 
+	LABELREF(cmd_service.label) HSTRETCH;
+
+}
+
+cmd_parser.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    cmd_parser.label = PARM_LABEL("Parser", "cmd_parser") WIDTH(1.5);
+    PARM_FIELD(string, "cmd_parser") VALUE(cmd_parser.val) 
+	LABELREF(cmd_parser.label) HSTRETCH;
+
+}
+
+submit_afnode.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ submit_afnode.label = PARM_LABEL("Afanasy ROP", "submit_afnode") WIDTH(1.5);
+ PARM_FIELD(pathstring, "submit_afnode") VALUE(submit_afnode.val) 
+	LABELREF(submit_afnode.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(submit_afnode.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(submit_afnode.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+soho_program.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ soho_program.label = PARM_LABEL("Program", "soho_program") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "soho_program") LABELREF(soho_program.label)
+	VALUE(soho_program.val) HSTRETCH;
+
+    soho_program.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(soho_program.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+renderpreview.gad = NULL { }
+executebackground.gad = NULL { }
+
+General.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "General.gad"
+    { 
+	VALUE(General.gad.val) STRETCH(1,0)
+
+	TAB "General"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    job_name.gad;		
+	    output_driver.gad;		
+	    sepparm2.gad;		
+	    trange.gad;		
+	    f.gad;		
+	    frame_pertask.row.join;		
+	    sepparm3.gad;		
+	    take.gad;		
+	    independent.gad;		
+	    subtaskdepend.gad;		
+	    check_output_folder.gad;		
+	    render_temp_hip.gad;		
+	    ignore_inputs.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Job Parameters"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    platform.gad;		
+	    enable_extended_parameters.gad;		
+	    depend_mask.gad;		
+	    depend_mask_global.gad;		
+	    priority.gad;		
+	    max_runtasks.gad;		
+	    capacity.gad;		
+	    capacity_coefficient.gad;		
+	    maxperhost.gad;		
+	    maxruntime.gad;		
+	    hosts_mask.gad;		
+	    hosts_mask_exclude.gad;		
+	    min_memory.gad;		
+	    override_service.gad;		
+	    override_parser.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Distribute Simulation"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    ds_node.gad;		
+	    ds_num_slices.gad;		
+	    sepparm4.gad;		
+	    ds_tracker.gad;		
+	    ds_tracker_capacity.gad;		
+	    ds_tracker_hostmask.gad;		
+	    ds_tracker_service.row.join;		
+	    ds_tracker_manual.gad;		
+	    ds_address.row.join;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Separate Render"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    sep_enable.gad;		
+	    sepparm9.gad;		
+	    sep_run_rop.gad;		
+	    sep_join.gad;		
+	    sepparm8.gad;		
+	    sep_read_rop_params.gad;		
+	    sep_render_arguments.gad;		
+	    sep_files.gad;		
+	    sep_del_rop_files.gad;		
+	    sep_images.gad;		
+	    sep_use_tmp_img_folder.gad;		
+	    sepparm7.gad;		
+	    sep_tile.gad;		
+	    sep_tile_div.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Custom Command"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    cmd_mode.gad;		
+	    sepparm5.gad;		
+	    cmd_name.gad;		
+	    cmd_cmd.gad;		
+	    cmd_use_afcmdprefix.gad;		
+	    cmd_files.gad;		
+	    cmd_delete_files.gad;		
+	    cmd_preview.gad;		
+	    sepparm6.gad;		
+	    cmd_service.gad;		
+	    cmd_parser.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "SOHO"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    submit_afnode.gad;		
+	    sepparm.gad;		
+	    soho_program.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    execute.row.join; 
+    soho_multiframe.gad; 
+    renderdialog.gad; 
+    submit.row.join; 
+    General.gad; 
+    renderpreview.gad; 
+    executebackground.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

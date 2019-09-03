@@ -1,0 +1,115 @@
+// Magic: 256f29b9
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Wed May 15 13:53:42 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+blurrad.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ blurrad.label = PARM_LABEL("blurrad", "blurrad") WIDTH(1.5);
+ PARM(integer, 1, "blurrad", none, none) RANGE(0,10)
+	 LABELREF(blurrad.label) HSTRETCH;
+
+}
+
+advectspatial.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Spatial Scheme", "advectspatial") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    advectspatial.menu;
+
+    { HSTRETCH }
+
+}
+
+advecttemporal.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Temporal Scheme", "advecttemporal") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    advecttemporal.menu;
+
+    { HSTRETCH }
+
+}
+
+normsteps.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ normsteps.label = PARM_LABEL("Steps", "normsteps") WIDTH(1.5);
+ PARM(integer, 1, "normsteps", none, none) RANGE(1,10)
+	LOCK_RANGE_MIN LABELREF(normsteps.label) HSTRETCH;
+
+}
+
+renormspatial.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Spatial Scheme", "renormspatial") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    renormspatial.menu;
+
+    { HSTRETCH }
+
+}
+
+renormtemporal.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Temporal Scheme", "renormtemporal") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    renormtemporal.menu;
+
+    { HSTRETCH }
+
+}
+
+folder1.gad = 
+GROUP simple "renormalization"
+{ 
+    VALUE(folder1.gad.val) LAYOUT(vertical) HSTRETCH 
+	    normsteps.gad;		
+	    renormspatial.gad;		
+	    renormtemporal.gad;		
+} 
+
+folder0.gad = 
+GROUP simple "morphing"
+{ 
+    VALUE(folder0.gad.val) LAYOUT(vertical) HSTRETCH 
+	    advectspatial.gad;		
+	    advecttemporal.gad;		
+} 
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    blurrad.gad; 
+    folder0.gad; 
+    folder1.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

@@ -1,0 +1,956 @@
+// opscript -r -b /* > /path/name.cmd
+	
+https://www.sidefx.com/forum/attachment/764cb2f11e2b91233d3c27ba998ecef42f5cde3a/  hotkey map
+
+==in viewport editor
+m  in viewport  / handle allign to viewport/world/component
+space+b  oneview/4view toggle
+hold A + lcm   loop poly 
+hold A + mcm   loop poly whole line
+space+z - viewport centered
+shift+z - reset rotate pivot to viewport center
+
+==in network editor
+b -  - bypass
+r - primary display
+e - secondary template
+t - primary alternate render
+w - secondary alternate templat
+shift+p  - add sticky
+shift+i - add bg image
+shift+0  - add network (sub sticky)
+shift+m - resize netwotk to contents
+shift+r  switch node inputs 
+drag R  - slide render flag/select flag
+shift+k  shift+j   / minimize maximize selection stickies
+
+shift+lmb+move  - move node with upstream
+control+lmb+move  - move node with downstream
+
+alt+shift+move  - duplicate node with upstream
+alt+ctrl+move  - duplicate node with downstream
+
+==in network editor wires
+hold alt and lcm clicking - combine wire lines
+alt+c (new)  - copy parameter expression
+alt+v (new) - paste parameter expression
+ctrl+shift+c (new) - copy parameter relative
+ctrl+shift+v (new) - paste parameter relative
+
+shift+s (new)  show dependent links in current node
+shift+t (new) show time dependent nodes
+
+altp+shift+p - python shell
+alt+y - perfomance monitor
+ctrl+shift+d -hsavesession
+ctrl+alt+f  force update
+alt+shift+w  - floating panel
+alc+ctrl+2  enable/disable sim 
+ctrl+shift+g - center
+alt+shift+m - cache manager
+ctrl+alt+shift+lcm +drag = referenced copy of nodes
+
+alt+shift+k  animation editor
+alt+shift+c clone
+alt +- decrement link
+alt +- increment link
+====================wrangle_start=================
+
+ctrl+enter recoock attr wrangle node
+
+http://www.sidefx.com/docs/houdini/vex/cookbook
+http://www.sidefx.com/docs/houdini/vex/lang
+http://www.sidefx.com/docs/houdini/vex/statement
+http://www.sidefx.com/docs/houdini/vex/arrays
+http://www.sidefx.com/docs/houdini/vex/snippets
+http://www.sidefx.com/docs/houdini/vex/geometry
+http://www.sidefx.com/docs/houdini/vex/halfedges
+http://www.sidefx.com/docs/houdini/vex/random
+http://www.sidefx.com/docs/houdini/vex/strings
+
+@P // fetch first input P
+@opinput1_P // fetch second input P
+@opinput?_P // fetch ?th input P
+
+f@foo // fetch first input foo
+f@opinput1_foo // fetch second input foo
+f@opinput?_foo // fetch ?nt input foo
+v@opinput1_P
+
+@Cd.x = (@group_tmp==1) ? 1 : 0;  //access to group tmp    @group_tmp==1 - setting group if condition
+
+s@name = sprintf("list_%g", maxnum+1+@ptnum);   //replace symbol
+
+/* comment block
+*/ 
+
+i[]@t = {0,1};  //define array
+
+
+()	Grouping
+()	Grouping
+-a	Unary negation
+a^b	Raise to exponent
+* / %	Times, divide, modulus
++ -	Add, subtract
+< > == != || &&	Less than, greater than, equals, not equals, or, and
+
+dot product - скалярное произведение / длина векторов на косинус угла между ними
+cross product - векторное произведение
+
+касательные граней(edge_dir) - node point, edge force  
+
+`padzero(4,($F-1)%100+1)`  - циклирование анимации
+
+===========входяше ноды
+`chs(strcat(opinputpath(".",0),"/file"))`  - параметр файл входящей ноды
+`opname(opinputpath(".",0))` - имя входящей ноды
+
+
+string days[] = { "Mon", "Tue", "Wed", "Thu", "Fri" }
+foreach (int i; string name; days) {
+    printf("Day number %d is %s", i, name);
+}
+
+
+=============================DOP object name from object id?============
+//Aha!!! You can just put object ids into the dopfield expression. (But you need to use dopfields to return a string).
+
+`dopfields("/obj/sphere_object1/dopnet1", 1, "", "Options", 0, "name")`
+
+//fetch field from dopnet /
+/obj/sphere1/pyrodopnet:smokeobject1/density
+
+//get option from object
+dopoption("/obj/geo/dopnet1","pyro_lr","init","timescale")
+dopoption("/obj/geo/dopnet1","pyro_lr","parms","test")
+==========================================================================
+
+expandpointgroup() expandprimgroup() to convert a group pattern into an array of primitive of point numbers
+functions that supports groups with run_over set to the correct type
+getbbox(), getpointbbox(), intersect(), intersect_all(), minpos(), pcfind(), relbbox(), relpointbbox() , xyzdist()
+
+
+dopoption($DOPNET, "dop", "density", "tx")  -  get information from record from 
+
+`chs(chs("spare_input0")+"/test")` reference string to baba  hscript
+ch(opinputpath("..",1)+"/size1")  - same on float parm
+ch(chs("spare_input0")+"/p1_len")
+ch(chs("spare_input0")+"/size2")
+float sc = ch(concat(chs("spare_input0"),"/scale"));
+
+fcNode = hou.pwd()
+pN = fcNode.parm("spare_input0").eval()
+path = hou.node(pN).parm("test").eval()
+return path
+
+opinputpath(“../”, 0)  = hou.pwd().parent().inputs()[0].path() (python)
+hou.pwd().inputs()[0].path()  =  opinputpath(“.”, 0)
+
+
+hou.parm(kwargs["node"].parent().path()+"/resimulate").pressButton() -  reset simulation from this network
+==================================== about copy stamp ===============================
+
+
+
+=====================================================================================
+
+=======================
+int pt = findattribval(0, "point", "idRest", i@idRest, 0);  - find attrib value
+
+
+
+==============python
+getvart = hou.parm("../../affectorPosx")
+
+try:
+	evalVar = getvar.expression(
+	evalVar = hou.hscriptExpression(evalVar)
+except:
+	evalVar = getvar.eval()
+return evalVar	
+
+
+====================howToAdd viewport comment 
+camera > render properties  > openGL view < viewport comment
+    )
+
+
+====================wrangle_end=================
+
+====================stings_start=======================
+
+`chs( strcat ( opinputpath(".",0),"/fileName" ) )` 
+====================stings_end=======================
+
+
+hscript   memory [-b] The HScript command to check memory usage in Houdini is called memory. This is the signature for the command:
+op: `opfullpath(“../../your_node_with_data”)`
+`opname(chs("ROP_Node_m1"))`|||_ver`chs(strcat(chs("ROP_Node_m1"),"/ver"))`|||_trange_`chs(strcat(chs("ROP_Node_m1"),"/f1"))`_`chs(strcat(chs("ROP_Node_m1"),"/f2"))`||res_`chs(strcat(chs("ROP_Node_m1"),"/res_fraction"))`|||take_`chs(strcat(chs("ROP_Node_m1"),"/take"))`|||
+ https://www.sidefx.com/forum/topic/43537/ - вопросы про поинтклауды
+
+   hou.hscript("texcache -c")
+   hou.hscript("glcache -c")
+
+===========working on dops==================
+../..:pyro_lr/density   - merge or fetch density from this network in object merge
+============================================
+
+============blast code in python================
+frames = [78, 85, 90]
+result = '3'
+if hou.intFrame() in frames:
+    result = frames.index(hou.intFrame())
+return str(result)
+===============================================
+
+
+===================================================
+-------------------centroid pt each prim
+int npr = nprimitives(0);
+for(int i=0;i<npr+0;i++)
+{
+    int prA[] = primpoints(0,i);
+    int prAl = len(prA);
+    vector averPos;
+    vector tmpPos = {0,0,0};
+    
+    foreach(int num;prA)
+    {
+    vector curPos = point(0,"P",num);
+    tmpPos = tmpPos+curPos;
+    }
+    averPos = tmpPos/prAl;
+    int tmpPt = addpoint(0,averPos);
+}
+====================================================
+
+
+=========texport hscripts 
+exhelp   - help for expressions
+opcook [-F] [-f frame_start frame_end] [-i frame_inc] [-v] object  -recoock node 
+opcook -F -f 3 4 -v /obj/import_geo/attribwrangle4
+==========================
+
+()	Grouping
+()	Grouping
+-a	Unary negation
+a^b	Raise to exponent
+* / %	Times, divide, modulus
++ -	Add, subtract
+< > == != || &&	Less than, greater than, equals, not equals, or, and
+int condition(P.x>0) ? 1 : 0 ; //	short form if() test
+
+https://vimeo.com/144500605  showreel
+
+dot product - скалярное произведение / длина векторов на косинус угла между ними
+cross product - векторное произведение
+
+
+касательные граней(edge_dir) - node point, edge force  
+
+`padzero(4,($F-1)%100+1)`  - циклирование анимации
+
+ffmpeg -i Video.mpg Pictures%d.jpg
+
+===========in render properties
+https://vimeo.com/219655098  vcomment - add vieport comment
+
+
+===========входяше ноды
+`chs(strcat(opinputpath(".",0),"/file"))`  - параметр файл входящей ноды
+`opname(opinputpath(".",0))` - имя входящей ноды
+
+
+
+
+
+=========трансфер аттрибутов=====
+int handle; 
+handle = pcopen(@OpInput2, "P", @P, 1000, 1); 
+@N = pcfilter(handle, "N"); 
+pcclose(handle); 
+=================================
+
+// Copy attributes from particles to surface 
+int handle; 
+
+handle = pcopen(@OpInput2, "P", @P, 1000, 1); 
+@v = pcfilter(handle, "v"); 
+// @Cd = pcfilter(handle, "Cd"); 
+pcclose(handle); 
+
+============================================
+
+
+=======vex_forloop
+int closepts[] = pcfind(0, "id", i@id, @numpt,1);
+
+foreach (int pt; closepts) {
+  int p = addprim(0,"polyline");
+  addvertex(0,p,@ptnum);
+  addvertex(0,p,pt);
+} 
+
+
+=======vex_foreach============
+for (int i=0;i<@numpt;i++) {
+   int otherid = point(0,'id',i);
+   if (otherid == @id && i != @ptnum) {
+      int prim = addprim(0,'polyline');
+      addvertex(0,prim,@ptnum);
+      addvertex(0,prim,i);
+   }
+}
+==============================
+
+
+=====================centroid point
+vector min,max;
+getbbox(0,min,max);
+vector centr = (min+max)/2;
+
+removepoint(0,@ptnum);
+
+addpoint(0,centr);
+=====================================
+
+
+
+string ptgrps[] = detailintrinsic(0, "pointgroups");
+s[]@ptingrps = {};
+foreach(string grp;ptgrps)
+{
+    if (inpointgroup(0, grp, @ptnum)) append(s[]@ptingrps, grp);
+}
+
+============================================
+
+
+
+
+vector newP =@P + vector(onoise(@P+@Time*0.5,5,0.5,1))*1*{1,0,2}+{0,0.1,0};
+int prim;
+vector uv;
+xyzdist(@OpInput2,newP,prim,uv);
+@P = primuv(@OpInput2,"P",prim,uv);
+
+============================================
+
+----centroid
+
+vector min, max;
+getbbox(min, max);
+vector center = (min+max)/2;
+vector center = (min+max)/2;
+vector center = (min+max)/2;
+============================================
+
+---frame num with offset
+
+`padzero(4,$F-3)`
+.`padzero(4,clamp($F-14,1,200))
+============================================
+---------compare two points
+
+int np1 = npoints(0);
+int np2 = npoints(1);
+
+vector pos1;
+vector pos2;
+int extract = 0;
+
+for (int i=0; i<np1;i++)
+{
+    pos1 = point(0, "P",i);
+    
+    for (int j=0; j<np2;j++)
+    {
+        pos2 = point(1, "P",j);
+        if (pos1==pos2)
+        {
+        //extract = 1;
+        removepoint(0,i);
+        }
+        else
+        {
+        //removepoint(0,i);
+        }
+    }
+    
+}
+
+
+============================================Collision
+
+float dist = volumesample(1,"sdf",@P);
+
+if (dist<0){
+
+    vector grad = volumegradient(1,"sdf",@P);
+    vector disp_dir = normalize(grad);
+
+    @P += disp_dir * abs(dist);
+    @Cd = {0,1,0};
+    
+}
+
+============================================
+
+=======================add padzero padding=========
+int pnum = @ptnum;
+string ms = sprintf("%5d", pnum+10000*ch("body_part"));
+int msi = atoi(ms);
+i@wcluster = msi;
+===================================================
+
+====================remove by array
+int n[];
+int np = npoints(0)-1;
+n = {1,2,7,8,9};
+
+int nlen; 
+int curpt;
+//nlen = arraylength(n);
+
+
+for (int i=0; i<np;i++)
+{
+
+    foreach(int j;n)
+        if (@restpt == j)
+        {
+            removepoint(0,@ptnum);
+        }
+}
+
+=============================================
+
+-----------------------remove by percent
+
+int np = npoints(0)-1;
+float percprob =25;
+float prob = (100/percprob);
+
+for (int i=0; i<np;i++)
+{
+    if (@restpt % prob)
+    {
+    removepoint(0,@ptnum);
+    }
+}
+=============================================
+
+
+==============find number of groups==============================
+for primitive groups 
+argc(primgrouplist("../atWhatNode")) 
+
+for point groups 
+argc(pointgrouplist("../atWhatNode"))
+============================================
+
+
+
+============================================ notawhale ray
+vector newP =@P;
+//vector(onoise(@P+@Time*0.5,5,0.5,1))*1*{1,0,2}+{0,0.1,0};
+int prim;
+vector uv;
+xyzdist(@OpInput2,newP,prim,uv);
+vector compP = primuv(@OpInput2,"P",prim,uv);
+@P = lerp(v@P,compP,mix);
+============================================
+
+--CLOTH
+
+stretchstiffness - 2000
+stretchdamping
+Stretchelastcilimit
+Stretchplastichardening
+
+shearstiffness - 500
+sheardamping
+Shearelasticlimit
+Shearplastichardening
+
+bendstiffness - 500
+benddamping
+Bendelasticlimit
+Bendplastichardening
+
+
+enabletearing
+pintoanimation
+
+
+plastic flow rate - отвечает за то насколько глубоко может произойти вмятина
+
+
+
+FXG: Can you support plastic de	mations?
+
+Side Effects: Plastic deformations are currently *not* supported inside the solver. However, you have access to the rest positions as a vertex attribute.
+ This allows you to create your own custom plastic deformation, for example, by interpolating between the current position and the rest position. 
+ For hardening, the various stiffness multiplier attributes can be increased in a SOP solver.
+
+
+
+--WIRE_SOLVER
+`dopcontextgeo(".", ch("../../usecontextgeo")-2)`
+
+
+
+==================================================временно для эреев
+int handle = pcopen(0, "P", @P, 1, 10);
+int i = 0;
+vector nn, h;
+vector array[];
+printf("pcnumfound:%g \n", pcnumfound(handle));
+while (pciterate(handle)) 
+{
+    if (i==0) continue;
+    pcimport(handle, "N", nn);
+    append(array,nn);
+    i++;
+}
+vector tmp = 0;
+printf("array:%g \n", array);
+foreach (h; array)
+{
+    tmp = lerp(normalize(h), normalize(tmp), 0.5);
+}
+v@N = tmp;
+==================================================
+
+
+==================================grain solver
+scale kinetic - сила с которой партикл будет выталкиваться из другово. чем выше, тем более жесткой оказывается масса песка/снега  0,8-снег. обычно 0,2-0,3
+enable mass shock - позволяет делать партиклы легче в зависимости от того насколько выше они взлетели. (чаще выключает) задерживается в воздухе больше чем нужно
+clumping  - как хорошо он сам с собой слипается
+1
+1
+
+constrain iteration - насколько сильно нужно чтобы удерживать форму песка. 
+при партиклс сепарейшн 0,01  метр песка нужно 600
+продакшн констрейн интерейшнс 100
+
+velocity blend - уменьшается чтобы получить более жесткий отклик от грейна
+==============================================
+
+
+
+
+В Вайр солвере есть возможность пластичных деформаций. Enable Plastic Deformation
+Эластичность , растягивание.
+
+i<(divisions-1) ? i +1 :0]  - if then morfologic
+v@P.x<0 ? v@P.y=1 : v@P.y;
+
+--RENDER
+
+
+Оверрайды не работают на волюметриках
+pixel samples
+transapent samples (stohastic)
+
+
+-VOLUME_LIGHT  при использовании чтобы уменьшить шум на светильнике задираем sampling quality 
+----------
+
+You use the stamp() function.
+
+stamp("..", "FORVALUE", 0)
+
+or in the case of the group, since it is a string you need stamps()
+
+stamps("..", "FORVALUE", "") 
+
+veloffset = box - z value
+
+
+vm_geofilterwidth -  Минимальный размер точки на рендере 
+
+
+gasresize-----
+
+Subtract Threshold	
+Controls how smooth the bounds should grow or shrink, preventing jitter. 
+A field that expands will always be encapsulated. Shrinking fields will blend toward their new bounds based on the threshold specified. 
+Higher values will result in smoother transitions but larger grid sizes to compute.
+
+
+Field Cutoff	
+Controls what values trigger resizing. 
+Values in the field less than this cut off will not contribute to the final field size. 
+This avoids very faint smoke from continuing to expand the field.
+
+
+whitewatersolver
+isooffset -  больше нуля - больше пузырей, но меньше пены. 
+меньше нуля - больше пены
+
+
+
+
+Lifespan
+Lifespan Attribute	
+The initial lifespan of foam particles can be mapped from a zero to one attribute on the foam particles. 
+The lifespan will range from Min Lifespan to Max Lifespan, or just be set to Min Lifespan if this parameter is not set. 
+Using the same attribute that originally controlled particle emission (typically the emit attribue) will give larger clumps of foam a longer initial lifespan.
+
+Min Lifespan	
+The minimum lifespan for foam particles that map to the zero value of of the Lifespan Attribute, or for all particles if that attribute is not set.
+
+Max Lifespan	
+The maximum lifespan for foam particles that map to the one value of the Lifespan Attribute.
+
+Lifespan Variance	
+A random number of seconds within this range is added or subtracted from the foam lifespan.
+
+Preserve Foam	
+Increase or decrease the lifespan of foam particles based on the local density of foam particles, which can help create clumps and streaks of foam on the liquid surface over time.
+
+Min Foam Density	
+When the local foam density surrounding a foam particle lies in the range of this value down to zero, proportionally reduce its lifespan each timestep by the Reduction Rate.
+
+Max Foam Density	
+When the local foam density surrounding a foam particle lies in the range of Min Foam Density up to this value, proportionally increase its lifespan each timestep by the Preservation Rate.
+
+Preservation Rate	
+The proportional amount to increase the lifespan of a foam particle with sufficiently high local foam density. 
+This value is the number of seconds to add per second, so if greater than one can effectively preserve high density foam clumps from every being killed.
+
+Reduction Rate	
+The proportional amount to decrease the lifespan of a foam particle with sufficiently low local foam density. This value is the number of seconds to reduce the lifespan per second.
+
+Behavior
+Advection Strength	
+The strength of the advection force that carries the foam with the velocity field from the source liquid simulation. 
+Very high values will cause the foam to follow the liquid surface very closely and lead to fine, streaky foam. Lower values give more diffuse, spread-out foam.
+
+Falloff Bias	
+The rate at which the foam advection force falls off away from the middle of the foam layer. 
+Low values representing a slow falloff mean more foam particles have strong advection forces and produce tighter streaks of foam. With a higher falloff the foam gradually gets smeared across the surface over time.
+
+Behavior At Limits	
+Specifies the foam particle behavior when hitting the Volume Limits.
+
+Collide at Closed	
+Collide with any closed boundaries. At open boundaries this is equivalent to Kill.
+
+Make Ballistic	
+Make any foam particles ballistic when outside the Volume Limits.
+
+Kill	
+Kill any foam particles type when outside the Volume Limits.
+
+
+жмешь "9".. там есть Attributes -> выбираешь аттриб, выбираешь его значение..
+только не забудь выставить правильный компонент - если точки - то точки поставь..
+оно выде
+
+
+-- ИДБ. 
+
+Адвекция Сила
+Сила адвекцией силу, которая несет пену поля скоростей от источника жидкости моделирования. 
+Очень высокие значения будут вызывать пены следовать поверхности жидкости очень тесно и привести к тонкой, полосатый пены. 
+Более низкие значения дают более диффузный, вытянутую пену.
+
+Спад смещения
+Скорость, с которой пена Адвекция сила падает от середины слоя пены. Низкие значения, 
+представляющие медленный спад означает больше частиц пены имеют сильные адвекции силы и производить жесткие полосы пены. 
+При более высокой спада пены постепенно становится смазывают по всей поверхности с течением времени.
+
+
+
+------------------ Ray Tracing Acceleration
+
+A couple months latter I found the nugget I was looking for from the help documents in 11. Hope this helps someone else who stumbles across this.
+
+Ray Tracing Acceleration - KD-Tree and Bounding Volume Hierarchy
+A ray tracing accelerator is a spatial data structure used to optimize the performance of ray intersection tests against complex geometry."kdtree" – Ray trace using a KD-Tree. Normally, the KD-Tree will produce the fastest raytracing performance at a modest initialization time. It is possible to control the performance/quality tradeoff for KD-Tree construction with the vm_kdmemfactor setting.
+
+
+"bboxtree" – Ray trace using a bounding volume hierarchy. Sometimes a bounding volume hierarchy will be faster to construct and/or faster to raytrace than a KD-Tree. 
+
+
+KD-Tree Memory Factor - Change the memory/performance trade off used when constructing 
+
+KD-Tree acceleration data structures. Values larger than 1 will cause mantra to use proportionally more memory and take longer to optimize the tree in an attempt to make ray tracing faster. Smaller values will cause mantra to use proportionally less memory and take less time to optimize the tree while possibly compromising ray tracing performance. The default value of 1 will try to balance the amount of memory used by ray tracing data structures with the amount of memory used by geometry.
+
+If you are noticing long tree construction times (in IPR, the render view pane hangs for a long time in the “Building Octree...” Phase), try decreasing the KD memory factor 0.1. If your render is too slow after tree construction, increase the value until you find a good balance of tree construction time vs. render performance.
+
+-You can also notice the "Building Octree..." when you crank up your verbose settings if you are not going to IPR(Render View) 
+
+------------------
+If you are using the defaults for volume rendering, then yes you can certainly get a handle over the render times by tuning the volume rendering with a bit of a sacrifice on quality (if at all).
+
+Volume Step Size
+The main way to tune your volume rendering is with the volume step Size on the mantra output ROP (Properties > Sampling folder). Step size is in Houdini units in Camera Space. This will also have a great impact on quailty. It is a trade-off and that is what tuning is for. ;)
+What you are looking for here is if your volume object is very large (bigger than say 1 Houdini unit), then you can safely increase the Volume Step Size and see little to no quality difference.
+I turn down the step size when I am tweaking colors and shaping. I then turn up the step size when tuning the actual fine detail on the smoke.
+
+Pixel Samples
+This is the second major way to get speed back in to your volume rendering. It defaults to 3x3 which is decent quality. Decreasing this to 1x1 will certainly increase your render times but will introduce visible noise in to the final image. If you have a great deal of motion blur and/or DOF, you can get away with turning down the samples down a bit. At 2x2, the difference in quality from the 3x3 render is noticeable but not as bad as the 1x1 where sampling noise is clearly evident.
+
+Shading Quality
+Since we are dicing the volume primitive in to micropolygons (non PBR) before we even shade, shading quality comes in to play.
+You can control the shading quality on a per object level and that is exactly where you find this parameter: Object > Render > Dicing > Shading Quality. Increasing causes more micropolygons therefore more shader calls. Because we are marching through the volumes, the number of shader calls can get out of hand.
+Decreasing this value will reduce the memory consumed as well as render times but not nearly as drastic as throttling back the step size.
+If you are unfamiliar as to what shading quality does in a micoropolygon renderer, you have some homework to do. Seek out the OdForce Wiki and RenderMan documentation plus the Advanced RenderMan book. Fyi it controls the size of the micropolygons which inherently controls the number of times the shaders are called.
+
+Motion Factor, DOF and Motion Blur
+If you are using either Depth Of Field (DOF) and/or Motion Blur, you should try out Motion Factor. It controls the Shading Quality dynamically. Depending on the level of DOF or MB, you can decrease the shading quality which = less memory and faster renders.
+
+Control the Number of Lights
+Since we are marching in to a volume, eash shader call will loop through all the lights illuminating the current micropolygon in the volume. By limiting the number of lights we need to look up, we get a proportional decrease in render times.
+Following this, the less lights we have generating and using deep shadow maps, the quicker the render times. Remember it is the deep shadows that give you depth. You may only want one or two lights with this option on and the rest of the lights to not use shadows and just add bits of illumination.
+So, if you are using ambient occlusion (the Environment Light from the shelf) with your volume objects, don't. They really slow down your volume rendering because each shaded micropolygon will cause an awful lot of rays to be generated due to the raytraced ambient occlusion. Use standard CG lighting techniques to try to get the look you are after. At the default setting of 16, you can obstensibly add up to 16 carefully placed lights and get a similar impact yet have an awful lot of contro. If you really need this, limit the number of rays.
+
+Opacity Limit
+When you are rendering geometry with a certain amount of transparency, you can use the opacity limit to stop the current ray if the opacity threshold is met.
+If used too aggressively, you will see flickering and strange banding in your volume over a sequence of renders if the cam is moving or the smoke is evolving. This is the varying opacity thresholds in the volume. Most evident if your volumes are more wispy and transparent.
+Here you are chasing that 1-5% decrease in render times and not the large decreases above. The default value is already pretty aggressive so be careful here to avoid adding nasty artefacts.
+
+Use Standard Displacement and Surface Shader Optimizations
+It's really nice to have volume rendering where we can use standard surface and displacement shader opimization tricks. There should be quite a few tips/ideas on the two main forums. At this point your optimizations are in the 1-5% decerase in render times.
+
+Note: Both the Depth Maps (deep shadows with opacity) and the final rendered image benefit from the tuning above.
+Note: If you make a changes such as decreasing the step size, you need to regenerate your depth maps.
+Note: Make sure to turn on Mantra profiling to see the actual render times to see actual impact on rendering speeds. 
+
+
+медэкпресс сервис 15,30
+Шендерова.
+
+Варшавская 59.
+пасспорт+полис дмс
+
+
+
+
+
+
+KD-Tree memory factor
+Houdini name	vm_kdmemfactor
+IFD name	renderer:kdmemfactor
+Change the memory/performance tradeoff used when constructing KD-Tree acceleration data structures.
+ Values larger than 1 will cause mantra to use proportionally more memory and take longer to optimize the tree in an 
+ attempt to make ray tracing faster. Smaller values will cause mantra to use proportionally less memory and take less
+  time to optimize the tree, while possibly compromising ray tracing performance. The default value of 1 will try to balance
+   the amount of memory used by ray tracing data structures with the amount of memory used by geometry.
+
+If you are noticing long tree construction times, try decreasing the KD memory factor to 0.1. If your render 
+is too slow after tree construction, increase the value until you find a good balance of tree construction time vs. render performance.
+
+Enable Oriented BVH Construction
+Houdini name	vm_bvhoriented
+IFD name	renderer:bvhoriented
+Enables a ray tracing tree construction algorithm that uses rotations to locally align the axes with the dominant
+ geometric directions. This approach only works on curves, and will usually increase the amount of time required to build the ray tracing tree. 
+ However the resulting trees may improve ray tracing performance particularly for bundles of long curves that are not aligned to the x, y, or z axis
+  as can commonly occur when rendering long hair.
+
+
+
+Volume samples
+Houdini name	vm_volumesamples
+IFD name	object:volumesamples
+The number of samples to generate when rendering a uniform volume (vm_uniformvolume is enabled). 
+The samples will be distributed so as to produce an equal image contribution if they were all equal in brightness.
+
+
+
+When coving is enabled, this indicates to perform coving by implicitly expanding diced geometry, instead of by creating new polygons, 
+to fill cracks caused by T-junctions where different levels of dicing are side-by-side.
+
+Because no additional polygons are required, this can save memory, but if geometry is expanded too far, it can result in slow raytracing. 
+The Sample Coving Expansion Factor parameter indicates how much to implicitly expand the geometry, relative to the size of each diced piece.
+
+При свод включена, это указывает на то, чтобы выполнить свод с неявно расширяется нарезанный кубиками геометрию, 
+а за счет создания новых полигонов, чтобы заполнить трещины, вызванные Т-переходов, где различные уровни перетасовки которые бок о бок.
+
+Из-за каких-либо дополнительных многоугольников не требуется, это может сэкономить память, 
+но если геометрия расширяется слишком далеко, это может привести к медленной трассировки лучей.
+Параметр коэффициент расширения выборки Плинтуса указывает, сколько неявно расширить геометрию, относительно размера каждого куска кубиками.
+
+
+
+
+
+When sample coving is enabled with the Use Sample Coving parameter, this dictates how much to implicitly expand diced geometry, 
+relative to the size of each diced piece, to fill cracks caused by T-junctions where different levels of dicing are side-by-side.
+
+If geometry is expanded too far, it can result in slow raytracing. For example, a value of 10 can be quite slow. Setting small negative values, 
+e.g. -0.1, or the minimum allowed value, -1, can help visualize how geometry is diced.
+
+Когда образец свод включен с параметром свод использования образца, это диктует, сколько неявно расширить нарезанный кубиками геометрию, 
+относительно размера каждого куска кубиками, для заполнения трещин, вызванных Т-переходов, где различные уровни перетасовки являются бок о бок ,
+
+Если геометрия расширяется слишком далеко, это может привести к медленной трассировки лучей. Например, значение 10 может быть довольно медленным. 
+Установка небольшие отрицательные значения, например, -0.1 Или минимальное допустимое значение -1, можно помочь себе, как геометрия кубиками.
+
+
+
+------------------
+Here are a few tricks I can recommend - mostly to do with volumes:
+- thicker volumes are faster to render than transparant volumes. This is because you can lower the opacity limit on your mantra rop. Also the stochastic sampling helps speed up things (see sidefx masterclass on rendering volumes).
+- surprisingly shadowmaps are not always faster than raytraced lights. PBR in h12 is quite fast so do a speed comparison.
+- consider rendering your smoke at half res with a sharpening filter, then scaling them up in comp and blurring them a bit if they don't need to be well-defined. 
+- volume step size is key! Measure the division size of your volume. (bbox_sizex/divisions_in_x), your volume step size should not be lower than your division size or you are wasting samples without adding more definition. 
+- volume division size is also important. A good rule for final quality results is to aim for about 1 voxel per pixel -- but that is only true if you need very defined smoke ( swirling smoke or pyroclastic dust). So choose your render resolution and stick with the pixel rule -- no need to sim higher if you won't see it. 
+- a low amount of pixel samples will speed up your render, but will create some noise - consider/try degraining in comp. (If you have motion blur you can get away with quite low pixel samples as your volumes get blurred anyway.)
+
+
+*) Clustering:
+- clustering 5 sims is generally faster than 1 huge sim. Yes, there is some overlap, but it is faster to work with in your scene, lighter to iterate as you only see a subsection of the entire volume. 
+- Before rendering, volumemerge the 5 sims into 1 before you start rendering (if you can -- on current hardware I was not going over 800.000.000 voxels as things were getting really slow - this is based on feature film (2K resolution) production quality so this number will be way too high for you per volume - especially considering you will have a lot of other things in your scene besides volumes), this can make a big difference in render speed. I think this has to do with the way the opacity clipping works, between 1 object or between 5 objects in case you render 5 volumes. 
+
+- if you are dealing with a lot of different smoke scenes where you need smaller smoke puffs here or there. Render your smoke with RGB lights around it so you can relight them in comp. Render the same volume from a few different angles and render a longer framerange so you can use it as a re-useable element in comp and track it or dress your scene with it -- a lot of the times background atmospherics is scene dressing and layering a bumch of elements to create a new shaped volume can work quite well (This works in 2D as well as in 3D in case you have some more extreme camera moves). 
+
+----------------------
+… v@centroid = prim(0, "P", @primnum);
+i@b = addpoint(geoself(), @centroid);
+string name = prim (0, "name", @primnum);
+removeprim(geoself(), @primnum, 1 );
+setpointattrib(geoself(), "name", @b, name);
+
+
+
+[20:58:05] Kirill Strazhnikov: Господа,
+есть секвенция 10 кадров .бгео, которую я затягиваю в гудини. Я могу как-то зациклить ее?
+[20:58:45] Paul Winex: экспрешеном
+[20:58:48] Kirill Strazhnikov: дабы на протяжении, например 100 кадров иметь просто 10 циклов
+[20:58:55] Paul Winex: $F%10
+[20:59:06] somesanctus: $
+[20:59:10] Paul Winex: в таймшифте
+
+
+[22:33:19] Danil Krivoruchko: у меня какой-то тупой затык - без форича как-то можно на каждом полигоне выделить последнюю точку?
+[22:35:17] Konstantin [eistan]: полюбому вранглом, но я не знаю как)
+[22:36:29] Danil Krivoruchko: ахаха. полезный ответ)) кроме carve c экстрактом есть варианты? может что-то более быстрое есть?
+[22:37:33] Artem Smirnov: во врангле через primpoints получаем массив точек и последнюю добавляем в группу
+[22:41:52] Danil Krivoruchko: спасибо!
+
+-------------------------------------cloth parameters-----------------------------
+stiffness - жесткость
+shear - срез. влияет на сгибание. меньше - легче сгибается. больше - меньше сгибается.
+----------------------------------------------------------------------------------
+
+
+1)
+name = pwd().curPoint().attribValue("objname")
+name = name.split("/")[3].split("_")
+result = "%s_%s"%(name[2],name[3])
+return result
+
+
+
+
+anchor_id	Point	Integer	
+If this attribute is defined and refers to a valid point (or vertex depending on the value of anchor_type), then this anchor’s position will be bound to the specified point (or vertex) on the simulated geometry specified by the name attribute.
+
+If the value is set to -1, then the anchor is treated as a relative offset from the object specified by the name attribute (where the P attribute defines the offset). If the value does not refer to a valid point (or vertex), then the constraint is not created.
+anchor_type	Point	Integer	
+Specifies if the anchor is attached to a point, vertex or agent transform. If no anchor_id attribute is defined and the anchor type is point or vertex, then this attribute has no effect. If this attribute is not defined, then anchor_id will refer to a point.
+condir	Point	Vector	
+If the number of constrained degrees of freedom is 1, this value defines the normal of a plane that the object can move along or rotate in. If the number of constrained degrees of freedom is 2, this value defines an axis that the object can move or rotate about.
+condof	Point	Integer	
+Identifies the number of constrained degrees of freedom for an anchor (0 to 3).
+constraint_name	Primitive	String	
+Specifies the Data Name of the constraint to create. If this attribute is not present or the name is invalid, no constraint will be created from the primitive. This attribute can be modified in a SOP Solver to change the constraint’s type during the simulation.
+constraint_type	Primitive	String	
+Specifies whether the constraint affects position, rotation or all degrees of freedom. If this attribute is not present or has an invalid value, the default value will be position.
+local_orient	Point	Quaternion	
+If the anchor_type is agent, specifies the anchor’s orientation in the local space of the transform referenced by the name.
+local_P	Point	Vector	
+If the anchor_type is agent, specifies the anchor’s position in the local space of the transform referenced by the name.
+name	Point	String	
+Identifies the object to which the constraint is attached. An invalid name indicates that the constraint is attached to a world space position.
+
+For RBD Packed Objects, the name point attribute from the DOP object’s geometry is used to identify which object to attach the constraint to. This can be prefixed by the DOP Object name (e.g. object2/piece3) to uniquely identify the object. For agent primitives, a transform name can be appended to the anchor name (e.g. agent2/head) to attach the constraint to a specific transform in the agent’s rig. For all other types of objects, the DOP object name is used.
+next_constraint_name	Primitive	String	
+Specifies a new value for the constraint_name attribute to switch to if the constraint is broken by the solver. This is simpler than using a SOP Solver and allows the transition to take place at the instant the constraint breaks. Currently, only glue constraints may be broken during the timestep by the Bullet Solver.
+next_constraint_type	Primitive	String	
+Specifies a new value for the constraint_type attribute to switch to if the constraint is broken by the solver and the next_constraint_name attribute is valid.
+orient	Point	Quaternion	
+Identifies the initial world space orientation of the anchor. If the r point attribute also exists on the geometry, this attribute will take precedence.
+P	Point	Vector	Identifies the initial world space position of the anchor.
+propagate_iteration	Detail	Integer	
+Specifies the number of impact propagations for glue bonds in the constraint network.
+
+When a glued object is hit, its impact value is spread along the constraint network to other glue bonds. This allows distant glue bonds that are weak to be broken prior to nearer, strong bonds. The impact propagations is the number of rounds of propagation to do. Impulses will not travel more than this number of bonds each solve step.
+r	Point	Vector	
+Identifies the initial world space orientation of the anchor as Euler angles.
+v	Point	Vector	Identifies the velocity of the world space position to which the constraint is attached.
+w	Point	Vector	
+Identifies the angular velocity of the world space position to which the constraint is attached.
+
+
+
+
+
+
+
+
+
+
+
+
+
+========================================================== чиним хелп гудиньский
+py = os.path.join(hou.getenv('HFS'), 'python27/lib/mimetypes.py') 
+#backup 
+open(py+'_backup', 'w').write(open(py).read()) 
+#remove pyc 
+if os.path.exists(py+'c'): 
+try: 
+os.remove(py+'c') 
+except: 
+pass 
+#fix file 
+text_from = ''' try: 
+ctype = ctype.encode(default_encoding) # omit in 3.x! 
+except UnicodeEncodeError: 
+pass''' 
+text_to = ''' # try: 
+# ctype = ctype.encode(default_encoding) # omit in 3.x! 
+# except UnicodeEncodeError: 
+# pass''' 
+text = open(py).read() 
+if text_from in text: 
+newText = text.replace(text_from, text_to) 
+#save 
+open(py, 'w').write(newText) 
+hou.ui.displayMessage('Fixed!\nNow restart Houdini') 
+elif text_to in text: 
+hou.ui.displayMessage('Help already fixed') 
+else: 
+hou.ui.displayMessage('Lines not found',severity=hou.severityType.Warning)
+
+
+
+
+
+чтобы иметь общий гудини-репозиторий, самое простое - создать в сети папку, например, Z:/houdinistuff/  
+и указывать этот путь в энвайронмент переменной HSITE при старте гудини.  в Z:/houdinistuff/  
+иметь папку houdini16.0  в которой можно иметь любую подструктуру структуры HFS
+например Z:/houdinistuff/houdini16.0/presets/Sop/file.idx - и эти пресеты будут подсосаны гудиней, оверрайдя дефолтные, 
+если имена совпадают, и дополняя, если имена не совпадают.
+
+
+=======================matrix_matchmove_by_Olegus=======================================================
+matrix xf = ident();
+int point1 = chi("point1");
+vector pivot_stat = point(0, "P", point1);
+vector pivot_anim = point(1, "P", point1);
+translate(xf, -pivot_stat);
+matrix xf_stat = maketransform(point(0, "N", point1), normalize(point(0, "yy", point1)), point(0, "P", point1));
+matrix xf_anim = maketransform(point(1, "N", point1), normalize(point(1, "yy", point1)), point(1, "P", point1));
+4@xform = invert(xf_stat)*xf_anim;
+========================================================================================================
+
+
+mfa = shutter angle / 360. (ex: shutter angle = 120, mfa = .333)

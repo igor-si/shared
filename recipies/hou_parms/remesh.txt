@@ -1,0 +1,25 @@
+
+Attributes
+You can add point attributes to the input surface to give "hints" to the remesher.
+
+Name
+
+Datatype
+
+Description
+
+targetmeshsize
+
+Float
+
+An initial target edge length for the edges incident to each point. If the value is ≤ 0, the attribute is ignored. The remesher adjusts this value to prevent violation of your selected gradation.
+
+minmeshsize
+Float
+
+A minimum target edge length. If targetmeshsize is less than this value, the remesher uses this value.
+
+maxmeshsize
+Float
+
+A maximum target edge length. If targetmeshsize is greater than this value, the remesher uses this value.

@@ -1,0 +1,62 @@
+// Magic: 7a833cf2
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Mon Sep  2 02:06:01 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_workitemgeneration.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Work Item Generation", "pdg_workitemgeneration") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_workitemgeneration.menu;
+
+    { HSTRETCH }
+
+}
+
+splitexpression.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ splitexpression.label = PARM_LABEL("Split Expression", "splitexpression") WIDTH(1.5);
+ PARM(integer, 1, "splitexpression", none, none) RANGE(0,10)
+	 LABELREF(splitexpression.label) HSTRETCH;
+
+}
+
+invertselection.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("invertselection", "Invert Selection") toggle VALUE(invertselection.val);
+
+    { HSTRETCH }
+
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    pdg_workitemgeneration.gad; 
+    splitexpression.gad; 
+    invertselection.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

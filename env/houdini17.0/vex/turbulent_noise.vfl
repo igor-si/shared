@@ -1,0 +1,80 @@
+float turb(
+    vector sample_point;
+    float roughness;
+    float lacunarity;
+    int octaves;
+)
+
+{
+    float sum = 0;
+    float weight = 1.0;
+    vector samp_p = sample_point;
+
+    for(int i=0;i<octaves+1;i++)
+    {
+    //vector noise -.5 to .5 range
+    sum += (noise(samp_p)-.5)*weight;
+    
+    //next octave will be scalled in size
+    samp_p *= lacunarity;
+
+    // and reduced in contribution
+    weight *= roughness;
+    }
+    return sum;
+}
+
+vector v_turb(
+    vector sample_point;
+    float roughness;
+    float lacunarity;
+    int octaves;
+)
+{
+    vector sum = 0;
+    float weight = 1.0;
+    vector samp_p = sample_point;
+
+    for(int i=0;i<octaves+1;i++)
+    {
+    //vector noise -.5 to .5 range
+    sum += (noise(samp_p)-{.5,.5,.5})*weight;
+    
+    //next octave will be scalled in size
+    samp_p *= lacunarity;
+
+    // and reduced in contribution
+    weight *= roughness;
+    }
+    return sum;
+
+}
+
+
+float pow_abs_turb(
+    vector sample_point;
+    float roughness;
+    float lacunarity;
+    int octaves;  
+    float exponent; 
+    )
+{
+    float sum = 0;
+    float weight = 1.0;
+    vector samp_p = sample_point;
+
+
+
+    for(int i=0;i<octaves+1;i++)
+        {
+        //vector noise -.5 to .5 range
+        sum += (noise(samp_p)-{.5,.5,.5})*weight;
+    
+    //next octave will be scalled in size
+        samp_p *= lacunarity;
+
+        // and reduced in contribution
+        weight *= roughness;
+        }
+    return sum;    
+}

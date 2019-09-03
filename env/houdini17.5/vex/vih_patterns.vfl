@@ -1,0 +1,14 @@
+//
+//  File:    vih_patterns.vfl
+//  Version: 0001
+//  Author:  Shawn Lipowski
+//  Date:    2014 08 14
+//  Note:    Generic pattern functions like sin waves.
+//
+
+float sin_wave_2d(vector samp_p; float exponent) {
+
+    float dist = sqrt(samp_p.x * samp_p.x + samp_p.y * samp_p.y);
+
+    return pow( fit(sin(dist), -1, 1, 0, 1), exponent );
+}

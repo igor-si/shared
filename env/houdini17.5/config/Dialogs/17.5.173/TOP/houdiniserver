@@ -1,0 +1,176 @@
+// Magic: bf742ccb
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Mon Sep  2 02:05:45 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_workitemgeneration.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Work Item Generation", "pdg_workitemgeneration") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_workitemgeneration.menu;
+
+    { HSTRETCH }
+
+}
+
+iterationsfromupstream.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("iterationsfromupstream", "Session Count from Upstream Items") toggle VALUE(iterationsfromupstream.val);
+
+    { HSTRETCH }
+
+}
+
+iterations.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ iterations.label = PARM_LABEL("Number of Sessions", "iterations") WIDTH(1.5);
+ PARM(integer, 1, "iterations", none, none) RANGE(0,10)
+	 LABELREF(iterations.label) HSTRETCH;
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+sharedservername.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    sharedservername.label = PARM_LABEL("Shared Server Name", "sharedservername") WIDTH(1.5);
+    PARM_FIELD(string, "sharedservername") VALUE(sharedservername.val) 
+	LABELREF(sharedservername.label) HSTRETCH;
+
+}
+
+autosuffixname.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("autosuffixname", "Suffix with Index") toggle VALUE(autosuffixname.val);
+
+    { HSTRETCH }
+
+}
+
+commandport.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ commandport.label = PARM_LABEL("TCP Command Port", "commandport") WIDTH(1.5);
+ PARM(integer, 1, "commandport", none, none) RANGE(0,65535)
+	 LABELREF(commandport.label) HSTRETCH;
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+externalserver.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("externalserver", "Connect To Existing Server") toggle VALUE(externalserver.val);
+
+    { HSTRETCH }
+
+}
+
+externalhost.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    externalhost.label = PARM_LABEL("Server Address", "externalhost") WIDTH(1.5);
+    PARM_FIELD(string, "externalhost") VALUE(externalhost.val) 
+	LABELREF(externalhost.label) HSTRETCH;
+
+}
+
+timeout.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ timeout.label = PARM_LABEL("Load Timeout", "timeout") WIDTH(1.5);
+ PARM(integer, 1, "timeout", none, none) RANGE(0,120)
+	 LABELREF(timeout.label) HSTRETCH;
+
+}
+
+toptabs4.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "toptabs4.gad"
+    { 
+	VALUE(toptabs4.gad.val) STRETCH(1,0)
+
+	TAB "Node"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    pdg_workitemgeneration.gad;		
+	    iterationsfromupstream.gad;		
+	    iterations.gad;		
+	    sepparm2.gad;		
+	    sharedservername.gad;		
+	    autosuffixname.gad;		
+	    commandport.gad;		
+	    sepparm.gad;		
+	    externalserver.gad;		
+	    externalhost.gad;		
+	    timeout.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    toptabs4.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

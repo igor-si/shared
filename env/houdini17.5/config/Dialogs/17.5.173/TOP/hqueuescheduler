@@ -1,0 +1,519 @@
+// Magic: 15af57b6
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Sun Sep  1 18:52:21 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_workingdir.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    pdg_workingdir.label = PARM_LABEL("Working Directory", "pdg_workingdir") WIDTH(1.5);
+    PARM_FIELD(string, "pdg_workingdir") VALUE(pdg_workingdir.val) 
+	LABELREF(pdg_workingdir.label) HSTRETCH;
+
+    ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(pdg_workingdir.script_action)
+	HELP("Open floating directory chooser")
+	UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+}
+
+uselocalsharedroot.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("uselocalsharedroot", "Override Local Shared Root") toggle VALUE(uselocalsharedroot.val);
+
+    { HSTRETCH }
+
+}
+
+queryhq.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    { WIDTH(1.5) }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("queryhq", "Load from HQueue")
+	push VALUE(queryhq.val);
+
+}
+
+localsharedroot_win.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ localsharedroot_win.label = PARM_LABEL("Windows", "localsharedroot_win") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "localsharedroot_win") LABELREF(localsharedroot_win.label)
+	VALUE(localsharedroot_win.val) HSTRETCH;
+
+    localsharedroot_win.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(localsharedroot_win.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+localsharedroot_macosx.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ localsharedroot_macosx.label = PARM_LABEL("macOS", "localsharedroot_macosx") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "localsharedroot_macosx") LABELREF(localsharedroot_macosx.label)
+	VALUE(localsharedroot_macosx.val) HSTRETCH;
+
+    localsharedroot_macosx.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(localsharedroot_macosx.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+localsharedroot_linux.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ localsharedroot_linux.label = PARM_LABEL("Linux", "localsharedroot_linux") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "localsharedroot_linux") LABELREF(localsharedroot_linux.label)
+	VALUE(localsharedroot_linux.val) HSTRETCH;
+
+    localsharedroot_linux.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(localsharedroot_linux.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+address.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    address.label = PARM_LABEL("HQueue Server", "address") WIDTH(1.5);
+    PARM_FIELD(string, "address") VALUE(address.val) 
+	LABELREF(address.label) HSTRETCH;
+
+    ACTION_ICONBUTTON "BUTTONS_hq_browser" VALUE(address.script_action)
+	HELP("Open a web brower to the HQueue server")
+	UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+}
+
+sepparmhfs.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+useuniversalhfs.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+useuniversalhfs.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+useuniversalhfs.gad = PARM_BUTTON("useuniversalhfs", "") toggle VALUE(useuniversalhfs.val);
+
+hfspathuniversal.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    hfspathuniversal.label = PARM_LABEL("Universal HFS", "hfspathuniversal") WIDTH(1.32);
+    PARM_FIELD(string, "hfspathuniversal") VALUE(hfspathuniversal.val) 
+	LABELREF(hfspathuniversal.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+hfs_linux_path.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ hfs_linux_path.label = PARM_LABEL("Linux HFS Path", "hfs_linux_path") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "hfs_linux_path") LABELREF(hfs_linux_path.label)
+	VALUE(hfs_linux_path.val) HSTRETCH;
+
+    hfs_linux_path.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(hfs_linux_path.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+hfs_macosx_path.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ hfs_macosx_path.label = PARM_LABEL("macOS HFS Path", "hfs_macosx_path") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "hfs_macosx_path") LABELREF(hfs_macosx_path.label)
+	VALUE(hfs_macosx_path.val) HSTRETCH;
+
+    hfs_macosx_path.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(hfs_macosx_path.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+hfs_windows_path.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ hfs_windows_path.label = PARM_LABEL("Windows HFS Path", "hfs_windows_path") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "hfs_windows_path") LABELREF(hfs_windows_path.label)
+	VALUE(hfs_windows_path.val) HSTRETCH;
+
+    hfs_windows_path.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(hfs_windows_path.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+overrideportrange.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+overrideportrange.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+overrideportrange.gad = PARM_BUTTON("overrideportrange", "") toggle VALUE(overrideportrange.val);
+
+callbackportrange.gad = ROW
+{
+   HSTRETCH
+
+   callbackportrange.label = PARM_LABEL("Callback Port Range", "callbackportrange") WIDTH(1.32);
+   PARM(integer, 2, "callbackportrange", none, none, "#1,#2")
+	RANGE(0,65535)  LABELREF(callbackportrange.label)
+	HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+submitjob.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    { WIDTH(1.5) }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("submitjob", "Submit Graph As Job")
+	push VALUE(submitjob.val);
+
+}
+
+hqueue_priority.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Job Priority", "hqueue_priority") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    hqueue_priority.menu;
+
+    { HSTRETCH }
+
+}
+
+hqueue_assign_to.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Assign To", "hqueue_assign_to") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    hqueue_assign_to.menu;
+
+    { HSTRETCH }
+
+}
+hqueue_clients.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+hqueue_clients.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    hqueue_clients.label = PARM_LABEL("Clients", "hqueue_clients") WIDTH(1.5);
+    PARM_FIELD(string, "hqueue_clients") VALUE(hqueue_clients.val) 
+	LABELREF(hqueue_clients.label) HSTRETCH;
+
+}
+
+select_clients.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    {  }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("select_clients", "Select Clients")
+	push VALUE(select_clients.val);
+
+}
+}	// Template join.bot
+
+hqueue_client_groups.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+hqueue_client_groups.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    hqueue_client_groups.label = PARM_LABEL("Client Groups", "hqueue_client_groups") WIDTH(1.5);
+    PARM_FIELD(string, "hqueue_client_groups") VALUE(hqueue_client_groups.val) 
+	LABELREF(hqueue_client_groups.label) HSTRETCH;
+
+}
+
+select_client_groups.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    {  }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("select_client_groups", "Select Groups")
+	push VALUE(select_client_groups.val);
+
+}
+}	// Template join.bot
+
+
+hq_sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+hqueue_is_CPU_number_set.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("hqueue_is_CPU_number_set", "Set Number of CPUs per Job") toggle VALUE(hqueue_is_CPU_number_set.val);
+
+    { HSTRETCH }
+
+}
+
+hqueue_CPUs_to_use.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ hqueue_CPUs_to_use.label = PARM_LABEL("CPUs per Job", "hqueue_CPUs_to_use") WIDTH(1.5);
+ PARM(integer, 1, "hqueue_CPUs_to_use", none, none) RANGE(1,8)
+	LOCK_RANGE_MIN LABELREF(hqueue_CPUs_to_use.label) HSTRETCH;
+
+}
+
+hqueue_envmulti.parm =
+{
+    LAYOUT(horizontal) SPACING(0.02) HSTRETCH JUSTIFY(left, center)
+
+    PARM_LABEL_SIMPLE("Task Environment", "hqueue_envmulti") WIDTH(1.5);
+    { WIDTH(0.08) }
+
+    ROW
+    {
+	HSTRETCH(0.5) JUSTIFY(left, center)  VALUE(hqueue_envmulti.val)
+
+        hqueue_envmulti.field = PARM_FIELD (integer, "hqueue_envmulti")
+				VALUE(hqueue_envmulti.val) HSTRETCH(0.5)
+				 PREF_WIDTH(0.5);
+
+        ROW
+        {
+	     LOOK(lightline) VMARGIN(1p)
+
+   	     INCREMENT_ICONBUTTON VALUE(hqueue_envmulti.more.val)	
+	    	HELP("Add Another Instance") SIZE(0.2, 0.24);
+	     DECREMENT_ICONBUTTON VALUE(hqueue_envmulti.less.val)	
+	        HELP("Remove Last Instance") SIZE(0.2, 0.24);
+
+	}
+
+	ACTION_BUTTON "Clear" VALUE(hqueue_envmulti.clear.val);
+    }
+
+    { HSTRETCH }
+}
+
+hqueue_envmulti.multilist = 
+{
+    LAYOUT(vertical) STRETCH MARGIN(0.05)
+}
+
+hqueue_envmulti.gad =
+{
+    LAYOUT(vertical) STRETCH SPACING(0.02)
+
+    hqueue_envmulti.parm;
+    hqueue_envmulti.multilist;
+}
+
+hqueue_host.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    hqueue_host.label = PARM_LABEL("Allowed Host", "hqueue_host") WIDTH(1.5);
+    PARM_FIELD(string, "hqueue_host") VALUE(hqueue_host.val) 
+	LABELREF(hqueue_host.label) HSTRETCH;
+
+}
+
+hqueue_tags.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    hqueue_tags.label = PARM_LABEL("Tag List", "hqueue_tags") WIDTH(1.5);
+    PARM_FIELD(string, "hqueue_tags") VALUE(hqueue_tags.val) 
+	LABELREF(hqueue_tags.label) HSTRETCH;
+
+}
+
+hqueue_conditions.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    hqueue_conditions.label = PARM_LABEL("Conditions JSON", "hqueue_conditions");
+
+    MULTILINE_PARM_FIELD ("hqueue_conditions") 
+
+    	LABELREF(hqueue_conditions.label) 
+
+    	VALUE(hqueue_conditions.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+pdg_resultserver.gad = NULL { }
+
+folder3.gad = 
+GROUP collapsible "Advanced"
+{ 
+    VALUE(folder3.gad.val) LAYOUT(vertical) HSTRETCH
+	    hqueue_host.gad;		
+	    hqueue_tags.gad;		
+	    hqueue_conditions.gad;		
+} 
+
+hfsfolder_1.gad = 
+GROUP simple "HFS Per Platform"
+{ 
+    VALUE(hfsfolder_1.gad.val) LAYOUT(vertical) HSTRETCH 
+	    hfs_linux_path.gad;		
+	    hfs_macosx_path.gad;		
+	    hfs_windows_path.gad;		
+} 
+
+folder0.gad = 
+GROUP simple "Local Shared Root Paths"
+{ 
+    VALUE(folder0.gad.val) LAYOUT(vertical) HSTRETCH 
+	    queryhq.gad;		
+	    localsharedroot_win.gad;		
+	    localsharedroot_macosx.gad;		
+	    localsharedroot_linux.gad;		
+} 
+
+folder1.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder1.gad"
+    { 
+	VALUE(folder1.gad.val) STRETCH(1,0)
+
+	TAB "Scheduler"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    pdg_workingdir.gad;		
+	    uselocalsharedroot.gad;		
+	    folder0.gad;		
+	    address.gad;		
+	    sepparmhfs.gad;		
+	    useuniversalhfs.row.join;		
+	    hfsfolder_1.gad;		
+	    overrideportrange.row.join;		
+	    submitjob.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Job Parms"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    hqueue_priority.gad;		
+	    hqueue_assign_to.gad;		
+	    hqueue_clients.row.join;		
+	    hqueue_client_groups.row.join;		
+	    hq_sepparm2.gad;		
+	    hqueue_is_CPU_number_set.gad;		
+	    hqueue_CPUs_to_use.gad;		
+	    hqueue_envmulti.gad;		
+	    folder3.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    folder1.gad; 
+    pdg_resultserver.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

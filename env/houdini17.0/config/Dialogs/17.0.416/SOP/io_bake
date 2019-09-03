@@ -1,0 +1,65 @@
+// Magic: 9aec155
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Fri Aug 16 01:46:26 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+WRITE_SIM_sopoutput.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ WRITE_SIM_sopoutput.label = PARM_LABEL("Output File", "WRITE_SIM_sopoutput") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "WRITE_SIM_sopoutput") LABELREF(WRITE_SIM_sopoutput.label)
+	VALUE(WRITE_SIM_sopoutput.val) HSTRETCH;
+
+    WRITE_SIM_sopoutput.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(WRITE_SIM_sopoutput.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+WRITE_SIM_f.gad = ROW
+{
+   HSTRETCH
+
+   WRITE_SIM_f.label = PARM_LABEL("Start/End/Inc", "WRITE_SIM_f") WIDTH(1.5);
+   PARM(float, 3, "WRITE_SIM_f", none, none, "#1,#2,#3")
+	RANGE(0,10)  LABELREF(WRITE_SIM_f.label)
+	HSTRETCH;
+
+}
+
+WRITE_SIM_execute.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    { WIDTH(1.5) }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("WRITE_SIM_execute", "render")
+	push VALUE(WRITE_SIM_execute.val);
+
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    WRITE_SIM_sopoutput.gad; 
+    WRITE_SIM_f.gad; 
+    WRITE_SIM_execute.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

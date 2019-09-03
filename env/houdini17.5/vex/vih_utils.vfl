@@ -1,0 +1,28 @@
+//
+//  File:    vih_utils.vfl
+//  Version: 0001
+//  Author:  Shawn Lipowski
+//  Date:    2014 08 14
+//  Note:    Generic utility functions useful across many contexts.
+//
+
+// from file, returns the centroid of the bounding box as a vector
+vector centroid(string filename) {
+    vector min, max;
+    getbbox(filename, min, max);
+    return (max - min) * 0.5;
+}
+
+// from input, returns the centroid of the bounding box as a vector
+vector centroid(int input) {
+    vector min, max;
+    getbbox(input, min, max);
+    return (max - min) * 0.5;
+}
+
+// assumes input 0, returns the centroid of the bounding box as a vector
+vector centroid() {
+    vector min, max;
+    getbbox(0, min, max);
+    return (max - min) * 0.5;
+}

@@ -1,0 +1,12 @@
+https://packagecontrol.io/packages/RemoveNonAsciiChars
+Installation
+Installation via Sublime Package Control.
+
+Install Sublime Package Control
+From inside Sublime Text, open Package Control's Command Pallet: CTRL+SHIFT+P (Windows, Linux) or CMD+SHIFT+P (Mac).
+Type install package and hit Return. A list of available packages will be displayed.
+Type RemoveNonAsciiChars and hit Return.
+Using
+Bring out the command palette with CTRL+SHIFT+P (Windows, Linux) or CMD+SHIFT+P on Mac.
+Type Remove Non Ascii Chars until you see the commands.
+Select Remove non Ascii characters (File) for removing in the entire file, or Remove non Ascii characters (Select) for removing only in the selected text.

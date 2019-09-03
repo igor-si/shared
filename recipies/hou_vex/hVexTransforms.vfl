@@ -1,0 +1,417 @@
+
+======Getting transformation from OBJs
+string nodePath = chs("node_path"); // parameter is a string, but I went into "Edit Parameter Interface" and specified it to be a Node Path
+matrix xform = optransform(nodePath);
+v@P *= invert(xform);
+==============================
+
+=========Rotate with matrix
+// Create rotation matrix
+matrix3 matrx = ident();
+// Create angle control with UI
+float angle = radians( chf('angle') );
+// Define rotation axis
+vector axis = {0, 1, 0};
+
+//Rotate the matrix
+rotate ( matrx, angle, axis); 
+
+// Apply rotation: multiply position by matrix
+@P *= matrx; 
+==============================
+
+=========Rotate copies with quaternion multiply
+@N;
+@up = {0,1,0};
+
+@orient = quaternion(maketransform(@N,@up));
+vector4 rotate_X = quaternion(radians(ch('Rotate_X')),{1,0,0});
+vector4 rotate_Y = quaternion(radians(ch('Rotate_Y')),{0,1,0});
+vector4 rotate_Z = quaternion(radians(ch('Rotate_Z')),{0,0,1});
+
+@orient = qmultiply(@orient, rotate_X);
+@orient = qmultiply(@orient, rotate_Y);
+@orient = qmultiply(@orient, rotate_Z);
+==============================
+
+
+=========Rotate with quaternion along XYZ axys
+// Setup angle control with UI
+float angle_X = radians(chf('angle_X'));
+float angle_Y = radians(chf('angle_Y'));
+float angle_Z = radians(chf('angle_Z'));
+
+// Apply rotation
+vector rotations = set(angle_X,angle_Y,angle_Z);
+@P = qrotate(quaternion(rotations), @P);
+==============================
+
+===============Rotate Y COPIES with quaternion multiply
+@N;
+@up = {0,1,0};
+
+@orient = quaternion(maketransform(@N,@up));
+vector4 rotate_Y = quaternion(radians(ch('Rotate_Y')),{0,1,0});
+@orient = qmultiply(@orient, rotate_Y);
+-----------------------------------------------
+
+
+
+
+
+
+
+============Randomize copies
+// Define orientation vectors
+@N;
+@up = {0,1,0};
+
+// Define random position values
+float randPos_X = fit01(rand(@ptnum), -ch('Translate_X'), ch('Translate_X'));
+float randPos_Y = fit01(rand(@ptnum), -ch('Translate_Y'), ch('Translate_Y'));
+float randPos_Z = fit01(rand(@ptnum), -ch('Translate_Z'), ch('Translate_Z'));
+vector randPos = set(randPos_X, randPos_Y, randPos_Z);
+
+// Define random rotation values
+float randRot_X = fit01(rand(@ptnum), -ch('Rotate_X'), ch('Rotate_X'));
+float randRot_Y = fit01(rand(@ptnum), -ch('Rotate_Y'), ch('Rotate_Y'));
+float randRot_Z = fit01(rand(@ptnum), -ch('Rotate_Z'), ch('Rotate_Z'));
+
+// Apply random positions
+@P.x += randPos_X; 
+@P += randPos_Y*@N; 
+@P.z += randPos_Z; 
+
+// Apply random rotations
+@orient = quaternion(maketransform(@N,@up));
+vector4 rotate_X = quaternion(radians(randRot_X),{1,0,0});
+vector4 rotate_Y = quaternion(radians(randRot_Y),{0,1,0});
+vector4 rotate_Z = quaternion(radians(randRot_Z),{0,0,1});
+@orient = qmultiply(@orient, rotate_X);
+@orient = qmultiply(@orient, rotate_Y);
+@orient = qmultiply(@orient, rotate_Z);
+
+// Apply random scale
+@scale = fit01(rand(@ptnum), chf('Scale_MIN'), chf('Scale_MAX'));
+---------------------------------------------------------
+
+=============Find closest points
+float maxdist = 0.8;
+int maxpoints = 10;
+int closept[] = pcfind(0, 'P', @P, maxdist, maxpoints);
+============================================
+
+
+
+
+==========#APPLY RANDOM ROTATION TO VECTOR ON ALL AXIS (AXES)
+float amt = 0;
+float randx, randy, randz;
+vector axis = set(0,0,0);
+
+
+
+int npts2 = npoints(1); //Number of points in second input
+int lidx2 = npts2-1; //Index of penultimate point
+vector stemdir = point(1,"P",lidx2) - point(1,"P",0); //Main stem direction
+
+
+amt = fit(rand(@id+chf("rotation amt_seed")),0,1,chf("min_rotation_amt"),chf("max_rotation_amt"));
+randx = fit(rand(@id+chf("x_axis_seed")),0,1,chf("x_lower_limit"),chf("x_uppper_limit"));
+randy = fit(rand(@id+chf("y_axis_seed")),0,1,chf("y_lower_limit"),chf("y_uppper_limit"));
+randz = fit(rand(@id+chf("z_axis_seed")),0,1,chf("z_lower_limit"),chf("z_uppper_limit"));
+
+axis = set(randx,randy,randz);
+
+//create identity matrix to use for rotatating stem dir
+matrix3 idm = ident();
+rotate(idm,amt,axis); //Rotate the matrix
+
+v@N = stemdir; //visualize through normal
+
+@N*=idm; //Apply transformation
+==========================================================
+
+
+
+=========#ASSIGN ROTATION MATRIX COMPONENTS TO ATTRIBUTES
+assign(v@N.x, v@N.y, v@N.z, v@up.x, v@up.y, v@up.z, v@side.x, v@side.y, v@side.z,3@xform); //Get Rotation Matrix components
+========================================================
+
+
+=============#EXTRACT MATRIX COMPONENTS FROM PACKED POINT
+v@up=set(0,1,0);
+v@v=normalize(v@v);
+v@side = cross(v@up,v@v);
+3@xform = set(v@v.x, v@v.y, v@v.z, v@up.x, v@up.y, v@up.z, v@side.x, v@side.y, v@side.z); //3D Rotation Matrix
+4@from = set(1 , v@v.x, v@v.y, v@v.z, v@up.x, 1 , v@up.y, v@up.z, v@side.x, v@side.y, 1 , v@side.z,v@P.x, v@P.y, v@P.z, 1 ); //3D Transformation matrix
+========================================================
+
+==============================#QUATERNION ROTATE
+v@N = set(0,1,0);
+matrix3 xform = ident();
+float amt = chf("amt");
+vector axis = set(chf("axisx"),chf("axisy"),chf("axisz"));
+rotate(xform, amt, axis);
+p@roti = normalize(quaternion(xform));
+v@up= qrotate(p@roti,v@N);
+v@N*=xform;
+========================================================
+
+=========== #A RANDOM ROTATION MATRIX
+matrix3 myrot = ident();
+float amt = fit(rand(@id+chf("seed")),0,1,chf("minamt"),chf("maxamt"));
+vector axis = sample_direction_uniform(rand(@id));
+rotate(myrot, amt, axis);
+@P*=myrot;
+========================================================
+
+=================== #ROTATE BY MATRIX
+
+float xrotamt = radians(chf("xrotamt"));
+float yrotamt = radians(chf("yrotamt"));
+float zrotamt = radians(chf("zrotamt"));
+float cex, cey, cez;
+vector min, max,centroid;
+vector xrotaxis = set(1,0,0);
+vector yrotaxis = set(0,1,0);
+vector zrotaxis = set(0,0,1);
+
+//Calculate the Centroid here
+
+getbbox(0, min, max);
+
+cex = (max.x + min.x) * 0.5;
+cey = (max.y + min.y) * 0.5;
+cez = (max.z + min.z) * 0.5;
+centroid = set(cex, cey, cez); 
+
+//Declare identity matrix here. 
+3@xform = ident();
+
+//Rotation order is x y z
+
+rotate(3@xform , xrotamt, xrotaxis);
+rotate(3@xform , yrotamt, yrotaxis);
+rotate(3@xform , zrotamt, zrotaxis);
+
+v@P-=centroid; //move points to origin
+@P = @P * 3@xform; //Apply Rotation
+v@P+=centroid; //move back to original position
+=========================================================
+
+==================Rotate GEO with matrix along Y axis
+// Create rotation matrix
+matrix3 matrx = ident();
+// Create angle control with UI
+float angle = radians( chf('angle') );
+// Define rotation axis
+vector axis = {0, 1, 0};
+
+//Rotate the matrix
+rotate ( matrx, angle, axis); 
+
+// Apply rotation: multiply position by matrix
+@P *= matrx; 
+---------------------------------------------
+
+
+=============Rotate GEO with quaternion along XYZ axys
+// Setup angle control with UI
+float angle_X = radians(chf('angle_X'));
+float angle_Y = radians(chf('angle_Y'));
+float angle_Z = radians(chf('angle_Z'));
+
+// Apply rotation
+vector rotations = set(angle_X,angle_Y,angle_Z);
+@P = qrotate(quaternion(rotations), @P);
+---------------------------------------------------
+
+
+======================rotate P ===========================
+//  Also we have maketransform function for doing all transformation (Translate , Rotate , Scale) on the points.
+maketransform(0,0,{ TX, TY, TZ },{ RX, RY, RZ},{ SX, SY, SZ },{ CEX, CEY, CEZ });
+//  Example : ( Rotate points 45 degree along Y axis )
+v@Temp = v@P * maketransform(0,0,{ 0, 0, 0 },{ 0, 45, 0 },{ 1, 1, 1 },{ 0, 0, 0 });
+v@P = v@Temp;
+
+
+//  And there is something handy at times - optransform() to fetch transform matrix from any obj at scene level.
+matrix M = optransform(“/obj/yourTransformedObj”) ;
+v@P *= M ;
+
+//you can as well use quaternions to do the same thing
+//if you are already familiar with matrices and quaternions
+//it may be helpful to browse the docs to get see all the functions 
+//that VEX has to offet for manipulating them (or to read more about above mentioned ones)
+v@P = qrotate( quaternion( {0,20,0}, 0 ), @P );
+
+
+//You can use this to rotate an object by 20 degrees in Y:
+matrix3 m = ident ( );
+rotate ( m, radians ( 20 ), { 0, 1, 0 } );
+@P *= m;
+
+==========================================================================================
+
+
+
+================#TRANSFORM BY PRIMITIVE INTRINSIC
+matrix xform = primintrinsic(@OpInput2, "packedfulltransform", 0);
+@P*=xform;
+=========================================================
+
+===================================================
+
+============Reset orient
+//If you use orient to align objects before a Bullet simulation
+//you need to multiply the orient attribute you get 
+//from bullet with your initial orient attribute.
+//To get a orient attribute that works correctly with
+//transform pieces SOP or copy to point SOP. 
+
+//Run in a Wrangle SOP (Run over - Points)
+p@orient = qmultiply( p@orient, p@orient_init);
+----------------------------------------------------------------
+
+
+==============#rotate geo by maketransform----
+int a[] - expandpointgroup(0,"ptBottom")
+int b[] - expandpointgroup(0,"ptTop")
+vector root = point(0,"P",a[0]);
+vector end = point(0,"P",b[0]);
+vector vecD = (end-root);
+
+vector angle = chv("angle");
+vector t = set(0,0,0); //translation
+vector s = set(1,1,1); //scale
+vector p = set(0,0,0); //pivot
+matrix m = maketransform(0,0,t,angle,s,p); //matrix 4
+translate(m,root); // translate matrix
+v@P = v@P*m;
+translate(m,-root); // matchmove
+v@v*=m;
+
+
+---------------------------------------
+
+
+
+
+============================aw_orientForCopyStamp
+vector up = normalize(  {0,1,0} );
+vector N =  normalize(  v@N );
+vector vD1 = normalize( cross(up,N) );
+vector vD2 = cross(N,vD1);
+vector vD3 = N;
+
+//matrix m1 = set(vD1,vD2,vD3);
+matrix3 m1 = maketransform(vD3,vD2);
+p@orient = quaternion(m1);
+
+vector4 or = p@orient;
+matrix3 m = qconvert(or);
+matrix3 mx;
+float a1 = radians( chf("angle_x")  );
+float a2 = radians( chf("angle_y")  );
+float a3 = radians( chf("angle_z")  );
+
+vector row1 = set(m.xx, m.xy, m.xz);
+vector row2 = set(m.yx, m.yy, m.yz);
+vector row3 = set(m.zx, m.zy, m.zz);
+
+rotate(m,a1,row1);
+rotate(m,a2,row2);
+rotate(m,a3,row3);
+
+p@orient = quaternion(m);
+---------------------------------------
+
+
+===# orient 
+//So first, create an @orient that smoothly rotates. 
+//To recap, Houdini offers several ways to deal with rotation, 
+//ranked in order of precedence, with @orient being the highest. 
+//Orient is a quaternion, which is a 4 value vector.
+
+//Previously we've used a matrix for this (a 3x3 matrix to be exact),
+//rotated it, and generated orient via the quaternion() function:
+float angle = @Time;
+vector axis = rand(@ptnum);
+matrix3 m = ident();
+rotate(m, angle, axis);
+@orient = quaternion(m);
+
+=====# orient 
+//Turns out I've been dong way too much work. 
+//A 3x3 matrix and a quaternion are mostly interchangeable, 
+//so it makes sense that some of the functions to create 
+//and manipulate them are also interchangeable. 
+//You can create a quaternion directly from an angle and axis:
+float angle = @Time;
+vector axis = rand(@ptnum);
+@orient = quaternion(angle, axis);
+
+
+=====# orient
+//What if we want to offset the pig to the end of the box though?
+//(Yes ok, you could transform the pig first, then copy 
+//it on, but pretend we couldn't.) A way to do this is to take 
+//a vector that's 1 unit on the y axis (which was the 
+//original orientation and height of the box), rotate it to match @orient,
+//then take a point and offset it by this modified vector.
+
+//That's what the qrotate function does; 
+//rotates a vector by a quaternion. In a second wrangle I take 
+//the same point, and shift it (the result needs to be normalized):
+
+vector pos = qrotate(@orient, {0,1,0} );
+@P += normalize(pos);
+
+=======# Convert N to Orient with dihedral
+//You have some geo that you want to copy onto points, matching @N,
+//but save this as @orient so it won't be ambiguous.
+
+//The copy sop assumes your geo points down the z-axis, 
+//so you need to work out how to rotate {0,0,1} onto @N.
+
+//Dihedral() does exactly this, it gives you a matrix 
+//that rotates one vector onto another.
+
+//We know by now that a rotation matrix and a quaternion 
+//are interchangeable, so all we do with that matrix is
+//convert it to our orient quaternion:
+matrix3 m = dihedral( {0,1,0} , @N);
+@orient = quaternion(m);
+
+
+//========Simple scale Geo
+matrix3 m = ident();
+scale(m,chv('scale'));
+@P *= m;
+
+//========Scale vdb NOT WORK WITH VOLUMES
+vector scale = chv("scale");
+matrix xform4 = primintrinsic(0,"transform",@ptnum);
+scale(xform4,scale);
+setprimintrinsic(0,"transform",@ptnum,xform4,"set")
+//--------------------------------------
+
+
+// Article
+// 3x3 matrix is a rotation (and also scale) matrix. 
+// It does not store translation vector, since there is
+// no space to store it, like in 4x4 transform matrices.
+// We usually use 4x4 matrices to store full transforms 
+// (translation, rotation, scale), and 3x3 to store orientations. 
+// In later case, additional pivot attribute may be used to store translation. 
+// VDB's transform intrinsic may be special, however. 
+
+// ========= Extract components from matrix
+maxtrix m = qconvert(@orient);
+vector trans = cracktransform(0,0,0,{0,0,0},m);
+vector rot = cracktransform(0,0,1,{0,0,0},m);
+vector scale = cracktransform(0,0,2,{0,0,0},m);
+//--------------------------------------
+
+

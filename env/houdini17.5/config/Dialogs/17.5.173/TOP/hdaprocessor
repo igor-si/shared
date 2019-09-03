@@ -1,0 +1,415 @@
+// Magic: 22b1708b
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Mon Sep  2 02:07:44 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+displayedparms.gad = NULL { }
+expressionparms.gad = NULL { }
+operatortype.gad = NULL { }
+
+templatenode.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ templatenode.label = PARM_LABEL("Template Node", "templatenode") WIDTH(1.5);
+ PARM_FIELD(pathstring, "templatenode") VALUE(templatenode.val) 
+	LABELREF(templatenode.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(templatenode.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(templatenode.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+
+inputfile.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ inputfile.label = PARM_LABEL("HDA File", "inputfile") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "inputfile") LABELREF(inputfile.label)
+	VALUE(inputfile.val) HSTRETCH;
+
+    inputfile.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(inputfile.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+optypeselection.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+optypeselection.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    PARM_LABEL_SIMPLE("Operator Type", "optypeselection") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    optypeselection.menu;
+
+    {  }
+
+}
+
+updateHDAParms.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    PARM_BUTTON("updateHDAParms", "Update HDA Parameters")
+	push VALUE(updateHDAParms.val);
+
+}
+
+filterparms.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    {  }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("filterparms", "Filter HDA Parameters")
+	push VALUE(filterparms.val);
+
+}
+}	// Template join.bot
+
+
+autoexpression.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("autoexpression", "Auto Enable HDA Parameter Expressions") toggle VALUE(autoexpression.val);
+
+    { HSTRETCH }
+
+}
+
+pdg_workitemgeneration.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Work Item Generation", "pdg_workitemgeneration") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_workitemgeneration.menu;
+
+    { HSTRETCH }
+
+}
+
+iterations.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ iterations.label = PARM_LABEL("Iterations", "iterations") WIDTH(1.5);
+ PARM(integer, 1, "iterations", none, none) RANGE(0,10)
+	 LABELREF(iterations.label) HSTRETCH;
+
+}
+usepriority.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+usepriority.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+usepriority.gad = PARM_BUTTON("usepriority", "") toggle VALUE(usepriority.val);
+
+itempriority.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ itempriority.label = PARM_LABEL("Priority", "itempriority") WIDTH(1.32);
+ PARM(integer, 1, "itempriority", none, none) RANGE(0,10)
+	 LABELREF(itempriority.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+usebatch.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+usebatch.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+usebatch.gad = PARM_BUTTON("usebatch", "") toggle VALUE(usebatch.val);
+
+batchsize.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ batchsize.label = PARM_LABEL("Batch Size", "batchsize") WIDTH(1.32);
+ PARM(integer, 1, "batchsize", none, none) RANGE(0,10)
+	 LABELREF(batchsize.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+sequential.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sequential", "Sequential") toggle VALUE(sequential.val);
+
+    { HSTRETCH }
+
+}
+
+createfileinput.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("createfileinput", "Create File SOP Inputs") toggle VALUE(createfileinput.val);
+
+    { HSTRETCH }
+
+}
+
+fileinputs.parm =
+{
+    LAYOUT(horizontal) SPACING(0.02) HSTRETCH JUSTIFY(left, center)
+
+    PARM_LABEL_SIMPLE("Number of Inputs", "fileinputs") WIDTH(1.5);
+    { WIDTH(0.08) }
+
+    ROW
+    {
+	HSTRETCH(0.5) JUSTIFY(left, center)  VALUE(fileinputs.val)
+
+        fileinputs.field = PARM_FIELD (integer, "fileinputs")
+				VALUE(fileinputs.val) HSTRETCH(0.5)
+				 PREF_WIDTH(0.5);
+
+        ROW
+        {
+	     LOOK(lightline) VMARGIN(1p)
+
+   	     INCREMENT_ICONBUTTON VALUE(fileinputs.more.val)	
+	    	HELP("Add Another Instance") SIZE(0.2, 0.24);
+	     DECREMENT_ICONBUTTON VALUE(fileinputs.less.val)	
+	        HELP("Remove Last Instance") SIZE(0.2, 0.24);
+
+	}
+
+	ACTION_BUTTON "Clear" VALUE(fileinputs.clear.val);
+    }
+
+    { HSTRETCH }
+}
+
+fileinputs.multilist = 
+{
+    LAYOUT(vertical) STRETCH MARGIN(0.05)
+}
+
+fileinputs.gad =
+{
+    LAYOUT(vertical) STRETCH SPACING(0.02)
+
+    fileinputs.parm;
+    fileinputs.multilist;
+}
+
+writegeo.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("writegeo", "Write Geometry") toggle VALUE(writegeo.val);
+
+    { HSTRETCH }
+
+}
+
+outputfile.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    outputfile.label = PARM_LABEL("Output File Name", "outputfile") WIDTH(1.5);
+    PARM_FIELD(string, "outputfile") VALUE(outputfile.val) 
+	LABELREF(outputfile.label) HSTRETCH;
+
+}
+
+outputtag.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    outputtag.label = PARM_LABEL("Output Tag", "outputtag") WIDTH(1.5);
+    PARM_FIELD(string, "outputtag") VALUE(outputtag.val) 
+	LABELREF(outputtag.label) HSTRETCH;
+
+}
+
+dumpdebug.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("dumpdebug", "Save Debug .hip File") toggle VALUE(dumpdebug.val);
+
+    { HSTRETCH }
+
+}
+
+pdgnodedeps.parm =
+{
+    LAYOUT(horizontal) SPACING(0.02) HSTRETCH JUSTIFY(left, center)
+
+    PARM_LABEL_SIMPLE("File Dependencies", "pdgnodedeps") WIDTH(1.5);
+    { WIDTH(0.08) }
+
+    ROW
+    {
+	HSTRETCH(0.5) JUSTIFY(left, center)  VALUE(pdgnodedeps.val)
+
+        pdgnodedeps.field = PARM_FIELD (integer, "pdgnodedeps")
+				VALUE(pdgnodedeps.val) HSTRETCH(0.5)
+				 PREF_WIDTH(0.5);
+
+        ROW
+        {
+	     LOOK(lightline) VMARGIN(1p)
+
+   	     INCREMENT_ICONBUTTON VALUE(pdgnodedeps.more.val)	
+	    	HELP("Add Another Instance") SIZE(0.2, 0.24);
+	     DECREMENT_ICONBUTTON VALUE(pdgnodedeps.less.val)	
+	        HELP("Remove Last Instance") SIZE(0.2, 0.24);
+
+	}
+
+	ACTION_BUTTON "Clear" VALUE(pdgnodedeps.clear.val);
+    }
+
+    { HSTRETCH }
+}
+
+pdgnodedeps.multilist = 
+{
+    LAYOUT(vertical) STRETCH MARGIN(0.05)
+}
+
+pdgnodedeps.gad =
+{
+    LAYOUT(vertical) STRETCH SPACING(0.02)
+
+    pdgnodedeps.parm;
+    pdgnodedeps.multilist;
+}
+
+outputgroup.gad = 
+GROUP simple "Asset Output"
+{ 
+    VALUE(outputgroup.gad.val) LAYOUT(vertical) HSTRETCH 
+	    writegeo.gad;		
+	    outputfile.gad;		
+	    outputtag.gad;		
+	    dumpdebug.gad;		
+} 
+
+inputgroup.gad = 
+GROUP simple "Asset Inputs"
+{ 
+    VALUE(inputgroup.gad.val) LAYOUT(vertical) HSTRETCH 
+	    createfileinput.gad;		
+	    fileinputs.gad;		
+} 
+
+workitemgroup.gad = 
+GROUP simple "Work Items"
+{ 
+    VALUE(workitemgroup.gad.val) LAYOUT(vertical) HSTRETCH 
+	    pdg_workitemgeneration.gad;		
+	    iterations.gad;		
+	    usepriority.row.join;		
+	    usebatch.row.join;		
+	    sequential.gad;		
+} 
+
+asset.gad = 
+GROUP simple "Asset"
+{ 
+    VALUE(asset.gad.val) LAYOUT(vertical) HSTRETCH 
+	    templatenode.gad;		
+	    inputfile.gad;		
+	    optypeselection.row.join;		
+	    autoexpression.gad;		
+} 
+
+generation.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "generation.gad"
+    { 
+	VALUE(generation.gad.val) STRETCH(1,0)
+
+	TAB "Generation"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    operatortype.gad;		
+	    asset.gad;		
+	    workitemgroup.gad;		
+	    inputgroup.gad;		
+	    outputgroup.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Files"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    pdgnodedeps.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    displayedparms.gad; 
+    expressionparms.gad; 
+    generation.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

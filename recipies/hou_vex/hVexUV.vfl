@@ -1,0 +1,23 @@
+
+
+==============================
+// Procedural UVs more like @vtxnum / (@numvtx-1) than marched_length /
+// curve_length.
+
+// One way to go is to use uvsample function:
+
+float perc = fit(@Frame, 1, 100, 0, 1);
+vector pos = uvsample("op:../CURVE","P", "uv", set(perc, 0, 0));  // @uv is set(@perc, 0, 0).
+addpoint(0, pos);
+
+// Another is to use primuvconvert. No need to compute percentage then:
+
+#include <math.h>
+float perc = fit(@Frame, 1, 100, 0, 1);
+vector2 uv = primuvconvert("op:../CURVE", set(perc, 0), 0, PRIMUV_UNITLEN_TO_UNIT);
+vector pos = primuv("op:../CURVE", "P", 0, uv);
+addpoint(0, pos);
+-------------------------------------------------
+
+
+

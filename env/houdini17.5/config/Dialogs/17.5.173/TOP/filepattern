@@ -1,0 +1,179 @@
+// Magic: ad576027
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Mon Sep  2 02:05:34 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_workitemgeneration.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Work Item Generation", "pdg_workitemgeneration") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_workitemgeneration.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+filetypes.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("File Types", "filetypes") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    filetypes.menu;
+
+    { HSTRETCH }
+
+}
+
+pattern.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ pattern.label = PARM_LABEL("Glob Pattern", "pattern") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "pattern") LABELREF(pattern.label)
+	VALUE(pattern.val) HSTRETCH;
+
+    pattern.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(pattern.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+recursive.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("recursive", "Recursive") toggle VALUE(recursive.val);
+
+    { HSTRETCH }
+
+}
+overrideresultdatatag.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+overrideresultdatatag.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+overrideresultdatatag.gad = PARM_BUTTON("overrideresultdatatag", "") toggle VALUE(overrideresultdatatag.val);
+
+resultdatatag.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    resultdatatag.label = PARM_LABEL("Result Data Tag", "resultdatatag") WIDTH(1.32);
+    PARM_FIELD(string, "resultdatatag") VALUE(resultdatatag.val) 
+	LABELREF(resultdatatag.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+overrideworkitemindex.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+overrideworkitemindex.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+overrideworkitemindex.gad = PARM_BUTTON("overrideworkitemindex", "") toggle VALUE(overrideworkitemindex.val);
+
+workitemindex.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ workitemindex.label = PARM_LABEL("Work Item Index", "workitemindex") WIDTH(1.32);
+ PARM(integer, 1, "workitemindex", none, none) RANGE(0,10)
+	 LABELREF(workitemindex.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+indexfromfilesequence.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("indexfromfilesequence", "Index From File Sequence") toggle VALUE(indexfromfilesequence.val);
+
+    { HSTRETCH }
+
+}
+
+split.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("split", "Split Results into Separate Items") toggle VALUE(split.val);
+
+    { HSTRETCH }
+
+}
+
+errornomatch.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("errornomatch", "Error on No Matches") toggle VALUE(errornomatch.val);
+
+    { HSTRETCH }
+
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    pdg_workitemgeneration.gad; 
+    sepparm.gad; 
+    filetypes.gad; 
+    pattern.gad; 
+    recursive.gad; 
+    overrideresultdatatag.row.join; 
+    overrideworkitemindex.row.join; 
+    indexfromfilesequence.gad; 
+    split.gad; 
+    errornomatch.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

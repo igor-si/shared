@@ -1,0 +1,132 @@
+// a lot of information and functionality is stored in
+// "intrinsic" attributes, they might be hidden to many users
+// because they do not show up in primitive attributes list
+// by default// they are however very useful and important for manipulating
+// and controlling those primitives from VEX
+HiQPdf Evaluation 02.13.2018
+// you can display intrinsics in Geometry Spreadsheet, in primitive attributes
+// and Show All Intrinsics in Intrinsics drop‐down menu
+// intrinsics that are greyed out are read‐only, the rest is also writable
+// in this example I will show you how to access and modify those
+// values, I will refer to them based on their point numbers as
+// those intrinsics vary based on the primitive we are dealing with
+// 0 ‐ packed geo, 1 ‐ VDB, 2 ‐ sphere, 3 ‐ packed disk, 4 ‐ abc
+// if you change order of inputs in merge, then those numbers will change
+// in our case @ptnum matches @primnum
+// this is the type of our primitive
+s@primitiveType = primintrinsic(0, "typename", @ptnum);
+matrix3 xform = ident();
+// sphere
+if (@ptnum == 2) {
+    // accessing sphere volume and area
+    f@sphereVolume = primintrinsic(0, "measuredvolume", @ptnum);
+    f@sphereArea = primintrinsic(0, "measuredarea", @ptnum);
+    
+    // changing sphere scale, rotation which is not accessible through standard attributes
+    // this intrinsic is also present on other primitives
+    xform = primintrinsic(0, "transform", @ptnum);
+    scale(xform, {1,2,3});
+    rotate(xform, radians(45), normalize({1,2,3}) );
+}
+// packed geo
+if (@ptnum == 0) {
+    // change viewport display to point cloud
+    setprimintrinsic(0, "viewportlod", @ptnum, "points", "set");
+    
+    // move packed's pivot to the bottom
+    // bounds are stared in this order: xmin, xmax, ymin, ymax, zmin, zmax
+    float bounds[] = primintrinsic(0, "bounds", @ptnum);
+    vector pivot = primintrinsic(0, "pivot", @ptnum);
+    pivot.y = bounds[2];
+    setprimintrinsic(0, "pivot", @ptnum, pivot, "set");
+    v@P.y = bounds[2];
+    
+    // and now transform the primitive along its new pivot :)
+    xform = primintrinsic(0, "transform", @ptnum);
+    scale(xform, {1,2,3});
+    rotate(xform, radians(‐45), normalize({1,2,3}) );
+}
+// packed disk
+if (@ptnum == 3) {
+    // changing this intrinsic can point the primitive into different geometry on disk
+    // so instead of boring cube let's have something way cooler
+    // this is very powerful ‐ e.g. controling your instances, see my other blog post about using it
+    // https://jurajtomori.wordpress.com/2016/09/29/rain‐and‐ripples‐rnd/
+    setprimintrinsic(0, "unexpandedfilename", @ptnum, "$HH/geo/HoudiniLogo.bgeo", "set");
+    
+    // and our mandatory transformation :)
+    xform = primintrinsic(0, "transform", @ptnum);
+    scale(xform, 5);
+    rotate(xform, radians(‐90), {1,0,0} );
+}
+// alembic
+if (@ptnum == 4) {
+    // make him move in the loop, he has 48 frames of animation
+    float frame = @Frame / 24;
+    frame = frame % 2;
+    setprimintrinsic(0, "abcframe", @ptnum, frame, "set");
+    
+    // get some useful info
+    s@abcObjPath = primintrinsic(0, "abcobjectpath", @ptnum);
+    s@abcFilePath = primintrinsic(0, "abcfilename", @ptnum); // also useful intrinsic
+    s@abcType = primintrinsic(0, "abctypename", @ptnum);
+    s@abcVis = primintrinsic(0, "viewportlod", @ptnum);
+    
+    // scale the bear up
+    xform = primintrinsic(0, "transform", @ptnum);
+    scale(xform, 20);
+}
+// setting transform intrinsic inside IFs did not work correctly, so I do it at the end
+setprimintrinsic(0, "transform", @ptnum, xform, "set");
+VDB intrinsics
+// for some reason updating VDB's transform and other primitives transform
+// did not work properly from one wrangle, so I put it here
+// VDB's transform is 4x4 matrix, while other prims have 3x3 matrices
+// VDB
+if (@ptnum == 1) {
+    // accessing useful information
+    i@vdbVoxels = primintrinsic(0, "activevoxelcount", @ptnum);    s@vdbClass = primintrinsic(0, "vdb_class", @ptnum);
+    s@vdbType = primintrinsic(0, "vdb_value_type", @ptnum);
+    s@vdbVis = primintrinsic(0, "volumevisualmode", @ptnum);
+    v@vdbVoxelSize = primintrinsic(0, "voxelsize", @ptnum);
+    
+    // changing volume transformation
+    matrix xform4 = primintrinsic(0, "transform", @ptnum);
+    scale(xform4, {1,2,3});
+    rotate(xform4, radians(‐45), {1,0,0});
+    setprimintrinsic(0, "transform", 1, xform4, "set");
+    
+    // setting volume export precision to half float, which saves space when written to disk
+    setprimintrinsic(0, "vdb_is_saved_as_half_float", @ptnum, 1, "set");
+
+
+
+
+========================extract transform from packed piece
+v@pivot = primintrinsic(0,"pivot",@primnum);
+matrix m = primintrinsic(0,'packedfulltransform',@ptnum);
+@orient = quaternion(matrix3(m));
+----------------------------------------------------
+
+==========================scale packed prims
+vector scale = chv("scale");
+matrix3 trn = primintrinsic(0,"transform",@primnum);
+matrix scalem = maketransform(0,0,{0,0,0},{0,0,0},scale,v@P);
+trn*=matrix(scalem);
+setprimintrinsic(0,"transform",@primnum,trn);
+==============================================
+
+
+===============rotate packed prims
+float angle = @Time*@ptnum;
+vector axis = {0,1,0};
+matrix3 m = ident();
+rotate (m, angle, axis);
+setprimintrinsic(0,'transform', @ptnum, m,'set');
+==============================================
+
+
+============ get voxelsize from vdb
+vector scale = primintrinsic(0, "voxelsize", @primnum);
+@t = scale;
+------------------------------------------------------

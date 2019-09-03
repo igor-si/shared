@@ -1,0 +1,372 @@
+// Magic: d3498020
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Fri Aug 16 01:45:49 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+vizMode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("vizMode", "vizMode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    vizMode.menu;
+
+    { HSTRETCH }
+
+}
+
+constraintName.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    constraintName.label = PARM_LABEL("constraintName", "constraintName") WIDTH(1.5);
+    PARM_FIELD(string, "constraintName") VALUE(constraintName.val) 
+	LABELREF(constraintName.label) HSTRETCH;
+
+}
+
+constraintType.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    constraintType.label = PARM_LABEL("constraintType", "constraintType") WIDTH(1.5);
+    PARM_FIELD(string, "constraintType") VALUE(constraintType.val) 
+	LABELREF(constraintType.label) HSTRETCH;
+
+}
+
+sepparm3.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+connectadjacentpieces4_searchradius.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ connectadjacentpieces4_searchradius.label = PARM_LABEL("Search Radius", "connectadjacentpieces4_searchradius") WIDTH(1.5);
+ PARM(float, 1, "connectadjacentpieces4_searchradius", none, none) RANGE(0,10)
+	LOCK_RANGE_MIN LABELREF(connectadjacentpieces4_searchradius.label) HSTRETCH;
+
+}
+
+connectadjacentpieces4_maxsearchpoints.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ connectadjacentpieces4_maxsearchpoints.label = PARM_LABEL("Max Search Points", "connectadjacentpieces4_maxsearchpoints") WIDTH(1.5);
+ PARM(integer, 1, "connectadjacentpieces4_maxsearchpoints", none, none) RANGE(0,1000)
+	LOCK_RANGE_MIN LABELREF(connectadjacentpieces4_maxsearchpoints.label) HSTRETCH;
+
+}
+
+connectadjacentpieces4_maxconnections.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ connectadjacentpieces4_maxconnections.label = PARM_LABEL("Max Connections", "connectadjacentpieces4_maxconnections") WIDTH(1.5);
+ PARM(integer, 1, "connectadjacentpieces4_maxconnections", none, none) RANGE(1,5)
+	LOCK_RANGE_MIN LABELREF(connectadjacentpieces4_maxconnections.label) HSTRETCH;
+
+}
+
+sepparm6.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+breakForce.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ breakForce.label = PARM_LABEL("breakForce", "breakForce") WIDTH(1.5);
+ PARM(float, 1, "breakForce", none, none) RANGE(0,10)
+	 LABELREF(breakForce.label) HSTRETCH;
+
+}
+
+breakAngle.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ breakAngle.label = PARM_LABEL("breakAngle", "breakAngle") WIDTH(1.5);
+ PARM(float, 1, "breakAngle", none, none) RANGE(0,10)
+	 LABELREF(breakAngle.label) HSTRETCH;
+
+}
+
+breakTorque.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ breakTorque.label = PARM_LABEL("breakTorque", "breakTorque") WIDTH(1.5);
+ PARM(float, 1, "breakTorque", none, none) RANGE(0,10)
+	 LABELREF(breakTorque.label) HSTRETCH;
+
+}
+
+sepparm5.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+set1.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ set1.label = PARM_LABEL("scatter_amount", "set1") WIDTH(1.5);
+ PARM(integer, 1, "set1", none, none) RANGE(0,10)
+	 LABELREF(set1.label) HSTRETCH;
+
+}
+
+scatter_keep_probability.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ scatter_keep_probability.label = PARM_LABEL("keep_probability", "scatter_keep_probability") WIDTH(1.5);
+ PARM(float, 1, "scatter_keep_probability", none, none) RANGE(0,1)
+	 LABELREF(scatter_keep_probability.label) HSTRETCH;
+
+}
+
+sepparm4.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+scatterBreakForce.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ scatterBreakForce.label = PARM_LABEL("scatterBreakForce", "scatterBreakForce") WIDTH(1.5);
+ PARM(float, 1, "scatterBreakForce", none, none) RANGE(0,10)
+	 LABELREF(scatterBreakForce.label) HSTRETCH;
+
+}
+
+scatterBreakAngle.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ scatterBreakAngle.label = PARM_LABEL("scatterBreakAngle", "scatterBreakAngle") WIDTH(1.5);
+ PARM(float, 1, "scatterBreakAngle", none, none) RANGE(0,10)
+	 LABELREF(scatterBreakAngle.label) HSTRETCH;
+
+}
+
+scatterBreakTorque.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ scatterBreakTorque.label = PARM_LABEL("scatterBreakTorque", "scatterBreakTorque") WIDTH(1.5);
+ PARM(float, 1, "scatterBreakTorque", none, none) RANGE(0,10)
+	 LABELREF(scatterBreakTorque.label) HSTRETCH;
+
+}
+
+point_keep_probability.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ point_keep_probability.label = PARM_LABEL("keep_probability", "point_keep_probability") WIDTH(1.5);
+ PARM(float, 1, "point_keep_probability", none, none) RANGE(0,1)
+	 LABELREF(point_keep_probability.label) HSTRETCH;
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+pointBreakForce.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ pointBreakForce.label = PARM_LABEL("pointBreakForce", "pointBreakForce") WIDTH(1.5);
+ PARM(float, 1, "pointBreakForce", none, none) RANGE(0,10)
+	 LABELREF(pointBreakForce.label) HSTRETCH;
+
+}
+
+pointBreakAngle.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ pointBreakAngle.label = PARM_LABEL("pointBreakAngle", "pointBreakAngle") WIDTH(1.5);
+ PARM(float, 1, "pointBreakAngle", none, none) RANGE(0,10)
+	 LABELREF(pointBreakAngle.label) HSTRETCH;
+
+}
+
+pointBreakTorque.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ pointBreakTorque.label = PARM_LABEL("pointBreakTorque", "pointBreakTorque") WIDTH(1.5);
+ PARM(float, 1, "pointBreakTorque", none, none) RANGE(0,10)
+	 LABELREF(pointBreakTorque.label) HSTRETCH;
+
+}
+
+centroid_keep_probability.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ centroid_keep_probability.label = PARM_LABEL("keep_probability", "centroid_keep_probability") WIDTH(1.5);
+ PARM(float, 1, "centroid_keep_probability", none, none) RANGE(0,1)
+	 LABELREF(centroid_keep_probability.label) HSTRETCH;
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+centroidBreakForce.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ centroidBreakForce.label = PARM_LABEL("centroidBreakForce", "centroidBreakForce") WIDTH(1.5);
+ PARM(float, 1, "centroidBreakForce", none, none) RANGE(0,10)
+	 LABELREF(centroidBreakForce.label) HSTRETCH;
+
+}
+
+centroidBreakAngle.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ centroidBreakAngle.label = PARM_LABEL("centroidBreakAngle", "centroidBreakAngle") WIDTH(1.5);
+ PARM(float, 1, "centroidBreakAngle", none, none) RANGE(0,10)
+	 LABELREF(centroidBreakAngle.label) HSTRETCH;
+
+}
+
+centroidBreakTorque.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ centroidBreakTorque.label = PARM_LABEL("centroidBreakTorque", "centroidBreakTorque") WIDTH(1.5);
+ PARM(float, 1, "centroidBreakTorque", none, none) RANGE(0,10)
+	 LABELREF(centroidBreakTorque.label) HSTRETCH;
+
+}
+
+scatter_mode.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "scatter_mode.gad"
+    { 
+	VALUE(scatter_mode.gad.val) STRETCH(1,0)
+
+	TAB "scatter mode"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    set1.gad;		
+	    scatter_keep_probability.gad;		
+	    sepparm4.gad;		
+	    scatterBreakForce.gad;		
+	    scatterBreakAngle.gad;		
+	    scatterBreakTorque.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "point prximity mode"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    point_keep_probability.gad;		
+	    sepparm.gad;		
+	    pointBreakForce.gad;		
+	    pointBreakAngle.gad;		
+	    pointBreakTorque.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "inside face centroid mode"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    centroid_keep_probability.gad;		
+	    sepparm2.gad;		
+	    centroidBreakForce.gad;		
+	    centroidBreakAngle.gad;		
+	    centroidBreakTorque.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    vizMode.gad; 
+    constraintName.gad; 
+    constraintType.gad; 
+    sepparm3.gad; 
+    connectadjacentpieces4_searchradius.gad; 
+    connectadjacentpieces4_maxsearchpoints.gad; 
+    connectadjacentpieces4_maxconnections.gad; 
+    sepparm6.gad; 
+    breakForce.gad; 
+    breakAngle.gad; 
+    breakTorque.gad; 
+    sepparm5.gad; 
+    scatter_mode.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

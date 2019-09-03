@@ -1,0 +1,279 @@
+// Magic: 1ebad6d2
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Sun Sep  1 18:44:55 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_dynamicpartition.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("pdg_dynamicpartition", "Use Dynamic Partitioning") toggle VALUE(pdg_dynamicpartition.val);
+
+    { HSTRETCH }
+
+}
+
+pdg_partitionmerge.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("pdg_partitionmerge", "Merge Input Attributes") toggle VALUE(pdg_partitionmerge.val);
+
+    { HSTRETCH }
+
+}
+
+mode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Partition By", "mode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    mode.menu;
+
+    { HSTRETCH }
+
+}
+
+independent.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("independent", "Partition Attributes Independently") toggle VALUE(independent.val);
+
+    { HSTRETCH }
+
+}
+
+createunmatched.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("createunmatched", "Create Partition from Unmatched Items") toggle VALUE(createunmatched.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+attributes.parm =
+{
+    LAYOUT(horizontal) SPACING(0.02) HSTRETCH JUSTIFY(left, center)
+
+    PARM_LABEL_SIMPLE("Attributes", "attributes") WIDTH(1.5);
+    { WIDTH(0.08) }
+
+    ROW
+    {
+	HSTRETCH(0.5) JUSTIFY(left, center)  VALUE(attributes.val)
+
+        attributes.field = PARM_FIELD (integer, "attributes")
+				VALUE(attributes.val) HSTRETCH(0.5)
+				 PREF_WIDTH(0.5);
+
+        ROW
+        {
+	     LOOK(lightline) VMARGIN(1p)
+
+   	     INCREMENT_ICONBUTTON VALUE(attributes.more.val)	
+	    	HELP("Add Another Instance") SIZE(0.2, 0.24);
+	     DECREMENT_ICONBUTTON VALUE(attributes.less.val)	
+	        HELP("Remove Last Instance") SIZE(0.2, 0.24);
+
+	}
+
+	ACTION_BUTTON "Clear" VALUE(attributes.clear.val);
+    }
+
+    { HSTRETCH }
+}
+
+attributes.multilist = 
+{
+    LAYOUT(vertical) STRETCH MARGIN(0.05)
+}
+
+attributes.gad =
+{
+    LAYOUT(vertical) STRETCH SPACING(0.02)
+
+    attributes.parm;
+    attributes.multilist;
+}
+
+pdg_removestale.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("pdg_removestale", "Auto Remove Stale Dependencies") toggle VALUE(pdg_removestale.val);
+
+    { HSTRETCH }
+
+}
+
+pdg_alwaysevaluate.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("pdg_alwaysevaluate", "Force Re-Evaluation on Cook") toggle VALUE(pdg_alwaysevaluate.val);
+
+    { HSTRETCH }
+
+}
+
+pdg_partitionsort.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Sort Partition By", "pdg_partitionsort") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_partitionsort.menu;
+
+    { HSTRETCH }
+
+}
+
+pdg_dirtymode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Dirtying Mode", "pdg_dirtymode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_dirtymode.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+pdg_partitionwhen.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Partition When", "pdg_partitionwhen") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_partitionwhen.menu;
+
+    { HSTRETCH }
+
+}
+
+pdg_partitiontarget.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ pdg_partitiontarget.label = PARM_LABEL("Partition Target", "pdg_partitiontarget") WIDTH(1.5);
+ PARM_FIELD(pathstring, "pdg_partitiontarget") VALUE(pdg_partitiontarget.val) 
+	LABELREF(pdg_partitiontarget.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(pdg_partitiontarget.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(pdg_partitiontarget.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+
+attribute.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "attribute.gad"
+    { 
+	VALUE(attribute.gad.val) STRETCH(1,0)
+
+	TAB "Attributes"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    mode.gad;		
+	    independent.gad;		
+	    createunmatched.gad;		
+	    sepparm2.gad;		
+	    attributes.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Advanced"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    pdg_removestale.gad;		
+	    pdg_alwaysevaluate.gad;		
+	    pdg_partitionsort.gad;		
+	    pdg_dirtymode.gad;		
+	    sepparm.gad;		
+	    pdg_partitionwhen.gad;		
+	    pdg_partitiontarget.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    pdg_dynamicpartition.gad; 
+    pdg_partitionmerge.gad; 
+    attribute.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

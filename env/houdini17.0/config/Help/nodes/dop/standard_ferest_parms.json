@@ -1,0 +1,1 @@
+{"body": [{"body": [{"body": [{"indent": 4, "type": "para", "extent": [66, 125], "text": ["The path to the SOP node that defines the rest shape."]}], "indent": 0, "text": ["Rest Shape"], "attrs": {"channels": "/restgeometrypath"}, "extent": [16, 28], "type": "dt"}], "container": true, "type": "dt_group"}], "type": "root", "attrs": {"type": "include"}}

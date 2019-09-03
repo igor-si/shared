@@ -1,0 +1,66 @@
+// Magic: 65584ddf
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug  4 17:45:47 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+mMaterialEntries.parm =
+{
+    LAYOUT(horizontal) SPACING(0.02) HSTRETCH JUSTIFY(left, center)
+
+    PARM_LABEL_SIMPLE("Materials", "mMaterialEntries") WIDTH(1.5);
+    { WIDTH(0.08) }
+
+    ROW
+    {
+	HSTRETCH(0.5) JUSTIFY(left, center) VALUE(mMaterialEntries.val)
+
+	mMaterialEntries.field = PARM_FIELD(integer, "mMaterialEntries") 
+		VALUE(mMaterialEntries.val) HSTRETCH(0.5) PREF_WIDTH(0.5);
+
+        ROW
+        {
+	     LOOK(lightline) VMARGIN(1p)
+
+   	     INCREMENT_ICONBUTTON VALUE(mMaterialEntries.more.val)	
+	    	HELP("Add Another Instance") SIZE(0.2, 0.24);
+	     DECREMENT_ICONBUTTON VALUE(mMaterialEntries.less.val)	
+	        HELP("Remove Last Instance") SIZE(0.2, 0.24);
+	}
+	ACTION_BUTTON "Clear" VALUE(mMaterialEntries.clear.val);
+    }
+
+    { HSTRETCH }
+}
+
+mMaterialEntries.multiswitch =
+{
+    LAYOUT(vertical) STRETCH
+}
+
+mMaterialEntries.gad =
+{
+    LAYOUT(vertical) STRETCH
+
+    mMaterialEntries.parm;
+    mMaterialEntries.multiswitch;
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    mMaterialEntries.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

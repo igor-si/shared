@@ -1,0 +1,115 @@
+// Magic: d7cb31e1
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Mon Aug  5 15:51:52 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+ring_size.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ ring_size.label = PARM_LABEL("Ring Divisions", "ring_size") WIDTH(1.5);
+ PARM(integer, 1, "ring_size", none, none) RANGE(0,10)
+	 LABELREF(ring_size.label) HSTRETCH;
+
+}
+
+resample_scale.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ resample_scale.label = PARM_LABEL("Resample Scale", "resample_scale") WIDTH(1.5);
+ PARM(float, 1, "resample_scale", none, none) RANGE(10,100)
+	 LABELREF(resample_scale.label) HSTRETCH;
+
+}
+
+use_pscale.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("use_pscale", "Use Pscale") toggle VALUE(use_pscale.val);
+
+    { HSTRETCH }
+
+}
+
+scale.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ scale.label = PARM_LABEL("Branch Width", "scale") WIDTH(1.5);
+ PARM(float, 1, "scale", none, none) RANGE(0,1)
+	 LABELREF(scale.label) HSTRETCH;
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+input.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("input", "Detriangulate Junctions (EXPERIMENTAL)") toggle VALUE(input.val);
+
+    { HSTRETCH }
+
+}
+
+folder0.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder0.gad"
+    { 
+	VALUE(folder0.gad.val) STRETCH(1,0)
+
+	TAB "Branchomatic Controls"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    ring_size.gad;		
+	    resample_scale.gad;		
+	    use_pscale.gad;		
+	    scale.gad;		
+	    sepparm.gad;		
+	    input.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    folder0.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

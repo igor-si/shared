@@ -1,0 +1,215 @@
+// Magic: 2840482b
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug  4 17:46:00 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+group.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    group.label = PARM_LABEL("Curve Group", "group") WIDTH(1.5);
+    PARM_FIELD(string, "group") VALUE(group.val) 
+	LABELREF(group.label) HSTRETCH;
+
+    group.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+curve_u_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    curve_u_name.label = PARM_LABEL("Curve U Name", "curve_u_name") WIDTH(1.5);
+    PARM_FIELD(string, "curve_u_name") VALUE(curve_u_name.val) 
+	LABELREF(curve_u_name.label) HSTRETCH;
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+numerator.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Numerator", "numerator") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    numerator.menu;
+
+    { HSTRETCH }
+
+}
+
+vtx_num_denominator_use.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Denominator", "vtx_num_denominator_use") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    vtx_num_denominator_use.menu;
+
+    { HSTRETCH }
+
+}
+
+vtx_num_float_denominator.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ vtx_num_float_denominator.label = PARM_LABEL("Float Value", "vtx_num_float_denominator") WIDTH(1.5);
+ PARM(float, 1, "vtx_num_float_denominator", none, none) RANGE(0,10000)
+	LOCK_RANGE_MIN LABELREF(vtx_num_float_denominator.label) HSTRETCH;
+
+}
+
+pt_length_denominator_use.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Denominator", "pt_length_denominator_use") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pt_length_denominator_use.menu;
+
+    { HSTRETCH }
+
+}
+
+pt_length_float_denominator.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ pt_length_float_denominator.label = PARM_LABEL("Float Value", "pt_length_float_denominator") WIDTH(1.5);
+ PARM(float, 1, "pt_length_float_denominator", none, none) RANGE(0,5)
+	LOCK_RANGE_MIN LABELREF(pt_length_float_denominator.label) HSTRETCH;
+
+}
+
+float_attr_to_u.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    float_attr_to_u.label = PARM_LABEL("Float Attr", "float_attr_to_u") WIDTH(1.5);
+    PARM_FIELD(string, "float_attr_to_u") VALUE(float_attr_to_u.val) 
+	LABELREF(float_attr_to_u.label) HSTRETCH;
+
+    float_attr_to_u.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+attr_float_denominator.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ attr_float_denominator.label = PARM_LABEL("Denominator", "attr_float_denominator") WIDTH(1.5);
+ PARM(float, 1, "attr_float_denominator", none, none) RANGE(0,5)
+	LOCK_RANGE_MIN LABELREF(attr_float_denominator.label) HSTRETCH;
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+mark_closed_curve.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("mark_closed_curve", "Mark Closed Curve") toggle VALUE(mark_closed_curve.val);
+
+    { HSTRETCH }
+
+}
+mark_curve.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+mark_curve.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+mark_curve.gad = PARM_BUTTON("mark_curve", "") toggle VALUE(mark_curve.val);
+
+mark_curve_attr_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    mark_curve_attr_name.label = PARM_LABEL("Int Curve Attr", "mark_curve_attr_name") WIDTH(1.32);
+    PARM_FIELD(string, "mark_curve_attr_name") VALUE(mark_curve_attr_name.val) 
+	LABELREF(mark_curve_attr_name.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+mark_point.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+mark_point.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+mark_point.gad = PARM_BUTTON("mark_point", "") toggle VALUE(mark_point.val);
+
+mark_point_attr_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    mark_point_attr_name.label = PARM_LABEL("Int Point Attr", "mark_point_attr_name") WIDTH(1.32);
+    PARM_FIELD(string, "mark_point_attr_name") VALUE(mark_point_attr_name.val) 
+	LABELREF(mark_point_attr_name.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    group.gad; 
+    curve_u_name.gad; 
+    sepparm.gad; 
+    numerator.gad; 
+    vtx_num_denominator_use.gad; 
+    vtx_num_float_denominator.gad; 
+    pt_length_denominator_use.gad; 
+    pt_length_float_denominator.gad; 
+    float_attr_to_u.gad; 
+    attr_float_denominator.gad; 
+    sepparm2.gad; 
+    mark_closed_curve.gad; 
+    mark_curve.row.join; 
+    mark_point.row.join; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

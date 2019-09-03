@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <tool name="exportToCmd" label="exportToCmd" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import savescene
+reload(savescene)
+savescene.saveSceneToCmd(hou.hipFile.path() )]]></script>
+  </tool>
+
+  <toolshelf name="isscene_shelf" label="ISScene">
+    <memberTool name="exportToCmd"/>
+    <memberTool name="loadCmdAndSave"/>
+    <memberTool name="saveAndBackup"/>
+    <memberTool name="saveAndIncrement"/>
+    <memberTool name="loadRecentHipfile"/>
+    <memberTool name="project_manager"/>
+    <memberTool name="setupQuick"/>
+  </toolshelf>
+
+  <toolshelf name="create" label="Create">
+    <memberTool name="geometry_box"/>
+    <memberTool name="geometry_sphere"/>
+    <memberTool name="geometry_tube"/>
+    <memberTool name="geometry_torus"/>
+    <memberTool name="geometry_grid"/>
+    <memberTool name="object_null"/>
+    <memberTool name="geometry_line"/>
+    <memberTool name="geometry_circle"/>
+    <memberTool name="sop_curve"/>
+    <memberTool name="geometry_drawcurve"/>
+    <memberTool name="object_path"/>
+    <memberTool name="geometry_spraypaint"/>
+    <memberTool name="sop_font"/>
+    <memberTool name="geometry_platonic"/>
+    <memberTool name="sop_lsystem"/>
+    <memberTool name="sop_metaball"/>
+    <memberTool name="geometry_file"/>
+  </toolshelf>
+
+  <tool name="saveAndBackup" label="saveAndBackup" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import savescene
+reload(savescene)
+
+savescene.saveSceneAndBackup()
+]]></script>
+  </tool>
+
+  <tool name="saveAndIncrement" label="saveAndIncrement" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import savescene
+reload(savescene)
+
+savescene.saveSceneAndBackup(increment_version=True)
+]]></script>
+  </tool>
+
+  <tool name="loadCmdAndSave" label="loadCmdAndSave" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import savescene
+reload(savescene)
+savescene.loadCmdAndSave()]]></script>
+  </tool>
+
+  <tool name="loadRecentHipfile" label="loadRecentHipfile" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import savescene
+reload(savescene)
+savescene.loadRecentHipfile()
+]]></script>
+  </tool>
+
+  <tool name="project_manager" label="project_manager" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import isproject_utils
+reload(isproject_utils)
+isproject_utils.test()
+]]></script>
+  </tool>
+
+  <tool name="setupQuick" label="setupQuick" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+      <contextNetType>SOP</contextNetType>
+      <contextNetType>DOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts.isproject import setup_scene
+reload(setup_scene)
+setup_scene.setupQuick()
+]]></script>
+  </tool>
+</shelfDocument>

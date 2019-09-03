@@ -1,0 +1,852 @@
+// Magic: ee50059e
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug  4 17:46:14 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+curve_group.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    curve_group.label = PARM_LABEL("Curve Group", "curve_group") WIDTH(1.5);
+    PARM_FIELD(string, "curve_group") VALUE(curve_group.val) 
+	LABELREF(curve_group.label) HSTRETCH;
+
+    curve_group.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+tangent_method.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Set Tangent Use", "tangent_method") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    tangent_method.menu;
+
+    { HSTRETCH }
+
+}
+
+align_normal_method.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Align Normal Use", "align_normal_method") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    align_normal_method.menu;
+
+    { HSTRETCH }
+
+}
+
+up_vector_use.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Up Vector Use", "up_vector_use") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    up_vector_use.menu;
+
+    { HSTRETCH }
+
+}
+
+up.gad = ROW
+{
+   HSTRETCH
+
+   up.label = PARM_LABEL("Up Vector", "up") WIDTH(1.5);
+   PARM(float, 3, "up", none, none, "X,Y,Z")
+	RANGE(0,1)  LABELREF(up.label)
+	HSTRETCH;
+
+}
+
+attr_to_up.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    attr_to_up.label = PARM_LABEL("Attr to Up Vector", "attr_to_up") WIDTH(1.5);
+    PARM_FIELD(string, "attr_to_up") VALUE(attr_to_up.val) 
+	LABELREF(attr_to_up.label) HSTRETCH;
+
+    attr_to_up.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+make_frame_orthogonal.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("make_frame_orthogonal", "Make Frame Orthogonal") toggle VALUE(make_frame_orthogonal.val);
+
+    { HSTRETCH }
+
+}
+enable_tangent.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+enable_tangent.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+enable_tangent.gad = PARM_BUTTON("enable_tangent", "") toggle VALUE(enable_tangent.val);
+
+tangent_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    tangent_name.label = PARM_LABEL("Tangent Name", "tangent_name") WIDTH(1.32);
+    PARM_FIELD(string, "tangent_name") VALUE(tangent_name.val) 
+	LABELREF(tangent_name.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+enable_bitangent.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+enable_bitangent.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+enable_bitangent.gad = PARM_BUTTON("enable_bitangent", "") toggle VALUE(enable_bitangent.val);
+
+bitangent_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    bitangent_name.label = PARM_LABEL("Bitangent Name", "bitangent_name") WIDTH(1.32);
+    PARM_FIELD(string, "bitangent_name") VALUE(bitangent_name.val) 
+	LABELREF(bitangent_name.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+enable_normal.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+enable_normal.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+enable_normal.gad = PARM_BUTTON("enable_normal", "") toggle VALUE(enable_normal.val);
+
+normal_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    normal_name.label = PARM_LABEL("Normal Name", "normal_name") WIDTH(1.32);
+    PARM_FIELD(string, "normal_name") VALUE(normal_name.val) 
+	LABELREF(normal_name.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+x_axis_color.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    x_axis_color.label = PARM_LABEL("Tangent", "x_axis_color") WIDTH(1.5);
+    PARM(float, 3, "x_axis_color", none, COLOR, "R,G,B") 
+	LABELREF(x_axis_color.label) HSTRETCH;
+
+}
+
+y_axis_color.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    y_axis_color.label = PARM_LABEL("Bitangent", "y_axis_color") WIDTH(1.5);
+    PARM(float, 3, "y_axis_color", none, COLOR, "R,G,B") 
+	LABELREF(y_axis_color.label) HSTRETCH;
+
+}
+
+z_axis_color.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    z_axis_color.label = PARM_LABEL("Normal", "z_axis_color") WIDTH(1.5);
+    PARM(float, 3, "z_axis_color", none, COLOR, "R,G,B") 
+	LABELREF(z_axis_color.label) HSTRETCH;
+
+}
+
+length_scale.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ length_scale.label = PARM_LABEL("Length Scale", "length_scale") WIDTH(1.5);
+ PARM(float, 1, "length_scale", none, none) RANGE(0,1)
+	LOCK_RANGE_MIN LABELREF(length_scale.label) HSTRETCH;
+
+}
+
+numerator.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Numerator", "numerator") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    numerator.menu;
+
+    { HSTRETCH }
+
+}
+
+vtx_num_denominator_use.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Denominator", "vtx_num_denominator_use") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    vtx_num_denominator_use.menu;
+
+    { HSTRETCH }
+
+}
+
+vtx_num_float_denominator.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ vtx_num_float_denominator.label = PARM_LABEL("Float Value", "vtx_num_float_denominator") WIDTH(1.5);
+ PARM(float, 1, "vtx_num_float_denominator", none, none) RANGE(0,10000)
+	LOCK_RANGE_MIN LABELREF(vtx_num_float_denominator.label) HSTRETCH;
+
+}
+
+pt_length_denominator_use.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Denominator", "pt_length_denominator_use") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pt_length_denominator_use.menu;
+
+    { HSTRETCH }
+
+}
+
+pt_length_float_denominator.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ pt_length_float_denominator.label = PARM_LABEL("Float Value", "pt_length_float_denominator") WIDTH(1.5);
+ PARM(float, 1, "pt_length_float_denominator", none, none) RANGE(0,5)
+	LOCK_RANGE_MIN LABELREF(pt_length_float_denominator.label) HSTRETCH;
+
+}
+
+float_attr_to_u.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    float_attr_to_u.label = PARM_LABEL("Float Attr", "float_attr_to_u") WIDTH(1.5);
+    PARM_FIELD(string, "float_attr_to_u") VALUE(float_attr_to_u.val) 
+	LABELREF(float_attr_to_u.label) HSTRETCH;
+
+    float_attr_to_u.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+attr_float_denominator.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ attr_float_denominator.label = PARM_LABEL("Denominator", "attr_float_denominator") WIDTH(1.5);
+ PARM(float, 1, "attr_float_denominator", none, none) RANGE(0,5)
+	LOCK_RANGE_MIN LABELREF(attr_float_denominator.label) HSTRETCH;
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+rot_order.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Rot Order", "rot_order") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    rot_order.menu;
+
+    { HSTRETCH }
+
+}
+enable_rot_around_tangent.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+enable_rot_around_tangent.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+enable_rot_around_tangent.gad = PARM_BUTTON("enable_rot_around_tangent", "") toggle VALUE(enable_rot_around_tangent.val);
+
+around_tangent_rot.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ around_tangent_rot.label = PARM_LABEL("Around Tangent", "around_tangent_rot") WIDTH(1.32);
+ PARM(float, 1, "around_tangent_rot", none, none) RANGE(-180,180)
+	 LABELREF(around_tangent_rot.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+around_tangent_ramp.si_rampedit = FLOAT_RAMP VALUE(around_tangent_ramp.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+around_tangent_ramp.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	around_tangent_ramp.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(around_tangent_ramp.pointno.val) HSTRETCH;
+    }
+}
+
+around_tangent_ramp.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(around_tangent_ramp.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(around_tangent_ramp.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    around_tangent_ramp.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(around_tangent_ramp.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    around_tangent_ramp.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(around_tangent_ramp.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+around_tangent_ramp.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    around_tangent_ramp.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	around_tangent_ramp.buttons.gad VSTRETCH;
+
+	around_tangent_ramp.si_rampedit HSTRETCH;
+    }
+}
+
+around_tangent_ramp.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Ramp", "around_tangent_ramp");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	around_tangent_ramp.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(around_tangent_ramp.hideparms.val) HSTRETCH
+	    around_tangent_ramp.multiramp;
+	    {}
+	}
+    }
+}
+enable_rot_around_bitangent.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+enable_rot_around_bitangent.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+enable_rot_around_bitangent.gad = PARM_BUTTON("enable_rot_around_bitangent", "") toggle VALUE(enable_rot_around_bitangent.val);
+
+around_bitangent_rot.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ around_bitangent_rot.label = PARM_LABEL("Around Bitangent", "around_bitangent_rot") WIDTH(1.32);
+ PARM(float, 1, "around_bitangent_rot", none, none) RANGE(-180,180)
+	 LABELREF(around_bitangent_rot.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+around_bitangent_ramp.si_rampedit = FLOAT_RAMP VALUE(around_bitangent_ramp.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+around_bitangent_ramp.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	around_bitangent_ramp.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(around_bitangent_ramp.pointno.val) HSTRETCH;
+    }
+}
+
+around_bitangent_ramp.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(around_bitangent_ramp.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(around_bitangent_ramp.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    around_bitangent_ramp.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(around_bitangent_ramp.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    around_bitangent_ramp.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(around_bitangent_ramp.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+around_bitangent_ramp.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    around_bitangent_ramp.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	around_bitangent_ramp.buttons.gad VSTRETCH;
+
+	around_bitangent_ramp.si_rampedit HSTRETCH;
+    }
+}
+
+around_bitangent_ramp.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Ramp", "around_bitangent_ramp");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	around_bitangent_ramp.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(around_bitangent_ramp.hideparms.val) HSTRETCH
+	    around_bitangent_ramp.multiramp;
+	    {}
+	}
+    }
+}
+enable_rot_around_normal.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+enable_rot_around_normal.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+enable_rot_around_normal.gad = PARM_BUTTON("enable_rot_around_normal", "") toggle VALUE(enable_rot_around_normal.val);
+
+around_normal_rot.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ around_normal_rot.label = PARM_LABEL("Around Normal", "around_normal_rot") WIDTH(1.32);
+ PARM(float, 1, "around_normal_rot", none, none) RANGE(-180,180)
+	 LABELREF(around_normal_rot.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+around_normal_ramp.si_rampedit = FLOAT_RAMP VALUE(around_normal_ramp.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+around_normal_ramp.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	around_normal_ramp.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(around_normal_ramp.pointno.val) HSTRETCH;
+    }
+}
+
+around_normal_ramp.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(around_normal_ramp.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(around_normal_ramp.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    around_normal_ramp.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(around_normal_ramp.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    around_normal_ramp.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(around_normal_ramp.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+around_normal_ramp.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    around_normal_ramp.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	around_normal_ramp.buttons.gad VSTRETCH;
+
+	around_normal_ramp.si_rampedit HSTRETCH;
+    }
+}
+
+around_normal_ramp.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Ramp", "around_normal_ramp");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	around_normal_ramp.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(around_normal_ramp.hideparms.val) HSTRETCH
+	    around_normal_ramp.multiramp;
+	    {}
+	}
+    }
+}
+
+mark_closed_curve.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("mark_closed_curve", "Mark Closed Curve") toggle VALUE(mark_closed_curve.val);
+
+    { HSTRETCH }
+
+}
+mark_curve.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+mark_curve.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+mark_curve.gad = PARM_BUTTON("mark_curve", "") toggle VALUE(mark_curve.val);
+
+mark_curve_attr_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    mark_curve_attr_name.label = PARM_LABEL("Int Curve Attr", "mark_curve_attr_name") WIDTH(1.32);
+    PARM_FIELD(string, "mark_curve_attr_name") VALUE(mark_curve_attr_name.val) 
+	LABELREF(mark_curve_attr_name.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+mark_point.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+mark_point.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+mark_point.gad = PARM_BUTTON("mark_point", "") toggle VALUE(mark_point.val);
+
+mark_point_attr_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    mark_point_attr_name.label = PARM_LABEL("Int Point Attr", "mark_point_attr_name") WIDTH(1.32);
+    PARM_FIELD(string, "mark_point_attr_name") VALUE(mark_point_attr_name.val) 
+	LABELREF(mark_point_attr_name.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+folder2_2_1.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder2_2_1.gad"
+    { 
+	VALUE(folder2_2_1.gad.val) STRETCH(1,0)
+
+	TAB "Mark"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    mark_closed_curve.gad;		
+	    mark_curve.row.join;		
+	    mark_point.row.join;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder1.gad = 
+GROUP simple "Curve U"
+{ 
+    VALUE(folder1.gad.val) LAYOUT(vertical) HSTRETCH 
+	    numerator.gad;		
+	    vtx_num_denominator_use.gad;		
+	    vtx_num_float_denominator.gad;		
+	    pt_length_denominator_use.gad;		
+	    pt_length_float_denominator.gad;		
+	    float_attr_to_u.gad;		
+	    attr_float_denominator.gad;		
+} 
+
+folder2_2.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder2_2.gad"
+    { 
+	VALUE(folder2_2.gad.val) STRETCH(1,0)
+
+	TAB "Rot Frame"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    folder1.gad;		
+	    sepparm.gad;		
+	    rot_order.gad;		
+	    enable_rot_around_tangent.row.join;		
+	    around_tangent_ramp.gad;		
+	    enable_rot_around_bitangent.row.join;		
+	    around_bitangent_ramp.gad;		
+	    enable_rot_around_normal.row.join;		
+	    around_normal_ramp.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder0.gad = 
+GROUP collapsible "Visualize"
+{ 
+    VALUE(folder0.gad.val) LAYOUT(vertical) HSTRETCH
+	    x_axis_color.gad;		
+	    y_axis_color.gad;		
+	    z_axis_color.gad;		
+	    length_scale.gad;		
+} 
+
+folder2_1.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder2_1.gad"
+    { 
+	VALUE(folder2_1.gad.val) STRETCH(1,0)
+
+	TAB "Attrs Output"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    enable_tangent.row.join;		
+	    enable_bitangent.row.join;		
+	    enable_normal.row.join;		
+	    folder0.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder2.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder2.gad"
+    { 
+	VALUE(folder2.gad.val) STRETCH(1,0)
+
+	TAB "Method"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    tangent_method.gad;		
+	    align_normal_method.gad;		
+	    up_vector_use.gad;		
+	    up.gad;		
+	    attr_to_up.gad;		
+	    make_frame_orthogonal.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    curve_group.gad; 
+    folder2.gad; 
+    folder2_1.gad; 
+    folder2_2.gad; 
+    folder2_2_1.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

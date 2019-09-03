@@ -1,0 +1,36 @@
+
+ 
+
+Trying to wrap my head around writing shaders in Houdini.
+An empty code template in newly created VEX operator:
+
+surface
+test()
+{
+}
+Basic code for assigning a texture to the object with uv coordinates.
+
+surface
+test( vector uv = {0,0,0};
+ export vector Ce = {0,0,0};
+ )
+{
+vector tex = texture("C:pictures/pic_01.jpg", uv.x, uv.y);
+Cf = tex;
+Ce = Cf; //this is for pbr
+}
+This code adds an interface for user to be able to change the texture path. Pragmas at the beginning are useful for building user interface of defined parameters. In this case we’ll use pragmas to make uv and Ce parameters invisible. Texfile parameter receives a hint it should expect some file at the input. Pragmas are quite nicely described in docs.
+
+#pragma hint uv invisible
+#pragma hint Ce invisible
+#pragma hint texfile file
+surface
+test( string texfile = "Default";
+ vector uv = {0,0,0};
+ export vector Ce = {0,0,0};
+ )
+{
+vector tex = texture(texfile, uv.x, uv.y);
+Cf = tex;
+Ce = Cf;
+}

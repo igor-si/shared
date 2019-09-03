@@ -1,0 +1,144 @@
+// Magic: 55ae6214
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Sun Sep  1 18:43:56 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_workitemgeneration.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Work Item Generation", "pdg_workitemgeneration") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_workitemgeneration.menu;
+
+    { HSTRETCH }
+
+}
+
+wedgecount.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ wedgecount.label = PARM_LABEL("Wedge Count", "wedgecount") WIDTH(1.5);
+ PARM(integer, 1, "wedgecount", none, none) RANGE(0,10)
+	 LABELREF(wedgecount.label) HSTRETCH;
+
+}
+
+seed.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ seed.label = PARM_LABEL("Random Seed", "seed") WIDTH(1.5);
+ PARM(integer, 1, "seed", none, none) RANGE(0,10)
+	 LABELREF(seed.label) HSTRETCH;
+
+}
+
+exportenvironment.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("exportenvironment", "Export To Environment") toggle VALUE(exportenvironment.val);
+
+    { HSTRETCH }
+
+}
+
+previewselection.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("previewselection", "Overwrite Target Parm on Item Selection") toggle VALUE(previewselection.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+wedgeattributes.parm =
+{
+    LAYOUT(horizontal) SPACING(0.02) HSTRETCH JUSTIFY(left, center)
+
+    PARM_LABEL_SIMPLE("Wedge Attributes", "wedgeattributes") WIDTH(1.5);
+    { WIDTH(0.08) }
+
+    ROW
+    {
+	HSTRETCH(0.5) JUSTIFY(left, center)  VALUE(wedgeattributes.val)
+
+        wedgeattributes.field = PARM_FIELD (integer, "wedgeattributes")
+				VALUE(wedgeattributes.val) HSTRETCH(0.5)
+				 PREF_WIDTH(0.5);
+
+        ROW
+        {
+	     LOOK(lightline) VMARGIN(1p)
+
+   	     INCREMENT_ICONBUTTON VALUE(wedgeattributes.more.val)	
+	    	HELP("Add Another Instance") SIZE(0.2, 0.24);
+	     DECREMENT_ICONBUTTON VALUE(wedgeattributes.less.val)	
+	        HELP("Remove Last Instance") SIZE(0.2, 0.24);
+
+	}
+
+	ACTION_BUTTON "Clear" VALUE(wedgeattributes.clear.val);
+    }
+
+    { HSTRETCH }
+}
+
+wedgeattributes.multilist = 
+{
+    LAYOUT(vertical) STRETCH MARGIN(0.05)
+}
+
+wedgeattributes.gad =
+{
+    LAYOUT(vertical) STRETCH SPACING(0.02)
+
+    wedgeattributes.parm;
+    wedgeattributes.multilist;
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    pdg_workitemgeneration.gad; 
+    wedgecount.gad; 
+    seed.gad; 
+    exportenvironment.gad; 
+    previewselection.gad; 
+    sepparm.gad; 
+    wedgeattributes.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

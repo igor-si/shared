@@ -1,0 +1,312 @@
+
+// removeprim(0,@primnum,1);
+
+vector bb = getbbox_size(1);
+int cnt_y = 3;
+
+for (int i=0;i<cnt_y;i++)
+
+	vector add_y = set(0,bb.y/cnt_y*i+1,0);
+	int tmpAdd = addpoint(0,v@P+add_y);
+	//setpointattrib(0, "add_y", tmpAdd, bb.y/cnt, "set", ) #?
+	setpointattrib(0, "size", tmpAdd, set(v@size.x, bb.y/cnt_y, v@size.z))
+}
+
+removeprim(0,@primnum,1);
+
+
+
+#------------------------------------------
+
+float pscM = chf("pscale_mult");
+float smin = chf("source_min");
+float smax = chf("source_max");
+
+float dmin = chf("dest_min");
+float dmax = chf("dest_max");
+f@pscale = fit(@age,0,2,1,0)*pscM;
+`op:/opinputpath("..",0)`
+
+
+ch(chs("spare_input`/size2`"))
+
+
+
+//-------custom replication old-------------
+vector brel = relbbox(1, @P);
+float vols = volumesample(2, "surface", @P);
+int exclude_repl = 0;
+// vols<0 && brel.z < .8 || (@P.x<20 && @P.x>-20 && brel ) //... 
+
+int handle = pcopen(0,"P",@P,5,10);
+float distance, speed, npts_speed, speed_cut;
+int pnumber;
+vector curp, curv, curcd;
+float curpscale;
+int curptnum;
+
+int i = 0;
+int jmax = ch("subpoints"); //subpoints
+int imax = 3; //iter
+
+float lincr = 0;
+float lincrtemp = 0;
+
+int replcheck = 0;
+float distance_thresh = 0.15;
+
+
+speed = length(v@v);
+npts_speed = .7;
+speed_cut = 0.7;
+
+if (exclude_repl==0)
+{
+	while(pciterate(handle))
+	{
+		pcimport(handle,"point.distance",distance);
+
+		if (distance>distance_thresh && i<imax)
+		{
+
+			pcimport(handle,"point.number",curp);
+			if (@ptnum == curp)
+			continue;
+
+
+			pcimport(handle,"P",curp);
+
+			pcimport(handle,"v",curv);
+			pcimport(handle,"pscale",curpscale);
+			pcimport(handle,"Cd",curcd);
+			//@distance_test = distance;
+			if (speed > speed_cut)
+			{
+
+				for (int j=1;j<jmax;j++)
+				{
+
+					//@Cd = {0,1,1}; // test Cd
+					lincrtemp = j;
+					lincr = (1-lincrtemp*1/(jmax));
+					pcimport(handle,"point.number",cur ) //...
+
+					vector vtemp = lerp(v@v,curv,lincr); //...
+					float pscaletemp = lerp(f@pscale,curpscale,lincr); //...
+					vector temppos = lerp(@P,curp,lincr); //...
+					vector cdtemp = lerp(@Cd,curcd,lincr);
+
+					pcimport(handle,"point.distance",distance);
+					if (distance>distance_thresh)
+					{
+						int tempadd = addpoint(handle,temppos);
+
+						vector randvel = set(fit(rand(tempadd+1),0,1,.56,1),fit(rand(tempadd))); // ...
+						setpointattrib(handle,"v",tempadd, vtemp*randvel,"set");
+						setpointattrib(handle,"pscale",tempadd, pscaletemp, "set");
+						setpointattrib(handle,"Cd",tempadd, cdtemp, "set");
+						//setpointattrib(handle, "Cd", tempadd, {1,0,0}, "set");
+						//setpointgroup(handle, "foam", tempadd, 1, "add");
+						setpointgroup(handle, "replicated_line", tempadd, 1, "set");
+						//setpointgroup(handle, "replicated_ww_new", tempadd, 1, "set");
+					}
+				j++;
+				}
+			}	
+
+
+		}
+
+	i++;	
+	}
+}
+
+
+#------------------------------------------
+vector axis = {0,1,0};
+vector axis2 = {1,0,0};
+
+//float angle = 50;
+
+
+
+float sp = speed;
+vector off = {4,0,44};
+//vector angle = set(sin(@Frame*sp+off.x), sin(@Frame*sp  )); //...
+
+float angle = fit(sin(Frame*sp+off.x),-1,1,-20,20);
+float angleRad = radians(angle);
+
+float angle2 = fit(sin(Frame*sp+off,z),-1,1,-20,20);
+float angleRad2 = radians(angle2);
+
+//vector axis = {0, 0, 1};
+matrix3 m = ident();
+rotate(m,angleRad,axis);
+rotate(m,angleRad2,axis2);
+nvec = nvec*m;
+
+
+
+
+
+
+#------------------------------------------
+//remove weighted dist by ramp
+
+int i = 0;
+int np = npoints(0);
+
+float max_val = - 10000;
+for (i=0;i<np;i++)
+{	
+	vector curP = point(0,"rP",i)*{1,0,1};
+	vector cP = point(1,"P",0)*{1,0,1};
+	float dist = distance(curP,cP);
+
+	max_val = max(dist,max_val);
+
+}
+
+float dist = distance(v@rP,point(1,"P",0));
+
+float dD = fit(dist,0,max_val,0,1);
+float rpD = chramp("ramp_dist",dD);
+v@Cd = rpD;
+
+int steps = 30;
+float fR = rand(i@ptnum);
+for (int j=0;j<steps;j++)
+{
+	float t1 = rpD/(steps-j)*steps;
+	float res = fit(t1,0,1,1,0);
+
+	//printf("t %g \n", t1);
+	if (fR<res)
+	{
+	removepoint(0,@ptnum);
+	}
+}
+
+
+
+
+#------------------------------------------
+//nonlinear cluster
+
+
+//printf("nb:%g \n", '=======');
+float pow = chf("pow");
+vector p0 = point(0,"P",0);
+vector p1 = point(0,"P",1);
+vector p2 = point(0,"P",2);
+vector p3 = point(0,"P",3);
+//vector
+
+int clusterMax = chi("rows");
+//printf("nb:%g \n", clusterMax);
+for(int i=0,i<clusterMax,i++)
+{
+	float curVal = float(i+1)/clusterMax;
+	float prevVal = float(i)/clusterMax;
+	curVal = pow(curVal,pow);
+	prevVal = pow(prevVal,pow);
+	//printf("nb:%g %g \n", curVal, prevVal);
+	//printf("nb:%g \n", prevVal);
+
+	vector cP0 = lerp(p0,p2,prevVal);
+	vector cP2 = lerp(p1,p3,curVal);
+	vector cP1 = lerp(p0,p2,curVal);
+	vector cP3 = lerp(p1,p3,prevVal);
+
+
+
+		int pt0 = addpoint(0,cP0);
+		int pt1 = addpoint(0,cP1);
+		int pt2 = addpoint(0,cP2);
+		int pt3 = addpoint(0,cP3);
+
+		int prom0 = addprim(0,"poly");
+
+		int vtx0 = addvertex(0,prim0,pt0);
+		int vtx1 = addvertex(0,prim0,pt1);
+		int vtx2 = addvertex(0,prim0,pt2);
+		int vtx3 = addvertex(0,prim0,pt3);
+
+		setpointattrib(0,"curVal",pt0,curVal,"set");
+		setpointattrib(0,"curVal",pt1,curVal,"set");
+		setpointattrib(0,"curVal",pt2,curVal,"set");
+		setpointattrib(0,"curVal",pt3,curVal,"set");
+
+		setpointattrib(0,"prevVal",pt0,prevVal,"set");
+		setpointattrib(0,"prevVal",pt1,prevVal,"set");
+		setpointattrib(0,"prevVal",pt2,prevVal,"set");
+		setpointattrib(0,"prevVal",pt3,prevVal,"set");
+
+
+
+}
+
+removeprim(0,@primnum,1);
+
+#------------------------------------------
+//old cluster system
+int columns = chi("columns");
+
+vector brel = relbbox(1,v@P);
+float brx = chramp("ramp_x",brel.x);
+float bry = chramp("ramp_y",brel.y);
+
+
+for (int i=0;i<columns-1;i++)
+{
+	@cw = ((brx*(i+1))+1)/float(columns);
+	@cluster = ceil((brx*(i+1))+1);
+
+
+
+}
+
+v@Cd = rand(@cluster+44);
+#------------------------------------------
+//improved cluster system
+int columns = chi("columns")+1;
+int rows = chi("rows")+1;
+float cl,clx,clz;
+
+vector brel = relbbox(0,v@P);
+float brx = brel.x;
+float bry = brel.y;
+
+for (int j=0;j<rows-1;j++)
+{
+	clx = ceil(brx*(j+1));
+
+	for (int i=0;i<columns-1;i++)
+	{
+		clz = ceil(brz*(i+1));
+		clz = clx*rows+clz;
+	}
+}
+
+v@Cd = rand(clz+chf("color_seed"));
+@cluster = clz;
+
+
+
+
+
+#------------------------------------------
+//remove pts by dist
+
+
+
+
+
+@density += volumesamplev("/path/to/velocity/field");
+vector P = v@P;
+vector velTmp;
+//vector vel = volumesamlev(0,"vel",v@P);
+int steps = chi("steps");
+
+//3:34

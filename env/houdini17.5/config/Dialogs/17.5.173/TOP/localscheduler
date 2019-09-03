@@ -1,0 +1,210 @@
+// Magic: 5b7c2ce6
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Sun Sep  1 18:51:52 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_workingdir.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ pdg_workingdir.label = PARM_LABEL("Working Directory", "pdg_workingdir") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "pdg_workingdir") LABELREF(pdg_workingdir.label)
+	VALUE(pdg_workingdir.val) HSTRETCH;
+
+    pdg_workingdir.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(pdg_workingdir.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+pdg_resultserver.gad = NULL { }
+
+maxprocs.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ maxprocs.label = PARM_LABEL("Maximum CPUs to Use", "maxprocs") WIDTH(1.5);
+ PARM(integer, 1, "maxprocs", none, none) RANGE(-128,128)
+	 LABELREF(maxprocs.label) HSTRETCH;
+
+}
+local_usepool.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+local_usepool.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+local_usepool.gad = PARM_BUTTON("local_usepool", "") toggle VALUE(local_usepool.val);
+
+hdaprocessorpoolsize.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ hdaprocessorpoolsize.label = PARM_LABEL("HDAProcessor Pool Size", "hdaprocessorpoolsize") WIDTH(1.32);
+ PARM(integer, 1, "hdaprocessorpoolsize", none, none) RANGE(0,10)
+	 LABELREF(hdaprocessorpoolsize.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+socketcallbacks.gad = NULL { }
+
+local_single.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("local_single", "Single") toggle VALUE(local_single.val);
+
+    { HSTRETCH }
+
+}
+local_is_CPU_number_set.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+local_is_CPU_number_set.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+local_is_CPU_number_set.gad = PARM_BUTTON("local_is_CPU_number_set", "") toggle VALUE(local_is_CPU_number_set.val);
+
+local_CPUs_to_use.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ local_CPUs_to_use.label = PARM_LABEL("CPUs per Task", "local_CPUs_to_use") WIDTH(1.32);
+ PARM(integer, 1, "local_CPUs_to_use", none, none) RANGE(1,64)
+	LOCK_RANGE_MIN LABELREF(local_CPUs_to_use.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+local_usehoudinimaxthreads.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+local_usehoudinimaxthreads.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+local_usehoudinimaxthreads.gad = PARM_BUTTON("local_usehoudinimaxthreads", "") toggle VALUE(local_usehoudinimaxthreads.val);
+
+local_houdinimaxthreads.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ local_houdinimaxthreads.label = PARM_LABEL("Houdini Max Threads", "local_houdinimaxthreads") WIDTH(1.32);
+ PARM(integer, 1, "local_houdinimaxthreads", none, none) RANGE(0,10)
+	 LABELREF(local_houdinimaxthreads.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+local_envmulti.parm =
+{
+    LAYOUT(horizontal) SPACING(0.02) HSTRETCH JUSTIFY(left, center)
+
+    PARM_LABEL_SIMPLE("Task Environment", "local_envmulti") WIDTH(1.5);
+    { WIDTH(0.08) }
+
+    ROW
+    {
+	HSTRETCH(0.5) JUSTIFY(left, center)  VALUE(local_envmulti.val)
+
+        local_envmulti.field = PARM_FIELD (integer, "local_envmulti")
+				VALUE(local_envmulti.val) HSTRETCH(0.5)
+				 PREF_WIDTH(0.5);
+
+        ROW
+        {
+	     LOOK(lightline) VMARGIN(1p)
+
+   	     INCREMENT_ICONBUTTON VALUE(local_envmulti.more.val)	
+	    	HELP("Add Another Instance") SIZE(0.2, 0.24);
+	     DECREMENT_ICONBUTTON VALUE(local_envmulti.less.val)	
+	        HELP("Remove Last Instance") SIZE(0.2, 0.24);
+
+	}
+
+	ACTION_BUTTON "Clear" VALUE(local_envmulti.clear.val);
+    }
+
+    { HSTRETCH }
+}
+
+local_envmulti.multilist = 
+{
+    LAYOUT(vertical) STRETCH MARGIN(0.05)
+}
+
+local_envmulti.gad =
+{
+    LAYOUT(vertical) STRETCH SPACING(0.02)
+
+    local_envmulti.parm;
+    local_envmulti.multilist;
+}
+
+folder0.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder0.gad"
+    { 
+	VALUE(folder0.gad.val) STRETCH(1,0)
+
+	TAB "Scheduler"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    pdg_workingdir.gad;		
+	    pdg_resultserver.gad;		
+	    maxprocs.gad;		
+	    local_usepool.row.join;		
+	    socketcallbacks.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Job Parms"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    local_single.gad;		
+	    local_is_CPU_number_set.row.join;		
+	    local_usehoudinimaxthreads.row.join;		
+	    local_envmulti.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    folder0.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

@@ -1,0 +1,417 @@
+// Magic: df4c9af3
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Mon Sep  2 02:05:50 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_workitemgeneration.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Work Item Generation", "pdg_workitemgeneration") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_workitemgeneration.menu;
+
+    { HSTRETCH }
+
+}
+
+pdg_cachemode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Cache Mode", "pdg_cachemode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_cachemode.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm3.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+roppath.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ roppath.label = PARM_LABEL("ROP Path", "roppath") WIDTH(1.5);
+ PARM_FIELD(pathstring, "roppath") VALUE(roppath.val) 
+	LABELREF(roppath.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(roppath.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(roppath.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+useexternalhip.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+useexternalhip.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+useexternalhip.gad = PARM_BUTTON("useexternalhip", "") toggle VALUE(useexternalhip.val);
+
+externalhip.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    externalhip.label = PARM_LABEL("External HIP File", "externalhip") WIDTH(1.32);
+    PARM_FIELD(string, "externalhip") VALUE(externalhip.val) 
+	LABELREF(externalhip.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+sethip.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sethip", "Reset $HIP On Cook") toggle VALUE(sethip.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+framegeneration.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Evaluate Using", "framegeneration") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    framegeneration.menu;
+
+    { HSTRETCH }
+
+}
+useframeoverride.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+useframeoverride.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+useframeoverride.gad = PARM_BUTTON("useframeoverride", "") toggle VALUE(useframeoverride.val);
+
+frameoverride.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ frameoverride.label = PARM_LABEL("Override Frame", "frameoverride") WIDTH(1.32);
+ PARM(float, 1, "frameoverride", none, none) RANGE(0,10)
+	 LABELREF(frameoverride.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+range.gad = ROW
+{
+   HSTRETCH
+
+   range.label = PARM_LABEL("Frame Range", "range") WIDTH(1.5);
+   PARM(float, 3, "range", none, none, "#1,#2,#3")
+	RANGE(0,10)  LABELREF(range.label)
+	HSTRETCH;
+
+}
+
+expandinputs.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("expandinputs", "Expand Input Files Across Frame Range") toggle VALUE(expandinputs.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm4.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+batchall.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("batchall", "All Frames in One Batch") toggle VALUE(batchall.val);
+
+    { HSTRETCH }
+
+}
+
+framesperbatch.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ framesperbatch.label = PARM_LABEL("Frames per Batch", "framesperbatch") WIDTH(1.5);
+ PARM(integer, 1, "framesperbatch", none, none) RANGE(0,10)
+	 LABELREF(framesperbatch.label) HSTRETCH;
+
+}
+
+cookwhen.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Cook Batch When", "cookwhen") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    cookwhen.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+distribute.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("distribute", "Distributed Sim") toggle VALUE(distribute.val);
+
+    { HSTRETCH }
+
+}
+
+control.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ control.label = PARM_LABEL("Control DOP", "control") WIDTH(1.5);
+ PARM_FIELD(pathstring, "control") VALUE(control.val) 
+	LABELREF(control.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(control.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(control.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+
+slicetype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Slice Type", "slicetype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    slicetype.menu;
+
+    { HSTRETCH }
+
+}
+
+slicecount.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ slicecount.label = PARM_LABEL("Slice Count", "slicecount") WIDTH(1.5);
+ PARM(integer, 1, "slicecount", none, none) RANGE(0,10)
+	 LABELREF(slicecount.label) HSTRETCH;
+
+}
+
+slicedivs.gad = ROW
+{
+   HSTRETCH
+
+   slicedivs.label = PARM_LABEL("Slice Divisions", "slicedivs") WIDTH(1.5);
+   PARM(integer, 3, "slicedivs", none, none, "X,Y,Z")
+	RANGE(-1,1)  LABELREF(slicedivs.label)
+	HSTRETCH;
+
+}
+
+verbosetracker.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("verbosetracker", "Verbose Tracker Logging") toggle VALUE(verbosetracker.val);
+
+    { HSTRETCH }
+
+}
+
+pdgnodedeps.parm =
+{
+    LAYOUT(horizontal) SPACING(0.02) HSTRETCH JUSTIFY(left, center)
+
+    PARM_LABEL_SIMPLE("File Dependencies", "pdgnodedeps") WIDTH(1.5);
+    { WIDTH(0.08) }
+
+    ROW
+    {
+	HSTRETCH(0.5) JUSTIFY(left, center)  VALUE(pdgnodedeps.val)
+
+        pdgnodedeps.field = PARM_FIELD (integer, "pdgnodedeps")
+				VALUE(pdgnodedeps.val) HSTRETCH(0.5)
+				 PREF_WIDTH(0.5);
+
+        ROW
+        {
+	     LOOK(lightline) VMARGIN(1p)
+
+   	     INCREMENT_ICONBUTTON VALUE(pdgnodedeps.more.val)	
+	    	HELP("Add Another Instance") SIZE(0.2, 0.24);
+	     DECREMENT_ICONBUTTON VALUE(pdgnodedeps.less.val)	
+	        HELP("Remove Last Instance") SIZE(0.2, 0.24);
+
+	}
+
+	ACTION_BUTTON "Clear" VALUE(pdgnodedeps.clear.val);
+    }
+
+    { HSTRETCH }
+}
+
+pdgnodedeps.multilist = 
+{
+    LAYOUT(vertical) STRETCH MARGIN(0.05)
+}
+
+pdgnodedeps.gad =
+{
+    LAYOUT(vertical) STRETCH SPACING(0.02)
+
+    pdgnodedeps.parm;
+    pdgnodedeps.multilist;
+}
+
+distribution.gad = 
+GROUP collapsible "Distribution"
+{ 
+    VALUE(distribution.gad.val) LAYOUT(vertical) HSTRETCH
+	    distribute.gad;		
+	    control.gad;		
+	    slicetype.gad;		
+	    slicecount.gad;		
+	    slicedivs.gad;		
+	    verbosetracker.gad;		
+} 
+
+rop.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "rop.gad"
+    { 
+	VALUE(rop.gad.val) STRETCH(1,0)
+
+	TAB "ROP Fetch"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    pdg_workitemgeneration.gad;		
+	    pdg_cachemode.gad;		
+	    sepparm3.gad;		
+	    roppath.gad;		
+	    useexternalhip.row.join;		
+	    sethip.gad;		
+	    sepparm.gad;		
+	    framegeneration.gad;		
+	    useframeoverride.row.join;		
+	    range.gad;		
+	    expandinputs.gad;		
+	    sepparm4.gad;		
+	    batchall.gad;		
+	    framesperbatch.gad;		
+	    cookwhen.gad;		
+	    sepparm2.gad;		
+	    distribution.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "External Files"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    pdgnodedeps.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    rop.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

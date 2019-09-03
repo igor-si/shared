@@ -1,0 +1,362 @@
+// Magic: 52544540
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Tue Aug 27 21:55:21 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pdg_workitemgeneration.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Work Item Generation", "pdg_workitemgeneration") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pdg_workitemgeneration.menu;
+
+    { HSTRETCH }
+
+}
+
+geometrysource.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Geometry Source", "geometrysource") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    geometrysource.menu;
+
+    { HSTRETCH }
+
+}
+
+soppath.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left,center)
+
+ soppath.label = PARM_LABEL("SOP Path", "soppath") WIDTH(1.5);
+ PARM_FIELD(pathstring, "soppath") VALUE(soppath.val) 
+	LABELREF(soppath.label) HSTRETCH;
+
+ ACTION_ICONBUTTON "BUTTONS_jump" VALUE(soppath.jump)
+    HELP("Jump to operator\nCtrl+LMB: Open parameters popup dialog")
+    UI_FLAT_ICON_BTN_SIZE_SMALL LOOKFLAT;
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_node" VALUE(soppath.plus)
+    HELP("Open floating operator chooser") UI_FLAT_ICON_BTN_SIZE_SMALL 
+    LOOKFLAT;
+
+}
+usetime.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+usetime.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+usetime.gad = PARM_BUTTON("usetime", "") toggle VALUE(usetime.val);
+
+time.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ time.label = PARM_LABEL("Evaluation Time", "time") WIDTH(1.32);
+ PARM(float, 1, "time", none, none) RANGE(0,10)
+	 LABELREF(time.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+evaluateattributes.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("evaluateattributes", "Evaluate with Work Item Attributes") toggle VALUE(evaluateattributes.val);
+
+    { HSTRETCH }
+
+}
+
+filetag.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    filetag.label = PARM_LABEL("Result Tag", "filetag") WIDTH(1.5);
+    PARM_FIELD(string, "filetag") VALUE(filetag.val) 
+	LABELREF(filetag.label) HSTRETCH;
+
+}
+
+filepath.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ filepath.label = PARM_LABEL("File Path", "filepath") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "filepath") LABELREF(filepath.label)
+	VALUE(filepath.val) HSTRETCH;
+
+    filepath.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(filepath.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+asyncload.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("asyncload", "Load Geometry During Cook") toggle VALUE(asyncload.val);
+
+    { HSTRETCH }
+
+}
+
+mergeinput.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("mergeinput", "Merge Input Geometry") toggle VALUE(mergeinput.val);
+
+    { HSTRETCH }
+
+}
+
+storagetype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Store Geometry As", "storagetype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    storagetype.menu;
+
+    { HSTRETCH }
+
+}
+
+indextype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Set Item Index To", "indextype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    indextype.menu;
+
+    { HSTRETCH }
+
+}
+
+externalpath.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    externalpath.label = PARM_LABEL("External File Path", "externalpath") WIDTH(1.5);
+    PARM_FIELD(string, "externalpath") VALUE(externalpath.val) 
+	LABELREF(externalpath.label) HSTRETCH;
+
+}
+
+externaltag.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    externaltag.label = PARM_LABEL("External File Tag", "externaltag") WIDTH(1.5);
+    PARM_FIELD(string, "externaltag") VALUE(externaltag.val) 
+	LABELREF(externaltag.label) HSTRETCH;
+
+}
+
+class.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Class", "class") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    class.menu;
+
+    { HSTRETCH }
+
+}
+copyattributes.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+copyattributes.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+copyattributes.gad = PARM_BUTTON("copyattributes", "") toggle VALUE(copyattributes.val);
+
+attributes.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    attributes.label = PARM_LABEL("Copy Attributes", "attributes") WIDTH(1.32);
+    PARM_FIELD(string, "attributes") VALUE(attributes.val) 
+	LABELREF(attributes.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+copybbox.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("copybbox", "Include Bounding Box") toggle VALUE(copybbox.val);
+
+    { HSTRETCH }
+
+}
+
+primpoints.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("primpoints", "Include Points from Primitives") toggle VALUE(primpoints.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+grouptype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Create Work Item For", "grouptype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    grouptype.menu;
+
+    { HSTRETCH }
+
+}
+
+group.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    group.label = PARM_LABEL("Group", "group") WIDTH(1.5);
+    PARM_FIELD(string, "group") VALUE(group.val) 
+	LABELREF(group.label) HSTRETCH;
+
+}
+addworkitemattributes.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+addworkitemattributes.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+addworkitemattributes.gad = PARM_BUTTON("addworkitemattributes", "") toggle VALUE(addworkitemattributes.val);
+
+workitemattributes.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    workitemattributes.label = PARM_LABEL("Add Attributes", "workitemattributes") WIDTH(1.32);
+    PARM_FIELD(string, "workitemattributes") VALUE(workitemattributes.val) 
+	LABELREF(workitemattributes.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+edit.gad = 
+GROUP simple "Edit Geometry"
+{ 
+    VALUE(edit.gad.val) LAYOUT(vertical) HSTRETCH 
+	    addworkitemattributes.row.join;		
+} 
+
+geometry.gad = 
+GROUP simple "Source Geometry"
+{ 
+    VALUE(geometry.gad.val) LAYOUT(vertical) HSTRETCH 
+	    class.gad;		
+	    copyattributes.row.join;		
+	    copybbox.gad;		
+	    primpoints.gad;		
+	    sepparm.gad;		
+	    grouptype.gad;		
+	    group.gad;		
+} 
+
+storag.gad = 
+GROUP simple "Storage"
+{ 
+    VALUE(storag.gad.val) LAYOUT(vertical) HSTRETCH 
+	    storagetype.gad;		
+	    indextype.gad;		
+	    externalpath.gad;		
+	    externaltag.gad;		
+} 
+
+source.gad = 
+GROUP simple "Source"
+{ 
+    VALUE(source.gad.val) LAYOUT(vertical) HSTRETCH 
+	    geometrysource.gad;		
+	    soppath.gad;		
+	    usetime.row.join;		
+	    evaluateattributes.gad;		
+	    filetag.gad;		
+	    filepath.gad;		
+	    asyncload.gad;		
+	    mergeinput.gad;		
+} 
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    pdg_workitemgeneration.gad; 
+    source.gad; 
+    storag.gad; 
+    geometry.gad; 
+    edit.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

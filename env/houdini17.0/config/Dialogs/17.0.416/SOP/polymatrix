@@ -1,0 +1,320 @@
+// Magic: b4adc3e8
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Mon Aug 12 01:18:38 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+class.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Class", "class") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    class.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm3.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+style.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Style", "style") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    style.menu;
+
+    { HSTRETCH }
+
+}
+
+axissource.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Main Axis Source", "axissource") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    axissource.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+connmode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Connectivity", "connmode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    connmode.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm4.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+inname.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+inname.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    inname.label = PARM_LABEL("Input Attribute", "inname") WIDTH(1.5);
+    PARM_FIELD(string, "inname") VALUE(inname.val) 
+	LABELREF(inname.label) HSTRETCH;
+
+}
+
+inclass.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    PARM_LABEL_SIMPLE("Input Class", "inclass") ;
+    { WIDTH(0.09) }
+
+    inclass.menu;
+
+    {  }
+
+}
+}	// Template join.bot
+
+
+sepparm5.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+piecemethod.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Method", "piecemethod") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    piecemethod.menu;
+
+    { HSTRETCH }
+
+}
+resttype.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+resttype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    PARM_LABEL_SIMPLE("Rest Type", "resttype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    resttype.menu;
+
+    {  }
+
+}
+
+restframe.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ restframe.label = PARM_LABEL("Frame", "restframe") ;
+ PARM(float, 1, "restframe", none, none) RANGE(0,10)
+	 LABELREF(restframe.label) HSTRETCH;
+
+}
+}	// Template join.bot
+
+outgeotype.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+outgeotype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    PARM_LABEL_SIMPLE("Output Geometry", "outgeotype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    outgeotype.menu;
+
+    {  }
+
+}
+
+outpointtype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) 
+
+    PARM_LABEL_SIMPLE("Points Type", "outpointtype") ;
+    { WIDTH(0.09) }
+
+    outpointtype.menu;
+
+    {  }
+
+}
+}	// Template join.bot
+
+
+pointspos.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Points Positions", "pointspos") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pointspos.menu;
+
+    { HSTRETCH }
+
+}
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+outtype.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Output Matrix Type", "outtype") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    outtype.menu;
+
+    { HSTRETCH }
+
+}
+
+matrix.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    matrix.label = PARM_LABEL("Output Matrix Name", "matrix") WIDTH(1.5);
+    PARM_FIELD(string, "matrix") VALUE(matrix.val) 
+	LABELREF(matrix.label) HSTRETCH;
+
+}
+
+axisy.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    axisy.label = PARM_LABEL("Y axis", "axisy") WIDTH(1.5);
+    PARM_FIELD(string, "axisy") VALUE(axisy.val) 
+	LABELREF(axisy.label) HSTRETCH;
+
+}
+
+axisz.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    axisz.label = PARM_LABEL("Z axis", "axisz") WIDTH(1.5);
+    PARM_FIELD(string, "axisz") VALUE(axisz.val) 
+	LABELREF(axisz.label) HSTRETCH;
+
+}
+
+output_fld.gad = 
+GROUP simple "Output"
+{ 
+    VALUE(output_fld.gad.val) LAYOUT(vertical) HSTRETCH 
+	    outgeotype.row.join;		
+	    pointspos.gad;		
+	    sepparm2.gad;		
+	    outtype.gad;		
+	    matrix.gad;		
+	    axisy.gad;		
+	    axisz.gad;		
+} 
+
+reststate_fld.gad = 
+GROUP simple "Rest State"
+{ 
+    VALUE(reststate_fld.gad.val) LAYOUT(vertical) HSTRETCH 
+	    resttype.row.join;		
+} 
+
+kernel_fld.gad = 
+GROUP simple "Kernel"
+{ 
+    VALUE(kernel_fld.gad.val) LAYOUT(vertical) HSTRETCH 
+	    class.gad;		
+	    sepparm3.gad;		
+	    style.gad;		
+	    axissource.gad;		
+	    sepparm.gad;		
+	    connmode.gad;		
+	    sepparm4.gad;		
+	    inname.row.join;		
+	    sepparm5.gad;		
+	    piecemethod.gad;		
+} 
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    kernel_fld.gad; 
+    reststate_fld.gad; 
+    output_fld.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

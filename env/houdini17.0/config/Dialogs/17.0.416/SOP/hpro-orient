@@ -1,0 +1,385 @@
+// Magic: 7cbc29d7
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug  4 17:46:07 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+info.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    info.label = PARM_LABEL("Info", "info") WIDTH(1.5);
+    PARM_FIELD(string, "info") VALUE(info.val) 
+	LABELREF(info.label) HSTRETCH;
+
+}
+
+group.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    group.label = PARM_LABEL("Group", "group") WIDTH(1.5);
+    PARM_FIELD(string, "group") VALUE(group.val) 
+	LABELREF(group.label) HSTRETCH;
+
+    group.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+operation.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Operation", "operation") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    operation.menu;
+
+    { HSTRETCH }
+
+}
+
+construct_orient_name.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    construct_orient_name.label = PARM_LABEL("Orient Name", "construct_orient_name") WIDTH(1.5);
+    PARM_FIELD(string, "construct_orient_name") VALUE(construct_orient_name.val) 
+	LABELREF(construct_orient_name.label) HSTRETCH;
+
+}
+
+aim_vector_mode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Aim Vector", "aim_vector_mode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    aim_vector_mode.menu;
+
+    { HSTRETCH }
+
+}
+attr_to_aim_vector.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+attr_to_aim_vector.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    attr_to_aim_vector.label = PARM_LABEL("Attr Name", "attr_to_aim_vector") WIDTH(1.5);
+    PARM_FIELD(string, "attr_to_aim_vector") VALUE(attr_to_aim_vector.val) 
+	LABELREF(attr_to_aim_vector.label) HSTRETCH;
+
+    attr_to_aim_vector.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+negative_aim_attr.gad = ROW
+{
+    
+
+    {  }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("negative_aim_attr", "Negative") toggle VALUE(negative_aim_attr.val);
+
+    {  }
+
+}
+}	// Template join.bot
+
+
+aim_vector_value.gad = ROW
+{
+   HSTRETCH
+
+   aim_vector_value.label = PARM_LABEL("Value", "aim_vector_value") WIDTH(1.5);
+   PARM(float, 3, "aim_vector_value", none, none, "X,Y,Z")
+	RANGE(-1,1)  LABELREF(aim_vector_value.label)
+	HSTRETCH;
+
+}
+
+up_vector_mode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Up Vector", "up_vector_mode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    up_vector_mode.menu;
+
+    { HSTRETCH }
+
+}
+attr_to_up_vector.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+attr_to_up_vector.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    attr_to_up_vector.label = PARM_LABEL("Attr Name", "attr_to_up_vector") WIDTH(1.5);
+    PARM_FIELD(string, "attr_to_up_vector") VALUE(attr_to_up_vector.val) 
+	LABELREF(attr_to_up_vector.label) HSTRETCH;
+
+    attr_to_up_vector.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+negative_up_attr.gad = ROW
+{
+    
+
+    {  }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("negative_up_attr", "Negative") toggle VALUE(negative_up_attr.val);
+
+    {  }
+
+}
+}	// Template join.bot
+
+
+up_vector_value.gad = ROW
+{
+   HSTRETCH
+
+   up_vector_value.label = PARM_LABEL("Value", "up_vector_value") WIDTH(1.5);
+   PARM(float, 3, "up_vector_value", none, none, "X,Y,Z")
+	RANGE(-1,1)  LABELREF(up_vector_value.label)
+	HSTRETCH;
+
+}
+
+orient_to_extract.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    orient_to_extract.label = PARM_LABEL("Orient Name", "orient_to_extract") WIDTH(1.5);
+    PARM_FIELD(string, "orient_to_extract") VALUE(orient_to_extract.val) 
+	LABELREF(orient_to_extract.label) HSTRETCH;
+
+    orient_to_extract.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+oreint_to_x.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    oreint_to_x.label = PARM_LABEL("X Axis", "oreint_to_x") WIDTH(1.5);
+    PARM_FIELD(string, "oreint_to_x") VALUE(oreint_to_x.val) 
+	LABELREF(oreint_to_x.label) HSTRETCH;
+
+}
+
+oreint_to_y.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    oreint_to_y.label = PARM_LABEL("Y Axis", "oreint_to_y") WIDTH(1.5);
+    PARM_FIELD(string, "oreint_to_y") VALUE(oreint_to_y.val) 
+	LABELREF(oreint_to_y.label) HSTRETCH;
+
+}
+
+oreint_to_z.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    oreint_to_z.label = PARM_LABEL("Z Axis", "oreint_to_z") WIDTH(1.5);
+    PARM_FIELD(string, "oreint_to_z") VALUE(oreint_to_z.val) 
+	LABELREF(oreint_to_z.label) HSTRETCH;
+
+}
+
+orient_to_rot.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    orient_to_rot.label = PARM_LABEL("Orient Name", "orient_to_rot") WIDTH(1.5);
+    PARM_FIELD(string, "orient_to_rot") VALUE(orient_to_rot.val) 
+	LABELREF(orient_to_rot.label) HSTRETCH;
+
+    orient_to_rot.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+rot_ord.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Order", "rot_ord") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    rot_ord.menu;
+
+    { HSTRETCH }
+
+}
+
+rot_orient_use.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Rotate Use", "rot_orient_use") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    rot_orient_use.menu;
+
+    { HSTRETCH }
+
+}
+
+rot_value.gad = ROW
+{
+   HSTRETCH
+
+   rot_value.label = PARM_LABEL("Degree", "rot_value") WIDTH(1.5);
+   PARM(float, 3, "rot_value", none, none, "X,Y,Z")
+	RANGE(-1,1)  LABELREF(rot_value.label)
+	HSTRETCH;
+
+}
+attr_to_rot.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+attr_to_rot.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    attr_to_rot.label = PARM_LABEL("Attr to Degree", "attr_to_rot") WIDTH(1.5);
+    PARM_FIELD(string, "attr_to_rot") VALUE(attr_to_rot.val) 
+	LABELREF(attr_to_rot.label) HSTRETCH;
+
+    attr_to_rot.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+negative_attr_to_rot.gad = ROW
+{
+    
+
+    {  }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("negative_attr_to_rot", "Negative") toggle VALUE(negative_attr_to_rot.val);
+
+    {  }
+
+}
+}	// Template join.bot
+
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+orient_visualize.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("orient_visualize", "Orient Visualize") toggle VALUE(orient_visualize.val);
+
+    { HSTRETCH }
+
+}
+
+x_axis_color.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    x_axis_color.label = PARM_LABEL("X Axis", "x_axis_color") WIDTH(1.5);
+    PARM(float, 3, "x_axis_color", none, COLOR, "R,G,B") 
+	LABELREF(x_axis_color.label) HSTRETCH;
+
+}
+
+y_axis_color.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    y_axis_color.label = PARM_LABEL("Y Axis", "y_axis_color") WIDTH(1.5);
+    PARM(float, 3, "y_axis_color", none, COLOR, "R,G,B") 
+	LABELREF(y_axis_color.label) HSTRETCH;
+
+}
+
+z_axis_color.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    z_axis_color.label = PARM_LABEL("Z Axis", "z_axis_color") WIDTH(1.5);
+    PARM(float, 3, "z_axis_color", none, COLOR, "R,G,B") 
+	LABELREF(z_axis_color.label) HSTRETCH;
+
+}
+
+length_scale.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ length_scale.label = PARM_LABEL("Length Scale", "length_scale") WIDTH(1.5);
+ PARM(float, 1, "length_scale", none, none) RANGE(0,1)
+	LOCK_RANGE_MIN LABELREF(length_scale.label) HSTRETCH;
+
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    info.gad; 
+    group.gad; 
+    operation.gad; 
+    construct_orient_name.gad; 
+    aim_vector_mode.gad; 
+    attr_to_aim_vector.row.join; 
+    aim_vector_value.gad; 
+    up_vector_mode.gad; 
+    attr_to_up_vector.row.join; 
+    up_vector_value.gad; 
+    orient_to_extract.gad; 
+    oreint_to_x.gad; 
+    oreint_to_y.gad; 
+    oreint_to_z.gad; 
+    orient_to_rot.gad; 
+    rot_ord.gad; 
+    rot_orient_use.gad; 
+    rot_value.gad; 
+    attr_to_rot.row.join; 
+    sepparm.gad; 
+    orient_visualize.gad; 
+    x_axis_color.gad; 
+    y_axis_color.gad; 
+    z_axis_color.gad; 
+    length_scale.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

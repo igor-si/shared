@@ -1,0 +1,129 @@
+
+
+================custom debtis source=====
+//first wranglle after timeshift
+int cC;
+int handle = pcopen(0,"P",v@P,chf("rad"),chi("mpts"));
+int pN = pcimportbyidxi(handle,"point.number",1);
+pcimport(handle,"class",cC);
+if (cC!=@class)
+{
+i@n_num=pN;
+}
+else
+{
+i@n_num=-1;
+}
+
+//second wrangle for transfer
+float dist_min = chf("dist_min");
+float dist_max = chf("dist_max");
+
+vector P = v@P;
+int n_num = @n_num;
+vector nP = point(0,"P",@n_num);
+float dist = distance(nP,v@P);
+dist = fit(dist,dist_min,dist_max,0,1);
+dist = chramp("ramp_dist",dist);
+v@Cd = set(dist,0,0);
+
+=========================================
+
+=================Create a poly line between adjacent points
+
+//Good for creating constraints.
+//Similar to Connect Adjacent Pieces SOP.
+//Beware though it creates overlapping primitives,
+//i.e. twice as many lines as you probably want.
+//See the next VEX snippet for a solution that 
+//removes overlapping primitives.
+
+Run in a Wrangle SOP (Run over - Points)
+
+float   radius_max = chf("radius");
+int     points_max = chi("connections");
+
+int     points[] = nearpoints( 0, @P, radius_max, points_max );
+
+int     prim;
+string  name;
+
+for ( int i = 0; i < len(points); i++ )
+{
+    if ( points[i] <= @ptnum )
+        continue;         
+        
+    name = attrib( 0, "point", "name", points[i] );
+    
+    if ( name == s@name )
+        continue;         
+    
+    prim = addprim( geoself(), "polyline" );            
+    
+    addvertex( geoself(), prim, @ptnum );
+    addvertex( geoself(), prim, points[i] );
+    
+    @Cd = {1, 0, 0};
+}
+
+==============Remove overlapping primitives
+//Mainly a complement to the previous VEX snippet.
+//Run in a Wrangle SOP (Run over - Primitives)
+
+int prim_points[] = primpoints( geoself(), @primnum );
+vector pos_accum = 0;
+
+for ( int i = 0; i < len(prim_points); i++ )
+{
+    pos_accum += attrib( 0, "point", "P", prim_points[i] );
+}
+
+pos_accum /= len(prim_points);
+
+int xyz_prim;
+vector xyz_uv;
+
+float xyz_dist = xyzdist( 0, pos_accum, xyz_prim, xyz_uv);
+
+if ( xyz_prim > @primnum && xyz_dist < 0.001 )
+    removeprim(geoself(), @primnum, 1);
+else if ( xyz_prim < @primnum && xyz_dist < 0.001 )
+    removeprim(geoself(), xyz_prim, 1);
+
+============Reset orient
+//If you use orient to align objects before a Bullet simulation
+//you need to multiply the orient attribute you get 
+//from bullet with your initial orient attribute.
+//To get a orient attribute that works correctly with
+//transform pieces SOP or copy to point SOP. 
+
+//Run in a Wrangle SOP (Run over - Points)
+p@orient = qmultiply( p@orient, p@orient_init);
+
+=======================
+
+
+=============compute center of mass
+// prim wrangle
+vector c=getbbox_center(0);
+
+int ppts[]=primpoints(0,@primnum);
+//From here we assume imcoming mesh is good and triangulated
+//But just in case
+if(len(ppts)!=3)error("Bad prim!");
+vector p[]={};
+resize(p,3);
+
+for(int i=0;i<3;++i)p[i]=point(0,"P",ppts[i]);
+
+v@mcom=lerp(lerp(c,p[0],0.5), lerp(p[1],p[2],0.5), 0.5);
+@vol=dot(cross(p[1]-p[0], p[2]-p[0]), c-p[0])/6; // divide by 6 just to be correct, we dont need it for our calculations
+
+v@mcom*=@vol;
+
+//attrib promote from prm to detail with "sum" promotion method
+//mcom vol
+
+///detail
+v@mcom/=@vol;
+=======================

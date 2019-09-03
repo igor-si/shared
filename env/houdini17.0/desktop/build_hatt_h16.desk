@@ -1,0 +1,259 @@
+fullscreen   -1
+playbarshown 1
+playbar      -1
+shelf        -1
+menubar      -1
+statusbar    -1
+radial menu set main
+root {
+    split 0.312049 V R {
+        split 0.374464 H {
+            split 0.612183 V R {
+                tabs 2 1 {
+                    pane panetab1 -a 0 -l 10 -H /obj/ -T OBJ -m sceneview
+                    pane panetab17 -a 0 -l 0 -H /shop/ -T SHOP -m neteditor
+                    pane panetab22 -a 0 -l 0 -H /obj/ -T OBJ -m datatree
+                }
+                tabs 4 1 {
+                    pane panetab10 -a 0 -l 10 -H /obj/ -T OBJ -m sceneview
+                    pane panetab11 -a 0 -l 10 -H /obj/ -T OBJ -m details
+                    pane panetab13 -a 0 -l 0 -H /obj/ -T OBJ -m python
+                    pane panetab15 -a 0 -l 0 -H /obj/ -T OBJ -m bundlelist
+                    pane panetab9 -a 0 -l 0 -H /obj/ -T OBJ -m datatree
+                }
+            }
+            split 0.934313 H R {
+                split 0.614983 H {
+                    split 0.363316 V {
+                        tabs 0 1 {
+                            pane panetab5 -a 0 -l 0 -H /obj/ -T OBJ -m neteditor
+                            pane copy_of_panetab5_1 -a 0 -l 0 -H /obj/ -T OBJ -m neteditor
+                            pane copy_of_panetab5_2 -a 0 -l 0 -H /obj/ -T OBJ -m neteditor
+                            pane copy_of_copy_of_panetab5_2_1 -a 0 -l 0 -H /obj/ -T OBJ -m neteditor
+                        }
+                        tabs 0 1 {
+                            pane panetab18 -a 0 -l 0 -H /obj/ -T OBJ -m neteditor
+                        }
+                    }
+                    tabs 1 1 {
+                        pane panetab20 -a 0 -l 0 -H /obj/ -T OBJ -m neteditor
+                        pane panetab21 -a 0 -l 10 -H /obj/ -T OBJ -m parmeditor
+                    }
+                }
+                tabs 3 1 {
+                    pane panetab12 -a 0 -l 0 -H /obj/ -T OBJ -m neteditor
+                    pane copy_of_panetab12_2 -a 0 -l 0 -H /obj/ -T OBJ -m neteditor
+                    pane copy_of_copy_of_panetab12_2_1 -a 0 -l 10 -H /obj/ -T OBJ -m neteditor
+                    pane panetab19 -a 0 -l 10 -H /obj/ -T OBJ -m parmeditor
+                }
+            }
+        }
+        split 0.770005 H {
+            tabs 5 1 {
+                pane panetab16 -a 0 -l 10 -H /obj/ -T OBJ -m details
+                pane copy_of_panetab16_1 -a 0 -l 10 -H /obj/ -T OBJ -m python
+                pane panetab2 -a 0 -l 10 -H /obj/ -T OBJ -m iprviewer
+                pane panetab3 -a 0 -l 0 -H /obj/ -T OBJ -m bundlelist
+                pane panetab4 -a 0 -l 10 -H /obj/ -T OBJ -m sceneview
+                pane panetab6 -a 0 -l 10 -H /obj/ -T OBJ -m parmeditor
+            }
+            tabs 2 1 {
+                pane panetab7 -a 0 -l 10 -H /obj/ -T OBJ -m details
+                pane panetab8 -a 0 -l 0 -H /obj/ -T OBJ -m bundlelist
+                pane panetab14 -a 0 -l 10 -H /obj/ -T OBJ -m parmeditor
+            }
+        }
+    }
+}
+shelfdock -o 0 -l icon_and_text -G "0.91 0.50" add shelf_set_1 shelf_set_2
+viewerstow -x open -b stow -l open -m hide -c hide -d open build_hatt_h16.panetab1.world
+vieweroption -a 0 build_hatt_h16.panetab1.world
+viewlayout -s 2 build_hatt_h16.panetab1.world
+viewtype -t ortho_right build_hatt_h16.panetab1.world.`vpname("build_hatt_h16.panetab1.world",4)`
+viewtype -t ortho_front build_hatt_h16.panetab1.world.`vpname("build_hatt_h16.panetab1.world",3)`
+viewtype -t ortho_top build_hatt_h16.panetab1.world.`vpname("build_hatt_h16.panetab1.world",1)`
+viewtype -t perspective build_hatt_h16.panetab1.world.`vpname("build_hatt_h16.panetab1.world",2)`
+networkeditor -p '{\n	"obj:listmode":"0",\n	"sop:listmode":"0",\n	"out:listmode":"0",\n	"showchilddep":"1",\n	"showdep":"0",\n	"perfstatname":"Time",\n	"showperfstats":"1",\n	"grouplistsplit":"0.75",\n	"showtree":"0",\n	"showtypesidebar":"0",\n	"showparmdialogmax":"1",\n	"treesplit":"0.25",\n	"palettesize":"150 150",\n	"typesidebarsplit":"0.25",\n	"palettemode":"0",\n	"showgrouplist":"0",\n	"backgroundimagebrightness":"1.0",\n	"backgroundimageediting":"0",\n	"gridystep":"1.0",\n	"gridmode":"0",\n	"showtimedep":"0",\n	"overviewbounds":"0.000000 0.000000 376.162887 398.321907",\n	"overviewmode":"2",\n	"palettecolors":"",\n	"showmenu":"1",\n	"gridxstep":"2.0",\n	"showparmdialog":"0"\n}\n' panetab17
+netcolumns -c display,xray,select,origin,capture,bone -n OBJ panetab17
+netcolumns -c display,render,template,selectabletemplate,highlight,unload,bypass,lock -n SOP panetab17
+netcolumns -c delscript,comment -n PART panetab17
+netcolumns -c display,render,template,bypass -n POP panetab17
+netcolumns -c delscript,comment -n CHOPNET panetab17
+netcolumns -c display,export,audio,bypass,lock -n CHOP panetab17
+netcolumns -c startrender,bypass,lock -n ROP panetab17
+netcolumns -c delscript,comment -n SHOP panetab17
+netcolumns -c display,render,template,bypass -n COP2 panetab17
+netcolumns -c delscript,comment -n IMG panetab17
+netcolumns -c delscript,comment,input -n VOP panetab17
+netcolumns -c delscript,comment -n VOPNET panetab17
+netcolumns -c delscript,comment -n DOP panetab17
+netcolumns -c delscript,comment -n MGR panetab17
+netcolumns -c delscript,comment -n DIR panetab17
+datatree -p "Material Style Sheets" -D "{  \"use_full_shop_paths\":false } " panetab22
+viewerstow -x open -b stow -l stow -m hide -c hide -d open build_hatt_h16.panetab10.world
+vieweroption -a 2 build_hatt_h16.panetab10.world
+viewlayout -s 2 build_hatt_h16.panetab10.world
+viewtype -t ortho_right build_hatt_h16.panetab10.world.`vpname("build_hatt_h16.panetab10.world",4)`
+viewtype -t ortho_front build_hatt_h16.panetab10.world.`vpname("build_hatt_h16.panetab10.world",3)`
+viewtype -t ortho_top build_hatt_h16.panetab10.world.`vpname("build_hatt_h16.panetab10.world",1)`
+viewtype -t perspective build_hatt_h16.panetab10.world.`vpname("build_hatt_h16.panetab10.world",2)`
+bundlelist -G 0.611374 -g 0 -p 0 panetab15
+datatree -p "Material Style Sheets" -D "{  \"use_full_shop_paths\":false } " panetab9
+networkeditor -p '{\n	"vop:listmode":"0",\n	"dop:listmode":"0",\n	"sop:listmode":"0",\n	"obj:listmode":"0",\n	"showchilddep":"1",\n	"showdep":"0",\n	"perfstatname":"Time",\n	"showperfstats":"1",\n	"grouplistsplit":"0.75",\n	"showtree":"0",\n	"showtypesidebar":"0",\n	"showparmdialogmax":"0",\n	"treesplit":"0.25",\n	"palettesize":"150 150",\n	"typesidebarsplit":"0.309293",\n	"palettemode":"0",\n	"showgrouplist":"0",\n	"backgroundimagebrightness":"1.0",\n	"backgroundimageediting":"0",\n	"gridystep":"1.0",\n	"gridmode":"0",\n	"showtimedep":"0",\n	"overviewbounds":"0.000000 0.000000 253.733333 154.979167",\n	"overviewmode":"2",\n	"palettecolors":"",\n	"showmenu":"1",\n	"gridxstep":"2.0",\n	"showparmdialog":"0"\n}\n' panetab5
+netcolumns -c display,xray,select,origin,capture,bone -n OBJ panetab5
+netcolumns -c display,render,template,selectabletemplate,highlight,unload,bypass,lock -n SOP panetab5
+netcolumns -c delscript,comment -n PART panetab5
+netcolumns -c display,render,template,bypass -n POP panetab5
+netcolumns -c delscript,comment -n CHOPNET panetab5
+netcolumns -c display,export,audio,bypass,lock -n CHOP panetab5
+netcolumns -c startrender,bypass,lock -n ROP panetab5
+netcolumns -c delscript,comment -n SHOP panetab5
+netcolumns -c display,render,template,bypass -n COP2 panetab5
+netcolumns -c delscript,comment -n IMG panetab5
+netcolumns -c delscript,comment,input -n VOP panetab5
+netcolumns -c delscript,comment -n VOPNET panetab5
+netcolumns -c delscript,comment -n DOP panetab5
+netcolumns -c delscript,comment -n MGR panetab5
+netcolumns -c delscript,comment -n DIR panetab5
+networkeditor -p '{\n	"dop:listmode":"0",\n	"obj:listmode":"0",\n	"sop:listmode":"0",\n	"showchilddep":"1",\n	"showdep":"0",\n	"perfstatname":"Time",\n	"showperfstats":"1",\n	"grouplistsplit":"0.75",\n	"showtree":"0",\n	"showtypesidebar":"0",\n	"showparmdialogmax":"1",\n	"treesplit":"0.25",\n	"palettesize":"150 150",\n	"typesidebarsplit":"0.444681",\n	"palettemode":"0",\n	"showgrouplist":"0",\n	"backgroundimagebrightness":"1.0",\n	"backgroundimageediting":"0",\n	"gridystep":"1.0",\n	"gridmode":"0",\n	"showtimedep":"0",\n	"overviewbounds":"0.000000 0.000000 253.733333 154.979167",\n	"overviewmode":"2",\n	"palettecolors":"",\n	"showmenu":"1",\n	"gridxstep":"2.0",\n	"showparmdialog":"0"\n}\n' copy_of_panetab5_1
+netcolumns -c display,xray,select,origin,capture,bone -n OBJ copy_of_panetab5_1
+netcolumns -c display,render,template,selectabletemplate,highlight,unload,bypass,lock -n SOP copy_of_panetab5_1
+netcolumns -c delscript,comment -n PART copy_of_panetab5_1
+netcolumns -c display,render,template,bypass -n POP copy_of_panetab5_1
+netcolumns -c delscript,comment -n CHOPNET copy_of_panetab5_1
+netcolumns -c display,export,audio,bypass,lock -n CHOP copy_of_panetab5_1
+netcolumns -c startrender,bypass,lock -n ROP copy_of_panetab5_1
+netcolumns -c delscript,comment -n SHOP copy_of_panetab5_1
+netcolumns -c display,render,template,bypass -n COP2 copy_of_panetab5_1
+netcolumns -c delscript,comment -n IMG copy_of_panetab5_1
+netcolumns -c delscript,comment,input -n VOP copy_of_panetab5_1
+netcolumns -c delscript,comment -n VOPNET copy_of_panetab5_1
+netcolumns -c delscript,comment -n DOP copy_of_panetab5_1
+netcolumns -c delscript,comment -n MGR copy_of_panetab5_1
+netcolumns -c delscript,comment -n DIR copy_of_panetab5_1
+networkeditor -p '{\n	"sop:listmode":"0",\n	"obj:listmode":"0",\n	"dop:listmode":"0",\n	"out:listmode":"0",\n	"showchilddep":"1",\n	"showdep":"0",\n	"perfstatname":"Time",\n	"showperfstats":"1",\n	"grouplistsplit":"0.75",\n	"showtree":"0",\n	"showtypesidebar":"0",\n	"showparmdialogmax":"1",\n	"treesplit":"0.25",\n	"palettesize":"150 150",\n	"typesidebarsplit":"0.25",\n	"palettemode":"0",\n	"showgrouplist":"0",\n	"backgroundimagebrightness":"1.0",\n	"backgroundimageediting":"0",\n	"gridystep":"1.0",\n	"gridmode":"0",\n	"showtimedep":"0",\n	"overviewbounds":"0.000000 0.000000 253.733333 154.979167",\n	"overviewmode":"2",\n	"palettecolors":"",\n	"showmenu":"1",\n	"gridxstep":"2.0",\n	"showparmdialog":"0"\n}\n' copy_of_panetab5_2
+netcolumns -c display,xray,select,origin,capture,bone -n OBJ copy_of_panetab5_2
+netcolumns -c display,render,template,selectabletemplate,highlight,unload,bypass,lock -n SOP copy_of_panetab5_2
+netcolumns -c delscript,comment -n PART copy_of_panetab5_2
+netcolumns -c display,render,template,bypass -n POP copy_of_panetab5_2
+netcolumns -c delscript,comment -n CHOPNET copy_of_panetab5_2
+netcolumns -c display,export,audio,bypass,lock -n CHOP copy_of_panetab5_2
+netcolumns -c startrender,bypass,lock -n ROP copy_of_panetab5_2
+netcolumns -c delscript,comment -n SHOP copy_of_panetab5_2
+netcolumns -c display,render,template,bypass -n COP2 copy_of_panetab5_2
+netcolumns -c delscript,comment -n IMG copy_of_panetab5_2
+netcolumns -c delscript,comment,input -n VOP copy_of_panetab5_2
+netcolumns -c delscript,comment -n VOPNET copy_of_panetab5_2
+netcolumns -c delscript,comment -n DOP copy_of_panetab5_2
+netcolumns -c delscript,comment -n MGR copy_of_panetab5_2
+netcolumns -c delscript,comment -n DIR copy_of_panetab5_2
+networkeditor -p '{\n	"sop:listmode":"0",\n	"obj:listmode":"0",\n	"dop:listmode":"0",\n	"vop:listmode":"0",\n	"showchilddep":"1",\n	"showdep":"0",\n	"perfstatname":"Time",\n	"showperfstats":"1",\n	"grouplistsplit":"0.75",\n	"showtree":"0",\n	"showtypesidebar":"0",\n	"showparmdialogmax":"1",\n	"treesplit":"0.25",\n	"palettesize":"150 150",\n	"typesidebarsplit":"0.25",\n	"palettemode":"0",\n	"showgrouplist":"0",\n	"backgroundimagebrightness":"1.0",\n	"backgroundimageediting":"0",\n	"gridystep":"1.0",\n	"gridmode":"0",\n	"showtimedep":"0",\n	"overviewbounds":"0.000000 0.000000 253.733333 154.979167",\n	"overviewmode":"2",\n	"palettecolors":"",\n	"showmenu":"1",\n	"gridxstep":"2.0",\n	"showparmdialog":"0"\n}\n' copy_of_copy_of_panetab5_2_1
+netcolumns -c display,xray,select,origin,capture,bone -n OBJ copy_of_copy_of_panetab5_2_1
+netcolumns -c display,render,template,selectabletemplate,highlight,unload,bypass,lock -n SOP copy_of_copy_of_panetab5_2_1
+netcolumns -c delscript,comment -n PART copy_of_copy_of_panetab5_2_1
+netcolumns -c display,render,template,bypass -n POP copy_of_copy_of_panetab5_2_1
+netcolumns -c delscript,comment -n CHOPNET copy_of_copy_of_panetab5_2_1
+netcolumns -c display,export,audio,bypass,lock -n CHOP copy_of_copy_of_panetab5_2_1
+netcolumns -c startrender,bypass,lock -n ROP copy_of_copy_of_panetab5_2_1
+netcolumns -c delscript,comment -n SHOP copy_of_copy_of_panetab5_2_1
+netcolumns -c display,render,template,bypass -n COP2 copy_of_copy_of_panetab5_2_1
+netcolumns -c delscript,comment -n IMG copy_of_copy_of_panetab5_2_1
+netcolumns -c delscript,comment,input -n VOP copy_of_copy_of_panetab5_2_1
+netcolumns -c delscript,comment -n VOPNET copy_of_copy_of_panetab5_2_1
+netcolumns -c delscript,comment -n DOP copy_of_copy_of_panetab5_2_1
+netcolumns -c delscript,comment -n MGR copy_of_copy_of_panetab5_2_1
+netcolumns -c delscript,comment -n DIR copy_of_copy_of_panetab5_2_1
+networkeditor -p '{\n	"dop:listmode":"0",\n	"sop:listmode":"0",\n	"obj:listmode":"0",\n	"showchilddep":"1",\n	"showdep":"0",\n	"perfstatname":"Time",\n	"showperfstats":"1",\n	"grouplistsplit":"0.75",\n	"showtree":"0",\n	"showtypesidebar":"0",\n	"showparmdialogmax":"1",\n	"treesplit":"0.25",\n	"palettesize":"150 150",\n	"typesidebarsplit":"0.25",\n	"palettemode":"0",\n	"showgrouplist":"0",\n	"backgroundimagebrightness":"1.0",\n	"backgroundimageediting":"0",\n	"gridystep":"1.0",\n	"gridmode":"0",\n	"showtimedep":"0",\n	"overviewbounds":"0.000000 0.000000 253.733333 74.966667",\n	"overviewmode":"2",\n	"palettecolors":"",\n	"showmenu":"1",\n	"gridxstep":"2.0",\n	"showparmdialog":"0"\n}\n' panetab18
+netcolumns -c display,xray,select,origin,capture,bone -n OBJ panetab18
+netcolumns -c display,render,template,selectabletemplate,highlight,unload,bypass,lock -n SOP panetab18
+netcolumns -c delscript,comment -n PART panetab18
+netcolumns -c display,render,template,bypass -n POP panetab18
+netcolumns -c delscript,comment -n CHOPNET panetab18
+netcolumns -c display,export,audio,bypass,lock -n CHOP panetab18
+netcolumns -c startrender,bypass,lock -n ROP panetab18
+netcolumns -c delscript,comment -n SHOP panetab18
+netcolumns -c display,render,template,bypass -n COP2 panetab18
+netcolumns -c delscript,comment -n IMG panetab18
+netcolumns -c delscript,comment,input -n VOP panetab18
+netcolumns -c delscript,comment -n VOPNET panetab18
+netcolumns -c delscript,comment -n DOP panetab18
+netcolumns -c delscript,comment -n MGR panetab18
+netcolumns -c delscript,comment -n DIR panetab18
+networkeditor -p '{\n	"obj:listmode":"0",\n	"sop:listmode":"0",\n	"dop:listmode":"0",\n	"showchilddep":"1",\n	"showdep":"0",\n	"perfstatname":"Time",\n	"showperfstats":"1",\n	"grouplistsplit":"0.75",\n	"showtree":"0",\n	"showtypesidebar":"0",\n	"showparmdialogmax":"1",\n	"treesplit":"0.25",\n	"palettesize":"150 150",\n	"typesidebarsplit":"0.25",\n	"palettemode":"0",\n	"showgrouplist":"0",\n	"backgroundimagebrightness":"1.0",\n	"backgroundimageediting":"0",\n	"gridystep":"1.0",\n	"gridmode":"0",\n	"showtimedep":"0",\n	"overviewbounds":"0.000000 0.000000 129.300000 223.800000",\n	"overviewmode":"2",\n	"palettecolors":"",\n	"showmenu":"1",\n	"gridxstep":"2.0",\n	"showparmdialog":"0"\n}\n' panetab20
+netcolumns -c display,xray,select,origin,capture,bone -n OBJ panetab20
+netcolumns -c display,render,template,selectabletemplate,highlight,unload,bypass,lock -n SOP panetab20
+netcolumns -c delscript,comment -n PART panetab20
+netcolumns -c display,render,template,bypass -n POP panetab20
+netcolumns -c delscript,comment -n CHOPNET panetab20
+netcolumns -c display,export,audio,bypass,lock -n CHOP panetab20
+netcolumns -c startrender,bypass,lock -n ROP panetab20
+netcolumns -c delscript,comment -n SHOP panetab20
+netcolumns -c display,render,template,bypass -n COP2 panetab20
+netcolumns -c delscript,comment -n IMG panetab20
+netcolumns -c delscript,comment,input -n VOP panetab20
+netcolumns -c delscript,comment -n VOPNET panetab20
+netcolumns -c delscript,comment -n DOP panetab20
+netcolumns -c delscript,comment -n MGR panetab20
+netcolumns -c delscript,comment -n DIR panetab20
+parmeditor -T 0.25 -w 0 panetab21
+networkeditor -p '{\n	"sop:listmode":"0",\n	"dop:listmode":"0",\n	"obj:listmode":"0",\n	"showchilddep":"1",\n	"showdep":"0",\n	"perfstatname":"Time",\n	"showperfstats":"1",\n	"grouplistsplit":"0.75",\n	"showtree":"0",\n	"showtypesidebar":"0",\n	"showparmdialogmax":"1",\n	"treesplit":"0.25",\n	"palettesize":"150 150",\n	"typesidebarsplit":"0.25",\n	"palettemode":"0",\n	"showgrouplist":"0",\n	"backgroundimagebrightness":"1.0",\n	"backgroundimageediting":"0",\n	"gridystep":"1.0",\n	"gridmode":"0",\n	"showtimedep":"0",\n	"overviewbounds":"0.000000 0.000000 23.021538 78.149744",\n	"overviewmode":"2",\n	"palettecolors":"",\n	"showmenu":"1",\n	"gridxstep":"2.0",\n	"showparmdialog":"0"\n}\n' panetab12
+netcolumns -c display,xray,select,origin,capture,bone -n OBJ panetab12
+netcolumns -c display,render,template,selectabletemplate,highlight,unload,bypass,lock -n SOP panetab12
+netcolumns -c delscript,comment -n PART panetab12
+netcolumns -c display,render,template,bypass -n POP panetab12
+netcolumns -c delscript,comment -n CHOPNET panetab12
+netcolumns -c display,export,audio,bypass,lock -n CHOP panetab12
+netcolumns -c startrender,bypass,lock -n ROP panetab12
+netcolumns -c delscript,comment -n SHOP panetab12
+netcolumns -c display,render,template,bypass -n COP2 panetab12
+netcolumns -c delscript,comment -n IMG panetab12
+netcolumns -c delscript,comment,input -n VOP panetab12
+netcolumns -c delscript,comment -n VOPNET panetab12
+netcolumns -c delscript,comment -n DOP panetab12
+netcolumns -c delscript,comment -n MGR panetab12
+netcolumns -c delscript,comment -n DIR panetab12
+networkeditor -p '{\n	"dop:listmode":"0",\n	"sop:listmode":"0",\n	"obj:listmode":"0",\n	"showchilddep":"1",\n	"showdep":"0",\n	"perfstatname":"Time",\n	"showperfstats":"1",\n	"grouplistsplit":"0.75",\n	"showtree":"0",\n	"showtypesidebar":"0",\n	"showparmdialogmax":"1",\n	"treesplit":"0.25",\n	"palettesize":"150 150",\n	"typesidebarsplit":"0.25",\n	"palettemode":"0",\n	"showgrouplist":"0",\n	"backgroundimagebrightness":"1.0",\n	"backgroundimageediting":"0",\n	"gridystep":"1.0",\n	"gridmode":"0",\n	"showtimedep":"0",\n	"overviewbounds":"0.000000 0.000000 23.021538 78.149744",\n	"overviewmode":"2",\n	"palettecolors":"",\n	"showmenu":"1",\n	"gridxstep":"2.0",\n	"showparmdialog":"0"\n}\n' copy_of_panetab12_2
+netcolumns -c display,xray,select,origin,capture,bone -n OBJ copy_of_panetab12_2
+netcolumns -c display,render,template,selectabletemplate,highlight,unload,bypass,lock -n SOP copy_of_panetab12_2
+netcolumns -c delscript,comment -n PART copy_of_panetab12_2
+netcolumns -c display,render,template,bypass -n POP copy_of_panetab12_2
+netcolumns -c delscript,comment -n CHOPNET copy_of_panetab12_2
+netcolumns -c display,export,audio,bypass,lock -n CHOP copy_of_panetab12_2
+netcolumns -c startrender,bypass,lock -n ROP copy_of_panetab12_2
+netcolumns -c delscript,comment -n SHOP copy_of_panetab12_2
+netcolumns -c display,render,template,bypass -n COP2 copy_of_panetab12_2
+netcolumns -c delscript,comment -n IMG copy_of_panetab12_2
+netcolumns -c delscript,comment,input -n VOP copy_of_panetab12_2
+netcolumns -c delscript,comment -n VOPNET copy_of_panetab12_2
+netcolumns -c delscript,comment -n DOP copy_of_panetab12_2
+netcolumns -c delscript,comment -n MGR copy_of_panetab12_2
+netcolumns -c delscript,comment -n DIR copy_of_panetab12_2
+networkeditor -p '{\n	"dop:listmode":"0",\n	"sop:listmode":"0",\n	"obj:listmode":"0",\n	"vop:listmode":"0",\n	"shop:listmode":"0",\n	"showchilddep":"1",\n	"showdep":"0",\n	"perfstatname":"Time",\n	"showperfstats":"1",\n	"grouplistsplit":"0.75",\n	"showtree":"0",\n	"showtypesidebar":"0",\n	"showparmdialogmax":"1",\n	"treesplit":"0.25",\n	"palettesize":"150 150",\n	"typesidebarsplit":"0.25",\n	"palettemode":"0",\n	"showgrouplist":"0",\n	"backgroundimagebrightness":"1.0",\n	"backgroundimageediting":"0",\n	"gridystep":"1.0",\n	"gridmode":"0",\n	"showtimedep":"0",\n	"overviewbounds":"0.000000 0.000000 23.021538 78.149744",\n	"overviewmode":"2",\n	"palettecolors":"",\n	"showmenu":"1",\n	"gridxstep":"2.0",\n	"showparmdialog":"0"\n}\n' copy_of_copy_of_panetab12_2_1
+netcolumns -c display,xray,select,origin,capture,bone -n OBJ copy_of_copy_of_panetab12_2_1
+netcolumns -c display,render,template,selectabletemplate,highlight,unload,bypass,lock -n SOP copy_of_copy_of_panetab12_2_1
+netcolumns -c delscript,comment -n PART copy_of_copy_of_panetab12_2_1
+netcolumns -c display,render,template,bypass -n POP copy_of_copy_of_panetab12_2_1
+netcolumns -c delscript,comment -n CHOPNET copy_of_copy_of_panetab12_2_1
+netcolumns -c display,export,audio,bypass,lock -n CHOP copy_of_copy_of_panetab12_2_1
+netcolumns -c startrender,bypass,lock -n ROP copy_of_copy_of_panetab12_2_1
+netcolumns -c delscript,comment -n SHOP copy_of_copy_of_panetab12_2_1
+netcolumns -c display,render,template,bypass -n COP2 copy_of_copy_of_panetab12_2_1
+netcolumns -c delscript,comment -n IMG copy_of_copy_of_panetab12_2_1
+netcolumns -c delscript,comment,input -n VOP copy_of_copy_of_panetab12_2_1
+netcolumns -c delscript,comment -n VOPNET copy_of_copy_of_panetab12_2_1
+netcolumns -c delscript,comment -n DOP copy_of_copy_of_panetab12_2_1
+netcolumns -c delscript,comment -n MGR copy_of_copy_of_panetab12_2_1
+netcolumns -c delscript,comment -n DIR copy_of_copy_of_panetab12_2_1
+parmeditor -T 0.25 -w 0 panetab19
+iprview -t 0.1 -l 1 -e 0 -u 1  panetab2
+bundlelist -G 0.5 -g 0 -p 0 panetab3
+viewerstow -x open -b stow -l stow -m hide -c hide -d open build_hatt_h16.panetab4.world
+vieweroption -a 2 build_hatt_h16.panetab4.world
+viewlayout -s 2 build_hatt_h16.panetab4.world
+viewtype -t ortho_right build_hatt_h16.panetab4.world.`vpname("build_hatt_h16.panetab4.world",4)`
+viewtype -t ortho_front build_hatt_h16.panetab4.world.`vpname("build_hatt_h16.panetab4.world",3)`
+viewtype -t ortho_top build_hatt_h16.panetab4.world.`vpname("build_hatt_h16.panetab4.world",1)`
+viewtype -t perspective build_hatt_h16.panetab4.world.`vpname("build_hatt_h16.panetab4.world",2)`
+parmeditor -T 0.25 -w 0 panetab6
+bundlelist -G 0.5 -g 0 -p 0 panetab8
+parmeditor -T 0.25 -w 0 panetab14

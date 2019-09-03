@@ -1,0 +1,53 @@
+
+=== bullet soft constraints
+"stiffness" is frequency of the spring
+
+in soft constraints sim is not very dependent of the mass of the objects
+in spring constraints sim very dependent of the mass of the objects
+
+If we want to get high stiffness, we may
+want to increase constraint iterations
+
+if we have a few substeps, solver will have
+damping effect without damping
+
+I will never blow up to you and it more
+stable then "spring constraint"
+
+== Glue propagation
+solver will take impact that occur and when take
+the impulse of the collision response and
+"record" that as primitive attribute on glue constraints
+
+When impact value goes to be large then "glue strength"
+that will cause solver to break the constraint and 
+it will let piece move by his one
+
+Is impact value wasn't high enough to break the glue
+there "half life" parm come in. It's just a case
+for impact value over time.
+
+Half life - is accumulating impact.
+
+Glue impulse needs to spread over network farther away from
+the impact location.
+That's why "propagation rate" comes in.
+It will do number of iteration diffusing spreading impulse
+through the network
+
+It it's set "1" it will spread evenly over all neighbours
+Iterations controls how far and rapidly the impacts 
+will spread.
+
+Prevously number of iteration was the global property of the entire constraint network.
+You hat to control this with detail attribute on the constraint
+network.
+
+==== collision as spheres
+downsides:
+if your geo has flat surfaces and hard edges it will be lost
+
+
+
+
+

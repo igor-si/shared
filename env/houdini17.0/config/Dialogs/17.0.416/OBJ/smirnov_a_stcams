@@ -1,0 +1,246 @@
+// Magic: 9a3eea5f
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug 25 17:40:02 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+parm.gad = ROW
+{
+   HSTRETCH
+
+   parm.label = PARM_LABEL("Label", "parm") WIDTH(1.5);
+   PARM(float, 3, "parm", none, none, "X,Y,Z")
+	RANGE(-1,1)  LABELREF(parm.label)
+	HSTRETCH;
+
+}
+keeppos.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+keeppos.gad = NULL { }
+pre_xform.gad = NULL { }
+}	// Template join.bot
+
+xOrd.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+xOrd.gad = NULL { }
+rOrd.gad = NULL { }
+}	// Template join.bot
+
+t.gad = NULL { }
+r.gad = NULL { }
+s.gad = NULL { }
+p.gad = NULL { }
+scale.gad = NULL { }
+lookatpath.gad = NULL { }
+lookup.gad = NULL { }
+pathobjpath.gad = NULL { }
+roll.gad = NULL { }
+pos.gad = NULL { }
+uparmtype.gad = NULL { }
+pathorient.gad = NULL { }
+up.gad = NULL { }
+bank.gad = NULL { }
+label1.gad = NULL { }
+label2.gad = NULL { }
+label3.gad = NULL { }
+label4.gad = NULL { }
+tdisplay.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+tdisplay.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+tdisplay.gad = NULL { }
+display.gad = NULL { }
+}	
+}	// Template join.bot
+
+outputobj.gad = NULL { }
+visibleobjects.gad = NULL { }
+picking.gad = NULL { }
+pickscript.gad = NULL { }
+caching.gad = NULL { }
+use_dcolor.gad = NULL { }
+dcolor.gad = NULL { }
+
+evalPath.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    { WIDTH(1.5) }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("evalPath", "evalPath")
+	push VALUE(evalPath.val);
+
+}
+
+abcPath.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ abcPath.label = PARM_LABEL("abcPath", "abcPath") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "abcPath") LABELREF(abcPath.label)
+	VALUE(abcPath.val) HSTRETCH;
+
+    abcPath.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(abcPath.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+leftCam.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    leftCam.label = PARM_LABEL("leftCam", "leftCam") WIDTH(1.5);
+    PARM_FIELD(string, "leftCam") VALUE(leftCam.val) 
+	LABELREF(leftCam.label) HSTRETCH;
+
+}
+
+rightCam.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    rightCam.label = PARM_LABEL("rightCam", "rightCam") WIDTH(1.5);
+    PARM_FIELD(string, "rightCam") VALUE(rightCam.val) 
+	LABELREF(rightCam.label) HSTRETCH;
+
+}
+
+transformsMult.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ transformsMult.label = PARM_LABEL("transformsMult", "transformsMult") WIDTH(1.5);
+ PARM(float, 1, "transformsMult", none, none) RANGE(0,10)
+	 LABELREF(transformsMult.label) HSTRETCH;
+
+}
+
+shutterTime.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ shutterTime.label = PARM_LABEL("shutterTime", "shutterTime") WIDTH(1.5);
+ PARM(float, 1, "shutterTime", none, none) RANGE(0,10)
+	 LABELREF(shutterTime.label) HSTRETCH;
+
+}
+
+frameOff.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ frameOff.label = PARM_LABEL("frame Offset", "frameOff") WIDTH(1.5);
+ PARM(integer, 1, "frameOff", none, none) RANGE(0,10)
+	 LABELREF(frameOff.label) HSTRETCH;
+
+}
+
+mfa.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ mfa.label = PARM_LABEL("mfa", "mfa") WIDTH(1.5);
+ PARM(float, 1, "mfa", none, none) RANGE(0,10)
+	 LABELREF(mfa.label) HSTRETCH;
+
+}
+
+camLeft_res.gad = ROW
+{
+   HSTRETCH
+
+   camLeft_res.label = PARM_LABEL("Resolution", "camLeft_res") WIDTH(1.5);
+   PARM(integer, 2, "camLeft_res", none, none, "X,Y")
+	RANGE(-1,1)  LABELREF(camLeft_res.label)
+	HSTRETCH;
+
+}
+
+trOff.gad = ROW
+{
+   HSTRETCH
+
+   trOff.label = PARM_LABEL("transform offset", "trOff") WIDTH(1.5);
+   PARM(float, 3, "trOff", none, none, "X,Y,Z")
+	RANGE(-1,1)  LABELREF(trOff.label)
+	HSTRETCH;
+
+}
+
+left_camera_near.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ left_camera_near.label = PARM_LABEL("Near Clipping", "left_camera_near") WIDTH(1.5);
+ PARM(float, 1, "left_camera_near", none, none) RANGE(0,10)
+	 LABELREF(left_camera_near.label) HSTRETCH;
+
+}
+
+left_camera_far.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ left_camera_far.label = PARM_LABEL("Far Clipping", "left_camera_far") WIDTH(1.5);
+ PARM(float, 1, "left_camera_far", none, none) RANGE(1,10000)
+	 LABELREF(left_camera_far.label) HSTRETCH;
+
+}
+childcomp.gad = NULL { }
+lookupobjpath.gad = NULL { }
+constraints_on.gad = NULL { }
+constraints_path.gad = NULL { }
+pr.gad = NULL { }
+
+stdswitcher3.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "stdswitcher3.gad"
+    { 
+	VALUE(stdswitcher3.gad.val) STRETCH(1,0)
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    evalPath.gad; 
+    abcPath.gad; 
+    leftCam.gad; 
+    rightCam.gad; 
+    transformsMult.gad; 
+    shutterTime.gad; 
+    frameOff.gad; 
+    mfa.gad; 
+    camLeft_res.gad; 
+    trOff.gad; 
+    left_camera_near.gad; 
+    left_camera_far.gad; 
+    childcomp.gad; 
+    lookupobjpath.gad; 
+    constraints_on.gad; 
+    constraints_path.gad; 
+    pr.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

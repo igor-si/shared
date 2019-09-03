@@ -1,0 +1,701 @@
+// Magic: f318fded
+// Automatically generated PSI dialog (PSI version 17.5.173)
+// Mon Sep  2 01:57:51 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+savenodescript.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+savenodescript.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    PARM_BUTTON("savenodescript", "Save to Python Script")
+	push VALUE(savenodescript.val);
+
+}
+
+savenodehda.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    {  }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("savenodehda", "Save to Digital Asset")
+	push VALUE(savenodehda.val);
+
+}
+}	// Template join.bot
+
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+pdg_workingdir.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    pdg_workingdir.label = PARM_LABEL("Working Directory", "pdg_workingdir") WIDTH(1.5);
+    PARM_FIELD(string, "pdg_workingdir") VALUE(pdg_workingdir.val) 
+	LABELREF(pdg_workingdir.label) HSTRETCH;
+
+}
+
+onschedule.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    onschedule.label = PARM_LABEL("onSchedule Callback", "onschedule");
+
+    MULTILINE_PARM_FIELD ("onschedule") 
+
+    	LABELREF(onschedule.label) 
+
+    	VALUE(onschedule.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+onschedulestatic.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    onschedulestatic.label = PARM_LABEL("onScheduleStatic Callback", "onschedulestatic");
+
+    MULTILINE_PARM_FIELD ("onschedulestatic") 
+
+    	LABELREF(onschedulestatic.label) 
+
+    	VALUE(onschedulestatic.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+submitasjob.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    submitasjob.label = PARM_LABEL("submitAsJob Callback", "submitasjob");
+
+    MULTILINE_PARM_FIELD ("submitasjob") 
+
+    	LABELREF(submitasjob.label) 
+
+    	VALUE(submitasjob.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+workingdir.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    workingdir.label = PARM_LABEL("workingDir Callback", "workingdir");
+
+    MULTILINE_PARM_FIELD ("workingdir") 
+
+    	LABELREF(workingdir.label) 
+
+    	VALUE(workingdir.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+localizepath.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    localizepath.label = PARM_LABEL("localizePath Callback", "localizepath");
+
+    MULTILINE_PARM_FIELD ("localizepath") 
+
+    	LABELREF(localizepath.label) 
+
+    	VALUE(localizepath.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+onstart.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    onstart.label = PARM_LABEL("onStart Callback", "onstart");
+
+    MULTILINE_PARM_FIELD ("onstart") 
+
+    	LABELREF(onstart.label) 
+
+    	VALUE(onstart.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+onstop.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    onstop.label = PARM_LABEL("onStop Callback", "onstop");
+
+    MULTILINE_PARM_FIELD ("onstop") 
+
+    	LABELREF(onstop.label) 
+
+    	VALUE(onstop.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+onstartcook.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    onstartcook.label = PARM_LABEL("onStartCook Callback", "onstartcook");
+
+    MULTILINE_PARM_FIELD ("onstartcook") 
+
+    	LABELREF(onstartcook.label) 
+
+    	VALUE(onstartcook.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+onstopcook.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    onstopcook.label = PARM_LABEL("onStopCook Callback", "onstopcook");
+
+    MULTILINE_PARM_FIELD ("onstopcook") 
+
+    	LABELREF(onstopcook.label) 
+
+    	VALUE(onstopcook.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+endsharedserver.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    endsharedserver.label = PARM_LABEL("endSharedServer Callback", "endsharedserver");
+
+    MULTILINE_PARM_FIELD ("endsharedserver") 
+
+    	LABELREF(endsharedserver.label) 
+
+    	VALUE(endsharedserver.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+workitemresultserveraddr.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    workitemresultserveraddr.label = PARM_LABEL("workItemResultServerAddr Callback", "workitemresultserveraddr");
+
+    MULTILINE_PARM_FIELD ("workitemresultserveraddr") 
+
+    	LABELREF(workitemresultserveraddr.label) 
+
+    	VALUE(workitemresultserveraddr.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+transferfile.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    transferfile.label = PARM_LABEL("transferFile Callback", "transferfile");
+
+    MULTILINE_PARM_FIELD ("transferfile") 
+
+    	LABELREF(transferfile.label) 
+
+    	VALUE(transferfile.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+getloguri.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    getloguri.label = PARM_LABEL("getLogURI Callback", "getloguri");
+
+    MULTILINE_PARM_FIELD ("getloguri") 
+
+    	LABELREF(getloguri.label) 
+
+    	VALUE(getloguri.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+getstatusuri.gad = ROW
+{
+
+    HSTRETCH JUSTIFY(left, top)
+
+    getstatusuri.label = PARM_LABEL("getStatusURI Callback", "getstatusuri");
+
+    MULTILINE_PARM_FIELD ("getstatusuri") 
+
+    	LABELREF(getstatusuri.label) 
+
+    	VALUE(getstatusuri.val) 
+    	SYNTAX("python") 
+    	LINES(8,40) 
+    	HSTRETCH;
+
+    {
+
+	LAYOUT(vertical)
+	{
+	    SIZE(0, 0.26)
+	}
+
+    }
+
+}
+
+folder13.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder13.gad"
+    { 
+	VALUE(folder13.gad.val) STRETCH(1,0)
+
+	TAB "Log URI"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    getloguri.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Status URI"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    getstatusuri.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder10.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder10.gad"
+    { 
+	VALUE(folder10.gad.val) STRETCH(1,0)
+
+	TAB "End Shared Server"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    endsharedserver.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Result Server Address"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    workitemresultserveraddr.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Transfer File"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    transferfile.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder6.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder6.gad"
+    { 
+	VALUE(folder6.gad.val) STRETCH(1,0)
+
+	TAB "Start"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    onstart.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Stop"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    onstop.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Start Cook"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    onstartcook.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Stop Cook"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    onstopcook.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder4.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder4.gad"
+    { 
+	VALUE(folder4.gad.val) STRETCH(1,0)
+
+	TAB "Working Directory"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    workingdir.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Localize Path"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    localizepath.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder1.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder1.gad"
+    { 
+	VALUE(folder1.gad.val) STRETCH(1,0)
+
+	TAB "Schedule"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    onschedule.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Schedule Static"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    onschedulestatic.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Submit As Job"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    submitasjob.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder0.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder0.gad"
+    { 
+	VALUE(folder0.gad.val) STRETCH(1,0)
+
+	TAB "Scheduling"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    folder1.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "File Paths"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    folder4.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Initialization and Cleanup"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    folder6.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Shared Servers"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    folder10.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Logging"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    folder13.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    savenodescript.row.join; 
+    sepparm.gad; 
+    pdg_workingdir.gad; 
+    folder0.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

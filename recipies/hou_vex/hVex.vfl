@@ -1,0 +1,2847 @@
+===============attribute order for instancing  
+Key: 
+X = pivot matrix (translate by -pivot)
+O = orient matrix 
+S = scale matrix (scale * pscale) 
+L = alignment matrix (*) 
+R = rot matrix 
+T = trans matrix (trans + P) 
+M = transform matrix
+
+(*) The alignment matrix (L) is defined by N or v and up. 
+
+//IF N exists AND up exists and isn't {0,0,0}: 
+   L = mlookatup(N,0,up) 
+//ELSE IF N exists: 
+   L = dihedral({0,0,1},N) 
+//ELSE IF v exists AND up exists and isn't {0,0,0}: 
+   L = mlookatup(v,0,up) 
+//ELSE IF v exists: 
+   L = dihedral({0,0,1},v) 
+
+IF transform exists:
+   Transform = X*M*T
+ELSE IF orient exists: 
+   Transform = X*S*(O*R)*T
+ELSE: 
+   Transform = X*S*L*R*T
+
+
+======================================================
+======================================================
+//fetch field from dopnet /
+/obj/sphere1/pyrodopnet:smokeobject1/density
+=============================strings===================
+printf("nb:%g \n", nb);
+printf("distTmp:%g,idTmp:%g \n", distTmp,idTmp);    
+
+======================================================
+
+=============how to hide primitives  
+@group__3d_hidden primitives=1
+-------------------------------------
+
+==============find near poins 
+int nearp = nearpoint(0,point(1,"P",0));
+if (@ptnum == nearp) v@Cd = set(1,0,0);
+-------------------------------------------
+
+==============find near poins 
+int nearpts[] = nearpoints(0, point(1,"P",0), ch("dist"));
+foreach ( int pt; nearpts ) if ( pt == @ptnum) v@Cd = set(1,0,0);
+-------------------------------------------
+
+
+==============centroidPrims
+//run over prims
+//create pts in centroid of each prim
+int prim_points[];
+vector accum_pos, pos;
+accum_pos = {0, 0, 0};
+
+for (int i = 0; i < primvertexcount(geoself(), @primnum); i++)
+{
+    int vtx_index = vertexindex(geoself(), @primnum, i);
+    int vtx_point = vertexpoint(geoself(), vtx_index); 
+    prim_points[i] = vtx_point;
+    getattribute(@OpInput1, pos, "point", "P", vtx_point, 0);
+    accum_pos += pos;
+}
+
+addpoint(geoself(), accum_pos / len(prim_points));
+removeprim(geoself(), @primnum, 1);
+
+
+=============Neighbourhood Watch
+//groupexpression/snippet
+neighbourcount(0,@ptnum)==chi("count")
+-----------------------------------------------------
+
+=============Lookat 2nd Input
+//attribexpression/snippet
+(@P - getbbox_center(0)) * lookat(getbbox_center(1),getbbox_center(0)) + getbbox_center(0)
+-----------------------------------------------------
+
+=======================Align
+//attribexpression/snippet
+    //Align
+    @P;
+    int alignaxis = chi("axis");
+    float offset = ch("offset");
+    if(alignaxis == 0){
+        @P.y -= getbbox_min(0).y - offset;
+    }
+    else if(alignaxis == 1){
+        @P.y -= getbbox_max(0).y - offset;
+    }
+    else if(alignaxis == 2){
+        @P.x -= getbbox_min(0).x - offset;
+    }
+    else if(alignaxis == 3){
+        @P.x -= getbbox_max(0).x - offset;
+    }
+    else if(alignaxis == 4){
+        @P.z -= getbbox_min(0).z - offset;
+    }
+    else {
+        @P.z -= getbbox_max(0).z - offset;
+    }
+--------------------------------------------------
+
+
+=================================Stack      
+//attribexpression/snippet
+//    Stack
+    @P;
+    int stackaxis=chi("axis");
+    float stackoffset=ch("offset");
+    @P+=getbbox_center(1);
+    if(stackaxis==0){
+        @P.x+=getbbox_max(1).x-getbbox_center(1).x-getbbox_min(0).x+stackoffset;
+    }
+    else if(stackaxis==1){
+        @P.y+=getbbox_max(1).y-getbbox_center(1).y-getbbox_min(0).y+stackoffset;
+    }
+    else{
+        @P.z+=getbbox_max(1).z-getbbox_center(1).z-getbbox_min(0).z+stackoffset;
+    }
+----------------------------------------------------
+
+
+
+
+
+=============ao (incomplete)=================
+vector hit,raydir;
+float u,v,conewidth;
+int hitprim;
+v@Cd = 1;
+
+float maxdist = ch("maxdist");
+for (int i;i<rays;i++)
+    {
+    raydir=sample_direction_cone(@N*maxdist,conewidth,vector2()
+    hitprim = intersect(0,v@P+(raydir+0.01),raydir,hit,u,v);
+    if (hitprim==-1)
+    {
+        v@Cd *= 1;
+    }
+    else
+    {
+        v@Cd *= 1-(1/float(rays));
+    }
+}
+v@Cd = pow(v@Cd,ch("gamma"))
+=============================================
+
+
+====================calculate_volume_based_on_bbox
+//calculate_volume_based_on_bbox
+vector two =    point(0,"P",2);
+vector one =    point(0,"P",1);
+vector three =  point(0,"P",3);
+vector six =    point(0,"P",6);
+
+float l = length(two-one);
+float b = length(two-three);
+float h = length(two-six);
+
+f@vol = l * b * h * chf("scale"); // scale if values are too small
+f@vol = abs(f@vol);
+=====================================================
+
+
+======================ISOLATE MULTIPLE PRIMS
+//#ISOLATE MULTIPLE PRIMS
+i[]@prims = {0,1,2}; //primitives to keep
+
+foreach(int i;@prims){
+if(i==@primnum)@group_del=1;
+}
+===============================================================
+
+=============#PRUNE BY STRING MATCH
+//prune by string match
+string aa[] = split(chs("str"));
+
+foreach(string i;aa)
+{
+string word = "*" + i + "*";
+if(match(word,s@AssemblyPath))removepoint(geoself(),@ptnum);
+}
+===============================================================
+
+========================#AVERAGING STUFF
+vector accum_p = set(0,0,0);
+vector pos;
+int count=0;
+vector avg_p;
+float vlen = length(v@v);
+int handle = pcopen(@OpInput1, "P", @P, chf("rad"), chi("num"));
+while(pciterate(handle)){
+    pcimport(handle,"P",pos);
+    accum_p+=pos;
+    count+=1;
+};
+avg_p = accum_p/count;
+v@P = lerp(v@P,avg_p,chf("mix"));
+===============================================================
+
+======================#CULL BASED ON RAY DIRECTION
+int handle = pcopen(@OpInput1, "P", @P, chf("rad"), chi("num"));
+vector up = {0,1,0};
+vector dir,pos;
+float angle;
+i@many = pcnumfound(handle);
+while(pciterate(handle)){
+    if(i@many>1){
+        pcimport(handle,"P",pos);
+        dir = pos - @P;
+        angle = dot(normalize(dir),up);
+        if(angle>chf("mix"))removepoint(geoself(),@ptnum);
+    };
+};
+pcclose(handle);
+========================================================
+
+
+===========#GENERAL POINT CLOUD OPEN FUNCTION
+int handle = pcopen(@OpInput2, "P", v@P, chf("rad"), chi("num"));
+vector lookup_P = pcfilter(handle, "P");
+i@many = pcnumfound(handle);
+========================================================
+
+================================#SHRINK WRAP
+int handle = pcopen(@OpInput2, "P", @P, chf("rad"), chi("num"));
+vector lookup_P = pcfilter(handle, "P");
+i@many = pcnumfound(handle);
+if(i@many>=1)v@N = @P-lookup_P;
+else v@N = set(0,0,0);
+@P-=v@N;
+========================================================
+
+
+==============#CULL BY VOLUME (chi("inv")) is a check box.
+float vsample = volumesample(1,0,@P);
+if(chi("inv")==1){
+ if(vsample==0) removepoint(geoself(), @ptnum);
+}
+else{
+ if(vsample!=0) removepoint(geoself(), @ptnum);
+}
+========================================================
+
+
+====================#DELETE LONE POINTS
+int handle = pcopen(@OpInput1, "P", @P, chf("rad"), chi("num"));
+i@many = pcnumfound(handle);
+if(i@many<chi("num"))removepoint(geoself(),@ptnum);
+========================================================
+
+
+=========================================================
+
+==========MOVE POINTS TO GROUND SURFACE (GEO)
+int handle = pcopen(@OpInput2, "P", @P, chf("rad"), chi("num"));
+vector lp = pcfilter(handle, "P");
+
+i@npt = nearpoint(1,@P);
+vector npos = point(1,"P",i@npt);
+vector off = set(0,chf("yoffset"),0);
+
+if(@P.y<npos.y){
+ vector disp = @P-lp;
+ @P-=disp;
+ @P+=off;
+}
+====================================================
+
+=============#MOVE POINTS TO GEOMETRY SURFACE IF INSIDE SDF
+//Input 2 is Geo
+//Input3 is SDF representation of Geo
+int handle = pcopen(@OpInput2, "P", @P, chf("rad"), chi("num"));
+vector lp = pcfilter(handle, "P");
+
+i@npt = nearpoint(1,@P);
+vector npos = point(1,"P",i@npt);
+vector off = set(0,chf("yoffset"),0);
+vector disp = @P-lp;
+float vsample = volumesample(2,0,@P); 
+
+if(vsample<0)@P-=disp;
+====================================================
+
+
+=============List of Primitive neighbours by half edges
+    int     prim_edge, edge, prim, i, n, num;
+    string  neighbours = "";
+    i = 0;
+    prim_edge = primhedge(@OpInput1, @primnum);
+    while(i < primvertexcount(@OpInput1, @primnum))
+    {
+        num = hedge_equivcount(@OpInput1, prim_edge);
+        n = 0;
+        while(n < num)
+        {
+            edge = hedge_nextequiv(@OpInput1, prim_edge);
+            prim = hedge_prim(@OpInput1, edge);
+            if(prim != @primnum)
+                neighbours += sprintf("%g ", prim);
+            prim_edge = edge;
+            n++;
+        }
+        prim_edge = hedge_next(@OpInput1, prim_edge);
+        i++;      
+    }
+    s@neighbours = neighbours;
+
+============================================
+
+============== neighbour analog for prim
+// Primitive wrangle.
+
+i[]@neighbours;
+
+int prim_edge = primhedge(0, @primnum);
+for (int i = 0; i < primvertexcount(0, @primnum); i++)
+{
+    for (int j = 0; j < hedge_equivcount(0, prim_edge); j++)
+    {
+        int edge = hedge_nextequiv(0, prim_edge);
+        int prim = hedge_prim(0, edge);
+        if (prim != @primnum)
+        {
+            append(i[]@neighbours, prim);
+        }
+        prim_edge = edge;
+    }
+    prim_edge = hedge_next(0, prim_edge);
+}
+============================================
+
+
+======Write point numbers to an array
+    //in detail mode
+    i[]@points = expandpointgroup(@OpInput1, "!");
+    //in point mode
+    int point[] = array(@ptnum);
+    setdetailattrib(geoself(), "points", point, "append");
+====================================================
+
+
+===============Visibility
+    @gl_wireframe = true;
+    @gl_lit = true;
+=========================
+
+================Split string
+    //Split based on '_'
+    string bars[] = split(s@shop_materialpath, "_");
+    //Use last element as attribute value
+    s@mtlGrpName = bars[-1];
+==========================================
+
+
+
+=============Insert a point to the middle of the curve
+int prim_num = 0;
+int new_point = addpoint(0, {0,0,0});
+int insert_position = 3;
+    // store the old vertices
+int old_vertices[] = primvertices(0, prim_num);
+    // add a placeholder using an arbitrary point
+addvertex(0, prim_num, 0);
+    // replace the vertex at the desired position
+setvertexpoint(0, prim_num, insert_position, new_point);
+    // replace the vertices after the inserted position
+for(int i = insert_position; i < len(old_vertices); i++)
+    setvertexpoint(0, prim_num, i + 1, old_vertices[i]);
+============================================
+
+==================U coordinate on closed prim
+// Detail wrangle.
+float length = primintrinsic(0, "measuredperimeter", 0);
+// Set to false if value of 1.0 is unwanted for the last point
+// of closed prims and instead need to be treated as if point with
+// u=1 is coincident with the first point (like in unrolled prims).
+int as_open = true;
+// Compensate for closing auto-edge length.
+if (as_open && primintrinsic(0, "closed", 0))
+{
+    vector auto_edge = point(0, "P", 0) - point(0, "P", @numpt-1);
+    length -= length(auto_edge);
+}
+// Compute curve u.
+float passed = 0;
+for (int i = 1; i < @numpt; i++)
+{
+    vector d = point(0, "P", i) - point(0, "P", i-1);
+    passed += length(d);
+    setpointattrib(0, "u", i, passed/length);
+}
+============================================================
+
+==============to and from camera space
+@P = toNDC(chs("camera"), @P);
+@P.z = -ch("depth");
+@P = fromNDC(chs("camera"), @P);
+
+
+=========================scale intrinistic packed
+vector scale = {.9,.9,.9};
+//fit01(vector(rand(@primnum)), 0.2,1);
+
+matrix3 trn = primintrinsic(0, "transform", @primnum);
+matrix scalem = maketransform(0, 0, {0,0,0}, {0,0,0}, scale, @P);
+trn *= matrix3(scalem);
+setprimintrinsic(0, "transform", @primnum, trn);
+=========================
+
+=======================simple prim scale
+vector min,max;
+getbbox(0,min,max);
+vector center = (min+max)/2;
+
+vector rootPos = center;
+matrix m = 1;
+
+float scf = chf("scale");
+vector sc = set(scf,scf,scf);
+
+translate(m, -rootPos);
+scale(m, sc);
+translate(m, rootPos);
+v@P *= m;
+======================
+
+
+//==============================vex snippets
+======================================================
+
+
+======aw_matchByString
+if(match("leave*",s@name) )
+{
+    removepoint(0,@ptnum);
+}
+============================================
+
+======aw_print function
+printf("avDist:%g \n", avDist);
+============================================
+
+=====aw_rotateByTrMatrix
+float angle = ch('angle');
+float angleRad = radians(angle);
+
+vector axis = {0,0,1};
+matrix3 m = ident();
+rotate(m,angleRad,axis);
+@P = v@P*m;
+============================================
+========================aw_AddPtAttribIfEnable
+int enable = int(ch("enable"));
+if( enable)
+{
+    addpointattrib(geoself(), "oldVel", set(v@v.x,v@v.y,v@v.z)) ;
+
+}
+============================================
+
+=========attribute transfer=====
+int handle; 
+
+handle = pcopen(@OpInput2, "P", @P, 1000, 1); 
+@N = pcfilter(handle, "N"); 
+pcclose(handle); 
+=================================
+
+=======vex_forloop
+int closepts[] = pcfind(0, "id", i@id, @numpt,1);
+
+foreach (int pt; closepts) {
+  int p = addprim(0,"polyline");
+  addvertex(0,p,@ptnum);
+  addvertex(0,p,pt);
+} 
+
+
+=======vex_foreach============
+for (int i=0;i<@numpt;i++) {
+   int otherid = point(0,'id',i);
+   if (otherid == @id && i != @ptnum) {
+      int prim = addprim(0,'polyline');
+      addvertex(0,prim,@ptnum);
+      addvertex(0,prim,i);
+   }
+}
+==============================
+
+
+
+
+string ptgrps[] = detailintrinsic(0, "pointgroups");
+s[]@ptingrps = {};
+foreach(string grp;ptgrps)
+{
+    if (inpointgroup(0, grp, @ptnum)) append(s[]@ptingrps, grp);
+}
+
+============================================
+
+
+
+
+vector newP =@P + vector(onoise(@P+@Time*0.5,5,0.5,1))*1*{1,0,2}+{0,0.1,0};
+int prim;
+vector uv;
+xyzdist(@OpInput2,newP,prim,uv);
+@P = primuv(@OpInput2,"P",prim,uv);
+
+============================================
+
+============maximum value vel
+int pts = npoints(0);
+float @maxVel = 0;
+for(int i=0;i<pts;i++){
+    vector vel = point(0,"v",i);
+    float mag = length(vel);
+    @maxVel = max(@maxVel,mag);
+}
+
+====frame num with offset
+
+`padzero(4,$F-3)`
+`padzero(4,clamp($F-14,1,200))`
+
+============================================
+---------compare two points
+
+int np1 = npoints(0);
+int np2 = npoints(1);
+
+vector pos1;
+vector pos2;
+int extract = 0;
+
+for (int i=0; i<np1;i++)
+{
+    pos1 = point(0, "P",i);
+    
+    for (int j=0; j<np2;j++)
+    {
+        pos2 = point(1, "P",j);
+        if (pos1==pos2)
+        {
+        //extract = 1;
+        removepoint(0,i);
+        }
+        else
+        {
+        //removepoint(0,i);
+        }
+    }
+    
+}
+
+=============================Collision
+
+float dist = volumesample(1,"sdf",@P);
+
+if (dist<0){
+
+    vector grad = volumegradient(1,"sdf",@P);
+    vector disp_dir = normalize(grad);
+
+    @P += disp_dir * abs(dist);
+    @Cd = {0,1,0};
+    
+}
+
+============================================
+
+=======================add padzero padding=========
+int pnum = @ptnum;
+string ms = sprintf("%5d", pnum+10000*ch("body_part"));
+int msi = atoi(ms);
+i@wcluster = msi;
+===================================================
+
+====================remove by array
+int n[];
+int np = npoints(0)-1;
+n = {1,2,7,8,9};
+
+int nlen; 
+int curpt;
+//nlen = arraylength(n);
+
+for (int i=0; i<np;i++)
+{
+
+    foreach(int j;n)
+        if (@restpt == j)
+        {
+            removepoint(0,@ptnum);
+        }
+}
+
+=============================================
+-----------------------remove by percent
+
+int np = npoints(0)-1;
+float percprob =25;
+float prob = (100/percprob);
+
+for (int i=0; i<np;i++)
+{
+    if (@restpt % prob)
+    {
+    removepoint(0,@ptnum);
+    }
+}
+=============================================
+
+
+==============find number of groups==============================
+for primitive groups 
+argc(primgrouplist("../atWhatNode")) 
+
+for point groups 
+argc(pointgrouplist("../atWhatNode"))
+============================================
+
+
+
+=====================================notawhale ray
+vector newP =@P;
+//vector(onoise(@P+@Time*0.5,5,0.5,1))*1*{1,0,2}+{0,0.1,0};
+int prim;
+vector uv;
+xyzdist(@OpInput2,newP,prim,uv);
+vector compP = primuv(@OpInput2,"P",prim,uv);
+@P = lerp(v@P,compP,mix);
+============================================
+
+
+
+====scale normal by angle to create proper move like extrude / correct N for extrude
+vector axis = set(1,0,0);
+vector nL = dot(v@N,axis);
+v@N = v@N/abs(nL);
+==========================
+
+
+==============check intersect btw line and prims ================
+int prims[];
+int intersect;
+vector uvw,pw,pos;
+
+for(int j=0;j<npoints(1);j++)
+{
+    pos=point(1,"P",j);
+    intersect = intersect(0,pos,{0,-1,0},pw,uvw);
+    append(prims,intersect);
+    
+}
+//printf("distTmp:%g \n", prims);    
+
+for (int k=0;k<nprimitives(0);k++)
+{
+    if (find(prims,k)<0)
+    {
+        removeprim(0,k,1);
+    }
+
+}
+===================================================================
+
+======================Visualize n-gons with VEX
+//Any polygon with more than 4 vertices will become red colored. 
+//The same way you can select triangles (just test vertex count < 4).
+if (primvertexcount(0, @primnum) > 4)
+{@Cd = set(1, 0, 0);}
+================================================================
+
+================ create point on each prim =====================
+int ptTmp = addpoint(0,v@P);
+setpointattrib(0,"rPr",ptTmp,@primnum,"set");
+================================================================
+
+
+================ create prim on each point =====================
+for (int i=0;i<npoints(0);i++)
+{
+    int prim = addprim(0,"poly");
+    int vtx = addvertex(0,prim,i);
+    int rPr = point(0,"rPr",i);
+    setprimattrib(prim,"rPr",i,rPr,"set");
+}
+================================================================
+
+==================find point position by name / fix glue networks==================
+int pt = findattribval(1,"point","name",@name); //check name from second input
+v@P = point(1,"P",pt); 
+===============================================================
+
+
+==================pc sample vel from pointcloud================
+float rad= chf("rad");
+int handle = pcopen(1,"P",v@P,rad,1);
+vector v = pcfilter(handle,"v");
+v@vel = v;
+===============================================================
+
+
+
+==================pc add velocity by match string=============
+float rad = chf("rad");
+int handle = pcopen(1,"P",v@P,rad,1);
+vector vAdd = pcfilter(handle,"v");
+while(pciterate(handle))
+{
+    float d;
+    string agt;
+   
+    pcimport(handle, "point.distance", d);
+    pcimport(handle,"agt", agt);
+    int check = match(agt,s@name);
+    if (check)
+    {
+        v@v+=vAdd*chf("mult");
+    }
+}
+===============================================================
+
+
+
+
+===========================break constraints==============================
+//if (f@angle>f@breakAngle||f@torque>f@breakTorque||f@force>f@breakForce)
+if (f@torque>f@breakTorque)
+    removeprim(0,@primnum,0);
+===========================================================================
+
+
+
+===================space colonization simple================
+//predifined attributes
+i@id = i@ptnum;
+f@speed=1;
+//predifined groups
+
+//solver inside
+//  main wrangle
+//  -   group food
+float radius = 0.55;//f@pscaleMax*2.03; // ch("rad");;
+int nbrs[] = nearpoints(0, "infected", @P, radius);
+
+int cnt = 0;
+float accum = 0;
+foreach(int nbr; nbrs){
+    float infection = point(0, "infect", nbr);
+    vector diff = v@P-point(0,"P", nbr);
+    //float upweight = fit(abs((dot(normalize(diff), {0,1,0}))), 0, 1, 1, 0.1);
+    float upweight = 1;
+    float dist = length(diff);
+    float weight = 1 - smooth(0, radius, dist);
+    accum += infection * weight *upweight; //* @gSpeed 
+    cnt++;
+    }
+
+f@infect = f@infect + accum/float(cnt);    
+
+//  switch wrangle
+if (@infect > 1.0) //1.0  f@gSpeedMax/10.0 /f@pscaleDif f@gSpeedMax
+{ 
+    @group_infected = 1;
+    @group_food = 0;
+}
+===========================================================================
+
+
+
+
+============= create grid with offset==============
+float h=ch("size");
+
+int zsteps=chi("cols");
+int xsteps=chi("rows");
+float xcoeff=sin(radians(60));
+float zcoeff=cos(radians(60));
+vector center=set(xsteps*xcoeff-1,0,zsteps-0.5)*h*0.5;
+
+for(int z=0;z<zsteps;++z){
+    for(int x=0;x<xsteps;++x){
+        vector p=set(x*h*xcoeff,0,z*h+h*(x%2)*zcoeff);
+        p-=center;
+        addpoint(geoself(),p);
+    }
+}
+===========================================================================
+
+
+
+
+==========================each prim center point======================
+//printf("frame %g \n",@Frame);    
+int prP[] = primpoints(0, @primnum);
+vector avP = {0,0,0};
+foreach(int num;prP)
+{
+    //printf("%g \n",num);
+    vector cP = point(0,"P",num);
+    //printf("%g %g \n",cP,num);
+    avP += cP; //add pos to averP
+}
+avP = avP / len(prP);
+foreach(int num;prP)
+//{
+//    setpointattrib(0,"cP",num,avP,"set");
+//}
+int tempPt = addpoint(0,avP);
+removeprim(0,@primnum,1);
+//printf(" %g \n",avP);
+//setprimattrib(0,"avP",@primnum,avP,"set");
+===========================================================================
+
+
+
+
+
+
+======================find number of pts within radius of pts using pointclouds=========
+float radius = ch("rad");
+int srchPts = 1;
+
+int pcNumMax = 0;
+float pcNmax = 0;
+
+int pts = npoints(0);
+
+int handle = pcopen(1,"P",v@P,radius,srchPts);
+    while(pciterate(handle))
+    {
+    int pcNum = pcnumfound(handle);
+    i@pcNum = pcNum;
+    }
+    
+==========================================================================================
+
+====================rolling debris=====================
+
+//=1    distance_and_travel_v
+vector vel_dir;
+float vlen = length(v@v);
+vector vel_dir_comp = normalize(    lerp(v@vel_dir,normalize(v@v),.5)   );
+if (vlen<.2)
+{
+//    vel_dir=vel_dir;
+}
+else
+{
+    vel_dir=vel_dir_comp;
+}
+
+
+//==2    rot_wrangle
+
+float add_dis = fit(vlen,0,3,0,1);
+add_dis = chramp("travel_v",add_dis);
+add_dis = vlen*add_dis;
+@dis+=add_dis;
+
+vector topAxis = {0,1,0};
+vector ma=normalize(    cross(topAxis,v@vel_dir)    );
+vector mb=normalize(    v@vel_dir   );
+vector mc=normalize(    cross(ma,mb)    );
+vector rotateAxis = ma;
+
+float randId = random(i@id);
+float pscaleMin = chf("pscale_min");
+float pscaleMax = chf("pscale_max");
+float massMin = chf("mass_min");
+float massMax = chf("mass_max");
+f@mass=fit(randId,0,1,massMin,massMax);
+
+float rPscale = fit( chramp("ramp_pscale",randId),0,1,pscaleMin,pscaleMax);
+@pscale = rPscale;
+
+float roundNum = 3.14159*rPscale*2; 
+float angle = radians(  f@dis/24.0/roundNum*360 );
+
+matrix3 matx;
+matx = set(ma.x,ma.y,ma.z,  mb.x,mb.y,mb.z, mc.x,mc.y,mc.z);
+
+matrix3 rmatrix=matx;
+rotate(rmatrix,angle,rotateAxis);
+
+p@quaternion = quaternion(rmatrix);
+
+
+int groundObjId = 0;
+groundObjId = chi("ground_obj_id");
+string hitpath = s@hitpath;
+string objId = itoa(groundObjId);
+string hitobjid[] = split(hitpath , ":");
+if (hitobjid[2] == objId)
+    @hitGround = 1;
+    
+    if(@hitGround==1)
+    @hitGroundCounter++;
+
+//==3   correct_ground_intersect_wrangle
+int hitMin=0;
+int hitMax=10;
+float mix = fit(    float(@hitGroundCounter)    ,hitMin,hitMax,0,1);
+vector addPos= set(0,f@pscale,0);
+vector newPos = v@P+addPos;
+v@P = lerp(v@P,newPos,mix);
+
+==========================================================================================
+
+
+
+============aw_3dVecTo2dSurfSpace
+v@v=v@v-v@N*dot(v@v,v@N);
+====================================
+
+=============aw_removeSimilarId==========
+int f = findattribval(1,"point","id",@id);
+if (f!=-1) 
+{removepoint(0,@ptnum);}
+====================================
+
+=============primuv_example_distance
+int prim = @primnum;
+vector primuv = {0,0,0};
+int max = 10000;
+f@dist = xyzdist(1,"",v@P,prim,primuv,max);
+====================================
+
+=========aw_probBtwGeoXYZ
+float distSmin = chf("dist_src_min");
+float distSmax = chf("dist_src_max");
+float distDmin = chf("dist_dest_min");
+float distDmax = chf("dist_dest_max");
+
+int prim;
+vector primuv;
+float dist = xyzdist(1,"",v@P,prim,primuv,1000000);
+@dist = dist;
+float distFit = fit(dist,distSmin,distSmax,distDmin,distDmax);
+vector primP = primuv(1,"P",prim,primuv);
+vector primN = primuv(1,"N",prim,primuv);
+vector vecPP = v@P-primP;
+float prod = dot(primN,vecPP);
+float dotInCheck = 0;
+if (prod>0) 
+{
+    dotInCheck = 1;
+}
+distFit*=dotInCheck;
+f@prob=distFit;
+v@Cd = distFit;
+
+==================transform (incomplete)
+string st[] = split(s@name,"piece");
+i@nn = atoi(st[-1]);
+
+vector orient = {0,0,0,1};
+vector scale = {1,1,1};
+float pscale = 1;
+
+rot = @orient;
+vector xyz = {0,0,0};
+
+matrix xform = instance(p,{0,0,0},pscale*scale,rot,up,pivot)
+4@xform = xform;
+
+//primwrangle
+int src = point(0,"attrib",@ptnum);
+matrix xform = point(1,"xform",src)
+matrix3 rot = xform
+matrix old_xform = primintrinsic(0,"transform",@primnum)
+setprimintrinsic(geoself(),"transform",@primnum,old_xform*rot)
+
+//
+int src = point(0,"attrib",@ptnum);
+matrix xform = point(1,"xform",src)
+v@P*=xform;
+matrix rot = xform;
+transpose(rot)
+rot = invert(rot)
+v@N *= rot;
+v@N *= normalize(v@N);
+
+
+
+=============aw_addPoly============================================
+vector rPos = v@P;
+removepoint(0,0);
+
+float addX = .1;
+float addY = .05;
+int pt0 = addpoint(0,rPos+set(0,0,0) );
+int pt1 = addpoint(0,rPos+set(0+addX,0,0) );
+int pt2 = addpoint(0,rPos+set(0+addX,0+addY,0) );
+int pt3 = addpoint(0,rPos+set(0,0+addY,0) );
+
+int prim0 = addprim(0,"poly");
+
+int vtx0 = addvertex(0,prim0,pt0);
+int vtx1 = addvertex(0,prim0,pt1);
+int vtx2 = addvertex(0,prim0,pt2);
+int vtx3 = addvertex(0,prim0,pt3);
+==================================================================
+
+
+
+
+==================aw_addPtAttribIfnable================
+int enable = int(ch("enable"));
+if( enable)
+{
+    addpointattrib(geoself(), "oldVel", set(v@v.x,v@v.y,v@v.z)) ;
+
+}
+
+
+============================aw_arrayOfValues
+//printf("frame:%g \n",@Frame);
+//printf("avDist:%g \n", avDist);
+int np = npoints(0);
+int im[];
+for (int n = 0;n<np;n++)
+{
+    int curn = point(0,"iter",n);
+//     printf("curn:%g \n",curn);
+     push(im,curn);
+}
+//printf("im:%g \n",im);
+setdetailattrib(0,"im",im,"set");
+//i[]@im = im;
+
+
+
+==========================aw_averNeighbDist
+string brk = '____==========________';
+printf("n:%g \n", brk);
+printf("frame:%g \n", @Frame);
+
+int np =npoints(0);
+for (int i=0;i<np;i++)
+{
+    vector curPos = point(0,"P",i);
+    
+    int n = neighbourcount(0,i);
+
+    int nb[] = neighbours(0,i);
+    
+    float plDist = 0;
+    foreach(int p;nb)
+    {
+        //printf("p:%g \n", p);
+        vector pnbPos = point(0,"P",p);
+        float dist = distance(curPos,pnbPos);
+        plDist += dist;
+    }
+    float avDist = plDist/n;
+    printf("avDist:%g \n", avDist);
+    setpointattrib(0,"avDist",i,avDist,"set");
+}
+
+=======================aw_brelRamps
+//vector brel = relbbox(0,v@P);
+vector rPos = v@P*set(ch("scX"),ch("scY"),ch("scZ") )+set( ch("offX"), ch("offY") ,ch("offZ") );
+float angleX = radians(ch('anglex'));
+vector axisX = {1,0,0};
+matrix3 mX = ident();
+rotate(mX,angleX,axisX);
+
+float angleY = radians(ch('angley'));
+vector axisY = {0,1,0};
+matrix3 mY = ident();
+rotate(mY,angleY,axisY);
+
+float angleZ = radians(ch('anglez'));
+vector axisZ = {0,0,1};
+matrix3 mZ = ident();
+rotate(mZ,angleZ,axisZ);
+
+rPos = rPos*mX*mY*mZ;
+
+vector brel = relbbox(0,rPos);
+float brelX = chramp("brelX",brel.x);
+float brelY = chramp("brelY",brel.y);
+float brelZ = chramp("brelZ",brel.z);
+
+float brelM = brelX*brelY*brelZ;
+v@Cd = brelM;
+f@brel = brelM;
+
+
+===========aw_centroid
+vector min,max;
+getbbox(0,min,max);
+v@centr = (min+max)/2;
+
+============aw_centroidPt
+vector min,max;
+getbbox(0,min,max);
+vector centr = (min+max)/2;
+
+removepoint(0,@ptnum);
+
+addpoint(0,centr);
+
+
+============aw_centroidPtOne
+vector min,max;
+getbbox(0,min,max);
+vector centr = (min+max)/2;
+
+
+//removepoint(0,@ptnum);
+
+int np =npoints(0);
+for (int i=0;i<np;i++)
+{
+    removepoint(0,i);
+    //inSectSumm += point(0,"inSectTemp",i);
+}
+int npr = nprimitives(0);
+for (int j=0;j<npr;j++)
+{
+    removeprim(0,j,1);
+}
+
+
+addpoint(0,centr);
+
+
+==============aw_collisionByIntersect
+vector hit_point;
+float hu,hv;
+float search_dist = 3.0;
+
+
+int hit_prim = intersect(1,@P,-@N*search_dist,hit_point,hu,hv);
+
+if (hit_prim != -1) 
+{
+    vector hit_norm = prim_normal(1,hit_prim,hu,hv);
+    if (dot(@N,hit_norm) < 0)    {
+        @P = hit_point; }
+}
+
+
+============aw_compAttrAverage
+string attrName = chs("attrComp");
+vector computeAverage (string attrName)
+{
+    int count = npoints ( 0 );
+    float tmp = 0;
+    for ( int i = 0; i < count; ++i )
+    {
+        float prob = point ( 0, attrName, i );
+        tmp+= prob;
+    
+    }
+    
+    float out = tmp / count;
+    
+    for ( int j = 0; j < count; ++j )
+    {
+    string attrNameAver = concat(attrName,"Aver");
+    setpointattrib(0,attrNameAver,j,out,'set');    
+    }
+    
+    
+    return out;
+
+    
+}
+computeAverage(attrName);
+=============================================
+
+============aw_compAttrAverageVec
+vector computeAverage ( )
+{
+    int count = npoints ( 0 );
+    vector tmp = 0;
+    for ( int i = 0; i < count; ++i )
+    {
+        vector prob = point ( 0, "P", i );
+        tmp+= prob;
+    
+    }
+    
+    vector out = tmp / count;
+    
+    for ( int j = 0; j < count; ++j )
+    {
+    setpointattrib(0,"probAver",j,out,'set');    
+    }
+    
+    
+    return out;
+
+    
+}
+computeAverage();
+=============================================
+
+
+==============aw_coneLines============
+float inSectSumm;
+float addY = 2;
+float pTop = ch("pTop");
+float pBot = ch("pBot");
+
+int np =npoints(0);
+for (int i=0;i<np;i++)
+{
+    vector pos = point(0,"P",i);
+    //vector nRest = point(0,"N",i);
+    vector restCenter = point(0,"restCenter",i);
+    vector posMix = lerp(restCenter,pos,pBot);
+    setpointattrib(0,"P",i,posMix,"set"); //set bottom pts
+    
+    vector addVec = set(0,addY,0);
+    vector addPos = pos+addVec;
+    vector restCenter2 = restCenter+addVec;
+    addPos = lerp(restCenter2,addPos,pTop);
+    
+    
+    vector tmpN = normalize(addPos-posMix);
+    int idRest = point(0,"id",i);
+    int tmpPt = addpoint(0,addPos);
+    
+    setpointattrib(0,"id",tmpPt,idRest,"set");
+    setpointattrib(0,"N",tmpPt,tmpN,"set");
+    setpointattrib(0,"N",i,tmpN,"set");
+
+}
+=============================================
+
+=============aw_displaceAlongN
+vector freq = 4;
+vector amp = .3;
+vector offset = set(0,0,0);
+v@P += v@N*anoise( (v@P+offset)*freq )*amp;
+=============================================
+
+
+============aw_distToCenter
+vector min,max;
+getbbox(0,min,max);
+vector centr = (min+max)/2;
+
+float dist = distance(v@P,centr);
+f@t = dist;
+float distFit = dist;
+
+f@prob = chramp("rampDist",distFit);
+v@Cd = f@prob;
+=============================================
+
+
+
+=================aw_findDistPC
+float search = .5;
+int handle = pcopen(1,"P",@P,search,16);
+    while(pciterate(handle))
+    {
+    float dist;
+    pcimport(handle,"point.distance",dist);
+    if (dist<search)
+    {
+        int icp;
+        pcimport(handle,"point.number",icp);
+        pcimport(handle,"point.distance",dist);
+        @dist = dist;
+    }
+    
+    
+    }
+=============================================
+
+
+
+
+==================aw_findIntersectPrimsByLine
+int prims[];
+int intersect;
+vector uvw,pw,pos;
+
+for(int j=0;j<npoints(1);j++)
+{
+    pos=point(1,"P",j);
+    intersect = intersect(0,pos,{0,-1,0},pw,uvw);
+    append(prims,intersect);
+    
+}
+//printf("distTmp:%g \n", prims);    
+
+for (int k=0;k<nprimitives(0);k++)
+{
+    if (find(prims,k)<0)
+    {
+        removeprim(0,k,1);
+    }
+
+}
+=============================================
+
+==========aw_findMaxValue
+vector min,max;
+getbbox(1,min,max);
+
+
+int i = 0;
+int np = npoints(0);
+//vector curP = {0,0,0};
+float max_y = -10000;
+for (i=0;i<np;i++)
+{
+    vector curP = point(0,"P",i);
+    float cur_y = curP.y;
+    max_y = max(cur_y,max_y);
+       
+}
+setpointattrib(0,"max_y",@ptnum,max_y,"set");
+if (v@P.y == max_y)
+{
+    v@P.y = max.y;
+}
+=============================================
+
+==========aw_findMaxValuePr
+float pr = @cnum;
+int i = 0;
+int np = npoints(0);
+
+float max_pr = -1*10^5;
+for (i=0;i<np;i++)
+{
+    float p_pr = point(0,"cnum",i);
+    float cur_pr = p_pr;
+    max_pr = max(cur_pr,max_pr);
+
+}
+    setpointattrib(0,"max_cnum",@ptnum,max_pr,"set");
+=============================================
+
+
+
+==============aw_findNeighboursArray
+string brk = '____==========________';
+//printf("n:%g \n", brk);
+//printf("frame:%g \n", @Frame);
+
+int np =npoints(0);
+for (int i=0;i<np;i++)
+{
+    vector curPos = point(0,"P",i);
+    
+    int n = neighbourcount(0,i);
+
+    int nb[] = neighbours(0,i);
+    
+    float plDist = 0;
+    foreach(int p;nb)
+    {
+        //printf("p:%g \n", p);
+        vector pnbPos = point(0,"P",p);
+        float dist = distance(curPos,pnbPos);
+        plDist += dist;
+    }
+    float avDist = plDist/n;
+    //printf("avDist:%g \n", avDist);
+    setpointattrib(0,"avDist",i,avDist,"set");
+}
+=============================================
+
+
+=====================aw_groupByNeighbourCount
+if ( neighbourcount ( 0, @ptnum ) == chi("count") )
+setpointgroup ( geoself ( ), chs("name"), @ptnum, 1, "set" );
+=============================================
+
+===================aw_intersectPtWithPrim
+vector pos;
+vector uvw;
+vector P_tmp = v@P;
+int prim = intersect(1,"",P_tmp,v@vecD,pos,uvw);
+v@P = pos;
+=============================================
+
+====================aw_laplacianSmooth
+int n = neighbourcount(0,@ptnum);
+
+float weight = 1.0/n;
+vector avg = {0,0,0};
+foreach(int j; neighbours(0,@ptnum)){
+    avg += weight*(point(0,"P",j) - @P);
+}
+
+float lambda = 0.333;
+v@P += lambda *avg;
+=============================================
+
+==============aw_lineRelativeDistance
+int root = 0;
+int end = 0;
+
+if (@ptnum==0)
+{
+    root = 1;
+}
+
+if (@ptnum==npoints(0)-1)
+{
+    end = 1;
+}
+
+vector posR = point(0,"P",0);
+vector posE = point(0,"P",npoints(0)-1);
+vector posCur = point(0,"P",@ptnum);
+
+float maxDist = distance(posR,posE);
+
+float dist = fit( distance(posR,posCur) ,0,maxDist,0,1);
+
+@relDist = dist;
+=============================================
+
+
+
+==================aw_makeTransform
+float angle = ch('angle');
+vector angleV = set(0,angle,0);
+v@Temp = @P * maketransform(0,0,{ 0, 0, 0 },angleV,{ 1, 1, 1 },{ 0, 0, 0 });
+@P = @Temp; 
+=============================================
+
+
+
+
+============================aw_maketransform
+float angle = ch('angle');
+vector angleV = set(0,angle,0);
+v@Temp = @P * maketransform(0,0,{ 0, 0, 0 },angleV,{ 1, 1, 1 },{ 0, 0, 0 });
+@P = @Temp; 
+
+
+============================aw_matchByString
+if(match("leave*",s@name) )
+{
+    removepoint(0,@ptnum);
+}
+
+============================aw_matrixXformMatchmove
+matrix xf = ident();
+int point1 = chi("point1");
+string basisName = "tangentu";
+vector pivot_stat = point(0, "P", point1);
+vector pivot_anim = point(1, "P", point1);
+translate(xf, -pivot_stat);
+matrix xf_stat = maketransform(point(0, "N", point1), normalize(point(0, basisName, point1)), point(0, "P", point1));
+matrix xf_anim = maketransform(point(1, "N", point1), normalize(point(1, basisName, point1)), point(1, "P", point1));
+4@xform = invert(xf_stat)*xf_anim;
+v@P*=4@xform;
+
+
+============================aw_moveCrossByUp
+vector up = {0,1,0};
+vector tempV = cross(up,v@N);
+v@v = cross(tempV,v@N);
+
+
+
+============================aw_neighbourVecMax
+//printf("frame:%g \n", @Frame);
+
+int np =npoints(0);
+int idTmpA[];
+float distTmp = 0;
+vector outNV;
+for (int i=0;i<np;i++)
+{
+    vector curPos = point(0,"P",i);
+    int roots = point(0,"roots",i);
+    
+    int n = neighbourcount(0,i);
+    setpointattrib(0,"ngbCount",i,n,"set");
+    int nb[] = neighbours(0,i);
+    //printf("nb:%g \n", nb);
+    
+    //float plDist = 0;
+    if ( roots == 1 )
+    {
+        foreach(int p;nb)
+        {
+        vector pnbPos = point(0,"P",p);
+        int idTmp = point(0,"idTmp",p);
+        float dist = distance(curPos,pnbPos);
+        
+        distTmp = max(distTmp,dist);
+        if (dist == distTmp)
+        {
+        printf("distTmp:%g,idTmp:%g \n", distTmp,idTmp);    
+        vector nV = curPos-pnbPos;
+        vector outNV =  nV;
+        //setpointattrib(0,"nV",i,outNV,"set");
+        setdetailattrib(0,"nVec",nV,"set");
+//       setpointattrib(0,"nV",i,nV,"set");
+        }
+    }
+    }
+}
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+============================aw_pcAttribTransfer
+// Copy attributes from particles to surface
+float rad = ch("rad");
+float hP;
+int handle = pcopen(1,"P",v@P,rad,1);
+    hP = pcfilter(handle,"hP");
+    setpointattrib(0,"hP",@ptnum,hP,"set");
+
+
+
+
+============================aw_pcFindPts
+float radius = ch("rad");
+int srchPts = 10;
+
+int pcNumMax = 0;
+float pcNmax = 0;
+
+int pts = npoints(0);
+//int @maxPnum = 0;
+int handle = pcopen(0,"P",v@P,radius,srchPts);
+    while(pciterate(handle))
+    {
+    int pcNum = pcnumfound(handle);
+    i@pcNum = pcNum;
+    }
+------------------------------------------
+
+   
+
+
+
+
+
+============================aw_pcMaxFindPts
+float radius = ch("rad");
+int srchPts = ch("maxSpts");
+int curp,curptnum = 0;
+int pN,pNm = -1;
+
+int mPn = 0;
+int handle = pcopen(0,"P",v@P,radius,srchPts);
+
+    while(pciterate(handle))
+    {
+    
+    
+        pcimport(handle,"point.number",curp);
+        if (@ptnum == curp)
+        continue;
+        
+        
+        for (int j=0;j<(npoints(0));j++)
+        {
+        pcimport(handle,"point.number",curptnum);
+        pN = pcnumfound(handle);
+        setpointattrib(0, "findPts", j, pN,"set");
+        mPn = max(mPn,pN);
+        setpointattrib(0, "findPtsMax", j, mPn,"set");
+        
+        }
+        
+    
+    
+    
+    }
+//setpointattrib(handle, "max", 0, mPn,"set");
+
+    
+   
+
+
+
+
+
+
+============================aw_pcOpenCloud
+float radius = .05;
+int srchPts = 1;
+int handle = pcopen(1,"P",v@P,radius,srchPts);
+float prob = pcfilter(handle,"prob");
+pcclose(handle);
+
+v@Cd = prob;
+
+
+
+============================aw_posByAttrib
+int np = npoints(0);
+vector resPos = {-1,-1,-1};
+for (int i=0;i<np;i++)
+{
+    vector curPos = point(0,"P",i);
+    float curC = point(0,"chR",i);
+    if (curC==1.0)
+        {
+        resPos = curPos;
+        }
+    
+    
+}
+addpointattrib(0,"pPos",resPos,"set");
+
+
+
+
+============================aw_projectByPrimUv
+vector newP =@P;
+float mix = .5;
+int prim;
+vector uv;
+xyzdist(@OpInput2,newP,prim,uv);
+vector compP = primuv(@OpInput2,"P",prim,uv);
+v@P = lerp(v@P,compP,mix);
+
+
+
+
+============================aw_rampDistBBscaled
+vector min,max;
+getbbox(0,min ,max);
+vector center = (min+max)/2;
+float mSizeX = abs(min.x-max.x);
+float mSizeY = abs(min.y-max.y);
+float mSizeZ = abs(min.z-max.z);
+
+float div = mSizeX/mSizeZ;
+
+vector multPos = set(1/mSizeX,1/mSizeY,1/mSizeZ);
+float dist = distance(v@P*multPos,center*multPos);
+//@t = dist;
+
+float  rD = fit(dist,0,1-dist,0,1);
+rD = chramp("rD",rD);
+v@Cd = rD;
+
+
+
+
+============================aw_reverseTrailReplicate
+int npt = npoints(0);
+
+vector curv,curp;
+int jMax = 8;
+float lincr = 0;
+float lincrtemp = 0;
+float maxDist = 0.05;
+int curpt;
+
+int handle = pcopen(0,"P",@P,.25,5);
+{
+    while(pciterate(handle))
+    {
+    pcimport(handle,"P",curp);
+    pcimport(handle,"v",curv);
+    pcimport(handle,"point.number",curpt);
+    
+    for (int j=1;j<jMax;j++)
+        {
+        lincr = (1-lincrtemp*1/(jMax));
+        vector negV = normalize(curv*-1)*maxDist/jMax;
+        curp += negV;
+        vector temppos = lerp(@P,curp,lincr);
+        
+        int tempadd = addpoint(handle,temppos);        
+        
+        
+        setpointattrib(handle, "v", tempadd, curv,"set");
+        j++;
+        }
+    
+    }
+
+
+}
+
+
+
+============================aw_rmByFrame
+int minF = chi("minF");
+int maxF = chi("maxF");
+
+float rN = chramp("rN",rand(i@id) );
+rN = fit01(rN,minF,maxF);
+
+if (rN>=@Frame)
+    removepoint(0,@ptnum);
+
+
+
+
+
+============================aw_rmPtByVols
+float vols = volumesample(1,0,v@P);
+if (vols<0)
+{
+    removepoint(0,@ptnum);
+}
+
+
+
+
+============================aw_rmptWeightedBrel
+printf ("Frame %g \n",@Frame);
+
+vector brel = relbbox(0,v@P);
+float brelZ = chramp("brelZ",brel.z);
+
+float brelM = brelZ;
+
+int steps = 10;
+float fR = rand(i@ptnum);
+for (int i=0;i<steps;i++)
+{
+    float t1 = brelM/(steps-i)*steps;
+    float res = fit(t1,0,1,1,0);
+    printf ("t %g \n",t1);
+    if (fR<res)
+    {
+    removepoint(0,@ptnum);
+    }
+}
+
+
+
+
+
+============================aw_rotateByTrMatrix
+float angle = ch('angle');
+float angleRad = radians(angle);
+
+vector axis = {0,0,1};
+matrix3 m = ident();
+rotate(m,angleRad,axis);
+@P = v@P*m;
+
+
+============================aw_rotateByTrMatrixV
+float angle = ch('angle');
+float angleRad = radians(angle);
+
+//vector axis = {0,0,1};
+vector axis = normalize(v@v);
+vector axisPr = cross(v@P,axis);
+//v@v = axisPr;
+
+matrix3 m = ident();
+rotate(m,angleRad,axisPr);
+@v = v@v*m;
+
+
+============================aw_rotateDihedral
+vector v1 = normalize(v@vecD);
+vector v2 = {1,0,0};
+
+matrix dh = dihedral(v1,v2);
+v@P*=dh;
+
+
+
+============================aw_rotateGeo
+
+float angleX = radians(ch('anglex'));
+vector axisX = {1,0,0};
+matrix3 mX = ident();
+rotate(mX,angleX,axisX);
+
+float angleY = radians(ch('angley'));
+vector axisY = {0,1,0};
+matrix3 mY = ident();
+rotate(mY,angleY,axisY);
+
+float angleZ = radians(ch('anglez'));
+vector axisZ = {0,0,1};
+matrix3 mZ = ident();
+rotate(mZ,angleZ,axisZ);
+
+@P = v@P*mX*mY*mZ;
+
+v@v = normalize( point(0,'P',1)-point(0,'P',0) );
+
+
+
+============================aw_sampleEachVdb
+int npr = nprimitives(1);
+int i = 0;
+for (i=0;i<npr;i++)
+{
+    string nameTmp = prim(1,"name",i);
+    float vs = volumesample(1,nameTmp,v@P);
+    if (vs<0)
+    {
+    setpointattrib(0,"name",@ptnum,nameTmp,'set');
+    }
+    
+}
+
+
+============================aw_scaleByPivot
+vector rootPos = @pPos;
+matrix m = 1;
+vector sc = chv("scale");
+translate(m, -rootPos);
+scale(m, sc);
+translate(m, rootPos);
+@P *= m;
+
+
+
+============================aw_scalePackedPrims
+vector scale = fit01(vector(rand(@primnum)), 2,2);
+
+matrix3 trn = primintrinsic(0, "transform", @primnum);
+matrix scalem = maketransform(0, 0, {0,0,0}, {0,0,0}, scale, @P);
+trn *= matrix3(scalem);
+setprimintrinsic(0, "transform", @primnum, trn);
+
+
+
+============================aw_setPointGroup
+if (@freeAge>0 && @freeAge<1)
+{
+
+}
+else
+{
+    //removepoint(0,@ptnum);
+    v@Cd = {0,1,0};
+    setpointgroup(0,'newbie',@ptnum,1,'set');
+//    setpointgroup(int geohandle, string name, int pt, int value, string mode="set") 
+}
+
+
+
+============================aw_setPrimGroup
+if (v@N.y==1)
+{
+    setprimgroup(0,"topPrim",@primnum,1,'set');
+}
+
+
+
+============================aw_simpleAlignToBbox
+vector min,max;
+getbbox(0,min,max);
+vector centr = (min+max)/2;
+
+vector min1,max1;
+getbbox(1,min1,max1);
+vector centr1 = (min1+max1)/2;
+
+
+v@P.y = v@P.y+max1.y;
+
+
+
+
+
+============================aw_simpleDisplaceAlongNormal
+vector min,max;
+getbbox(0,min,max);
+vector centr = (min+max)/2;
+
+v@N = normalize(v@P-centr);
+
+vector tempP = v@P;
+v@P += v@N*anoise(tempP*10)*0.3;
+
+
+
+
+
+============================aw_stringCat
+string alembicPath = chs("alembicPath");
+setdetailattrib(0,"alembicPath",alembicPath);
+
+
+
+
+============================aw_velByCenter
+vector min,max;
+getbbox(0,min,max);
+vector center = (min+max)/2;
+float randMin = ch("randMin");
+float randMax = ch("randMax");
+float randBase = rand(@ptnum);
+float randRamped = chramp("randRamped",randBase);
+float randVelMult = fit(randRamped,0,1,randMin,randMax);
+
+vector addPos = chv("addPos");
+float velMult = ch("velMult");
+v@v = normalize( v@P-center+addPos)*velMult*randVelMult;
+
+
+
+
+============================aw_vizVelLenPts
+v@Cd = chramp("Cd",fit(length(v@v),0,3,0,1));
+
+
+
+============================aw_waveDeformerAndrulis
+vector uvw;
+vector hit;
+vector dir = {0, 1, 0};
+
+int pr = intersect(1, v@P, dir * 1000, hit, uvw);
+if(pr == -1)
+{
+    vector negative_dir = -1 * dir;
+    pr = intersect(1, v@P, negative_dir * 1000, hit, uvw);
+}
+vector move = primuv(1, "move", pr, uvw); 
+vector dist = v@P - hit;
+
+v@P = move + dist;
+
+
+
+============================dw_arrayShiftPtNum
+printf("frame= %g \n", @Frame);
+
+int off = 1;
+int np = npoints(0);
+int i = 0;
+vector cpA;
+vector pA[];
+for( i;i<np;i++)
+{
+    vector curP = point(0,"P",i);
+    append(pA,curP);
+}
+i = 0;
+//printf("pA=%g, \n", pA);
+//cpA = pA[2];     
+//printf("cpA=%g, \n", cpA);        
+
+for( i;i<np;i++)
+{
+    int curI = i+off;
+        
+    if (curI<np)
+    {
+    cpA = pA[curI];     
+    printf("cpA=%g, \n", cpA);        
+    setpointattrib(0,"P",i,cpA,"set");
+    }
+    else
+    {
+    cpA = pA[0-curI];     
+    setpointattrib(0,"P",i,cpA,"set");
+    }
+    
+}
+
+
+
+
+============================dw_findLargestAreaSetUp
+/**
+loop through all the edges and find out the longest one 
+and set it as up
+**/
+float maxLength=0;
+vector up = set(1,0,0);
+vector point1, point2, edge;
+int neighbours[];
+float length;
+@num = @numpt;
+for(int i=0; i<@numpt;i++)
+{
+    neighbours = neighbours(0,i);
+    point1 = point(0,"P",i);  
+    for(int j=0;j<len(neighbours);j++)
+    {
+       point2 = point(0,"P",neighbours[j]);
+       edge = point1-point2;
+       length = abs(length(edge));
+       if(length>maxLength)
+       {
+            maxLength = length;
+            up = normalize(edge);       }
+    }
+    setpointattrib(0,"up",i,up,"set");
+}
+//@up = up;
+
+
+
+============================dw_findLargestAreaWithName
+/**
+count the total area of faces with the same name
+assume name startsWith "piece*"
+**/
+
+string name;
+float areas[];
+vector N[];
+int nameID;
+//init array with 0
+for(int i=0;i<@numprim;i++)
+    push(areas,0);
+
+//calculate total area of primities with with same name
+for(int i=0;i<@numprim;i++)
+{
+    name = prim(0,"name",i);
+    int l = len(name);
+    nameID = atoi(name[5:l]);
+    areas[nameID] += prim(0,"area",i);
+    N[nameID] = prim(0,"N",i);
+}
+
+//find the piece with the largest area
+int selFace = 0;
+float maxArea = 0;
+float area = 0;
+
+for(int i=0; i<len(areas);i++){
+    area = areas[i];
+    if(area>maxArea){
+        maxArea = area;
+        selFace = i;
+     }
+}
+
+//set selection
+i@selFace = selFace;
+v@selN = N[selFace];
+
+
+
+
+
+
+============================dw_linePine
+//printf("frame:%g \n",@Frame);
+int i = 0;
+int np = npoints(0);
+for(i=0; i<np;i++)
+{
+    int curPt = i; 
+
+    vector curPos = point(0,"P",i);
+    float curDist = point(0,"dist",i);
+    vector vecD = point(0,"vecD",i);
+    
+
+    vector cP = curPos + vecD*chramp("curDist",curDist)*5;
+    
+    
+    int tPt = addpoint(0,cP);
+    int prim0 = addprim(0,"poly");
+    int vtx00 = addvertex(0,prim0,curPt);
+    int vtx01 = addvertex(0,prim0,tPt);
+
+}
+
+
+============================dw_neighbourldToTangentvPts
+printf("frame:%g \n", @Frame);
+
+int np = npoints(0);
+
+int resId;
+//float tmpDP
+//int i = 0;
+for (int i=0;i<np;i++)
+{
+    vector curPos = point(0,"P",i);
+    int n = neighbourcount(0,i);
+
+    int nb[] = neighbours(0,i);
+    
+    float plDist = 0;
+    float maxProd = -100;
+    foreach(int p;nb)
+    {
+    vector pnbPos = point(0,"P",p);
+    
+    vector tmpV = pnbPos-curPos;
+    vector curTV = point(0,"tangentv",i);
+    float dotProd = dot(tmpV,curTV); // v@tangentv
+    float curDp = dotProd;
+    //printf("pnbPos :%g, cur pt=%g, dotProd=%g \n", pnbPos,i,dotProd );
+    //printf("dotProd:%g \n", dotProd);
+    maxProd = max(maxProd,curDp);
+    //printf("maxProd:%g %g \n", maxProd,curDp);
+    setpointattrib(0,"maxProd",i,maxProd,"set");
+    }
+    //printf("maxProd:%g \n", maxProd);
+    
+}    
+    //float tmpDP = max(dotProd,minProd); 
+    //printf("p:%g \n", tmpDP);
+    //printf("cut pt %g,neighbour:%g, dorProd:%g \n", i,p,dotProd);
+    
+    //printf("p:%g \n", tmpV);
+    //if dot(v@tangentV)
+    
+    //printf("tmpDP:%g \n", maxProd);
+    
+    
+    
+        
+    
+   
+   //@id = resId; 
+   //printf("resId:%g \n", resId);
+    
+    //float tmpDPT = tmpDP;
+    
+
+
+
+
+/*
+foreach(int k;nb)
+    {
+    vector pnbPos = point(0,"P",k);
+    vector tmpV = pnbPos-curPos;
+    float dotProd = dot(tmpV,v@tangentv);
+    printf("dotProd:%g ,k=%g,i=%g,maxProd=%g \n", dotProd,k,i,maxProd);
+    
+        if (dotProd==maxProd)
+        {
+        int curId = point(0,"curId",k);
+        resId = curId;
+        }
+
+
+*/
+
+
+
+
+
+
+============================dw_neighbourldToTangentvPtsPart2
+printf("frame:%g \n", @Frame);
+
+int np = npoints(0);
+//np = 2;
+float maxProd = -1.1;
+int resId;
+
+for (int b=0;b<np;b++)
+{
+    vector curPos = point(0,"P",b);
+    int n = neighbourcount(0,b);
+
+    int nb[] = neighbours(0,b);
+    
+    float plDist = 0;
+    foreach(int l;nb)
+    {
+    vector pnbPos = point(0,"P",l);
+    vector tmpV = pnbPos-curPos;
+    float dotProd = dot(tmpV,v@tangentv);
+    int curId = point(0,"idTmp",l);
+    
+    
+    float maxProdCur = point(0,"maxProd",b);
+    //printf("dotProd:%g,b=%g,maxProd=%g,curId=%g \n", dotProd,b,maxProdCur,curId);
+    
+    if (dotProd==maxProdCur)
+    {
+        setpointattrib(0,"curId",b,int(curId),"set");
+    }
+    //float t = max(dotProd,maxProd);
+    //maxProd = t;
+    //if (dotProd>=maxProdCur*.99)
+    
+    }    
+
+
+}
+
+
+
+============================dw_rellativeDistanceNp
+
+int np = npoints(0);
+vector fPos = point(0,"P",0);
+vector lPos = point(0,"P",np-1);
+
+float maxDist = distance(fPos,lPos);
+for (int i = 0;i<np;i++)
+{
+    vector curPos = point(0,"P",i);
+    //setpointattrib(0,"t",i,curPos,"set");
+    
+    float dist = distance (fPos , curPos);
+    
+    float distR = fit(dist,0,maxDist,0,1);
+    setpointattrib(0,"distR",i,distR,"set");
+}
+
+
+
+
+
+============================dw_vecToNextPt
+//printf("frame:%g \n", @Frame);
+
+int np = npoints(0);
+int i = 0;
+int j = 0;
+vector p1 = {0,0,0};
+vector p2 = {0,0,0};
+vector vecD;
+for( i;i<np;i++)
+{
+    p1 = point(0,"P",i);
+    p2 = point(0,"P",i+1);
+    vecD = p2-p1;
+    if ( i == np-1 )
+    {
+    p2 = point(0,"P",i-1);
+    vecD = p1-p2;
+    }
+    
+
+    //printf("vecD:%g \n",vecD);
+    setpointattrib(0,"vecD",i,vecD);
+    
+}
+
+
+============================pw_centroidEachPrim
+printf("frame %g \n",@Frame);    
+int prP[] = primpoints(0, @primnum);
+vector avP = {0,0,0};
+foreach(int num;prP)
+{
+    //printf("%g \n",num);
+    vector cP = point(0,"P",num);
+    //printf("%g %g \n",cP,num);
+    avP += cP; //add pos to averP
+}
+avP = avP / len(prP);
+foreach(int num;prP)
+{
+    setpointattrib(0,"cP",num,avP,"set");
+}
+//printf(" %g \n",avP);
+//setprimattrib(0,"avP",@primnum,avP,"set");
+
+
+=================Cavity map
+//Calculates how much a deformed geometry 
+//is squashed and skewed. 
+//For each point it takes the angle between 
+//perpendicular N and each point neighbor 
+//and compares the value between rest and deformed geometry.
+
+//Run in a Wrangle SOP (Run over - Points). 
+//Plug in the rest geometry into the first input 
+//and the deformed geometry into the other.
+//Point order has to match.
+
+int points[];
+
+points = neighbours( 0, @ptnum );
+
+float   angle_A_accum, angle_B_accum;
+vector  pos, nrm, dir;
+
+angle_A_accum = 0;
+
+for( int i = 0; i < len(points); i++ )
+{
+    pos = attrib( 0, "point", "P", points[i] );    
+    nrm = @N;
+    
+    dir = pos - @P;
+    
+    nrm = normalize(nrm);
+    dir = normalize(dir);
+    
+    angle_A_accum += dot(nrm, dir);
+}
+
+points = neighbours( 1, @ptnum );
+
+angle_B_accum = 0;
+
+for( int i = 0; i < len(points); i++ )
+{
+    pos = attrib( 1, "point", "P", points[i] );    
+    nrm = attrib( 1, "point", "N", @ptnum );
+    
+    dir = pos - attrib( 1, "point", "P", @ptnum );
+    
+    nrm = normalize(nrm);
+    dir = normalize(dir);
+    
+    angle_B_accum += dot(nrm, dir);
+}
+
+angle_A_accum = abs( angle_A_accum );
+angle_B_accum = abs( angle_B_accum );
+
+f@angle_A_accum = angle_A_accum;
+f@angle_B_accum = angle_B_accum;
+
+float angle;
+
+angle = abs( angle_A_accum - angle_B_accum );
+
+angle = fit( angle, 0, 1, 0, 1);
+
+f@angle = angle * -1 + 1;
+
+@Cd = chramp("color", angle );
+--------------------------------------------------------
+
+
+============Point unique id
+//In DOP's when creating new points with a Wrangle
+//node in a SOP Solver, it's tricky to assign unique
+//id attribute when several points are created on
+//the same time step. 
+//Assign -1 as the id on all the points that 
+//is created and run them trough a second Wrangle node.
+
+//You need a detail attribute named id_max 
+//with the largest current id value
+//
+//Run in a Wrangle SOP (Run over - Detail)
+
+int num_new_children, new_child, new_child_id, id_max;
+
+id_max = detail( @OpInput1, "id_max", 0);
+
+num_new_children = findattribvalcount( @OpInput1, "point", "id", -1);
+
+for ( int i = 0; i < num_new_children; i++ ){
+
+    new_child = findattribval( @OpInput1, "point", "id", -1, i);
+    
+    new_child_id = id_max + i + 1;
+    
+    setattrib(geoself(), "point", "id", new_child, 0, new_child_id, "set");
+    
+}
+--------------------------------------------------------
+
+
+
+========================extract transform from packed piece
+v@pivot = primintrinsic(0,"pivot",@primnum);
+matrix m = primintrinsic(0,'packedfulltransform',@ptnum);
+@orient = quaternion(matrix3(m));
+----------------------------------------------------
+
+
+
+===================volume grad
+float dotProd;
+float den = @density;
+vector grad = volumesamplev(1,"grad",v@P);
+
+
+=============pedohorse extrude
+if(@extrude==0 && @insert==0)return;
+
+int ppts[]=primpoints(0,@primnum);
+int l_ppts=len(ppts);
+int nppts[];resize(nppts,l_ppts);
+
+for(int i=0;i<l_ppts;++i){
+    nppts[i]=addpoint(geoself(),ppts[i]);
+    setvertexpoint(geoself(),@primnum,i,nppts[i]);
+    
+    vector p=point(0,"P",ppts[i]);
+    p+=normalize(@P-p)*@insert; //insert
+    p=p+v@N*@extrude;// extrude
+    setpointattrib(geoself(),"P",nppts[i],p);
+    
+}
+
+for(int i=0;i<l_ppts;++i){
+    int npr=addprim(geoself(),"poly");
+    addvertex(geoself(),npr,ppts[(i+1)%l_ppts]);
+    addvertex(geoself(),npr,nppts[(i+1)%l_ppts]);
+    addvertex(geoself(),npr,nppts[i]);
+    addvertex(geoself(),npr,ppts[i]);
+}
+========================================
+
+===========split name-------------
+string baseName = chs("base_name");
+i@nameNum=atoi( split(s@name,baseName)[0]);
+========================================
+
+
+==============copy by attrib-----------
+int f =findattribval(1,"point","nameNum",@nameNum);
+v@v = point(1,"v",f);
+
+------------------------------------------
+
+===============copy geometry in vex=========
+vector offset = chv('Offset');
+int copies = chi('Copies');
+int prim_pts[] = primpoints(0, @primnum);
+for(int i = 0; i < copies; i++){
+    int add_prim = addprim(0, "poly"); 
+    foreach(int pt; prim_pts){
+        vector pt_pos = point(0, "P", pt);
+        vector offset_mult = offset * (i + 1);
+        int add_pt = addpoint(0, pt_pos + offset_mult);
+        addvertex(0, add_prim, add_pt);
+    }
+}
+------------------------------------------
+
+=========== refer to chan from input
+string path = "`opinputpath(".",0)`";
+i@version = chi(concat(path,'/version'));
+------------------------------------------
+
+==============expr replace string_ 
+//`strreplace(chs("../node/objpath")`,'/obj','');
+//------------------------------------------
+
+"float step = @numpt > 1 ? length / (@numpt - 1) : 1.0;"
+
+==================edge detect ===
+int nb[] = neighbours(0,@ptnum);
+int nbc = neighbourcount(0,@ptnum);
+float cnt = 0;
+foreach(int num;nb)
+{
+    float curProb = point(0,"prob",num);
+    cnt += curProb;
+}
+float cntAv = cnt/nbc;
+if (cntAv>0 && cntAv,1 )
+{@border = 1}
+
+=======
+int n = nuniqueval(0, "primitive", "instance");
+for (int i=0; i<n; i++){
+    int inst = uniqueval(0, "primitive", "instance", i);
+    append(i[]@instarray, inst);
+}
+
+------------------------------------------
+
+==== intersect btw two geometry and camera
+// input 0 = processed geometry
+// input 1 = camera geometry
+// input 2 = barrier geometry
+vector camP = point(1,"P",0);
+vector dir = normalize(camP-v@P);
+float bias = 0.1;
+
+vector hit_ps[];
+int hits = intersect_all(2,v@P,dir*1000,hit_ps,{},{})
+if (hits && distance(vP,hit_ps[-1])>bias)
+{
+    v@Cd = {1,0,0}
+}
+
+
+------------------------------------------
+
+
+=========check if sth inside geo by normal
+float maxSearchRad = chf("radius");
+int prim;
+vector primuv;
+float dist = xyzdist(1,"",v@P,prim,primuv,maxSearchRad);
+vector primP = primuv(1,"P",prim,primuv);
+vector primN = primuv(1,"N",prim,primuv);
+vector moveV = primP = v@P;
+float dp = dot(normalize(moveV),normalize(primN));
+if(dp>0)
+{
+    v@P+=moveP;
+
+}
+ ------------------------------------------
+
+
+========= reproject "vector" on "surface"
+vector vecPrj = v@vecD-v@N*dot(v@vecD,v@N);
+-----------------------------------
+
+
+==== move outside collision vdb ====
+//note vdb should be with fill interior
+vector vg = volumegradient(1,0,v@P);
+vector vs = volumesample()(1,0,v@P);
+if (vs<0)
+{
+    v@P-=normalize(vg)*vs;
+
+}
+
+
+------------------------------------
+
+============ constraints 
+// Build a string such as "12-54" for use when identifying duplicate connections.
+// run over primwrangle / constraints pairs
+int pt0 = @ptnum;
+int pt1 = primpoint(0, @primnum, 1);
+s@__pointpairs = sprintf("%s-%s", min(pt0, pt1), max(pt0, pt1));
+----
+
+// run over primwrhangle / mark_duplicates
+int index = findattribval(0, "primitive", "__pointpairs", s@__pointpairs);
+// Keep the first match and remove all other duplicates.
+if (index != @primnum)
+    @group___todelete = 1;
+----
+
+
+------------------------------------
+
+
+========= refer to another "sop" --
+vector val = point("op:`opfullpath("../attribwrangle")`","Cd",3)
+
+------------------------------------
+
+
+
+=== Fix points on a moving object - "intersect function"
+// One of the methods to fix scattered points on a moving object is to use the intersect function
+// In a wrangle put on the first input the scattered points in a static position (for example the initial frame)
+// In the second input connect the geometry at rest position (for example the initial frame)
+// In the third input connect the moving object
+// For this to work you need to have normals on the object before scattering points.
+int prim;
+vector primuv, staticP;
+
+vector offset = @P - (v@N * 0.05);
+
+prim = intersect(1, offset, v@N, staticP, primuv.x, primuv.y);
+@P = primuv(2, "P", prim, primuv); 
+------------------------------------
+
+
+==== Fix points on a moving object - xyzdist and primuv
+// One of the methods to fix scattered points on a moving object is to use the combination of xyzdist and primuv
+// In a wrangle put on the first input the scattered points in a static position (for example the initial frame)
+// In the second input connect the geometry at rest position (for example the initial frame)
+// In the third input connect the moving object
+
+​
+
+int posprim;
+vector primuv;
+
+float maxdist = 10;
+float dist = xyzdist(1, @P, posprim, primuv, maxdist);
+
+vector pos = primuv(2, "P", posprim, primuv);
+@P = pos;
+------------------------------------
+
+===While loop
+// do something a number of times until a condition is reached
+int i = 0;
+
+while( i < npoints(0)){
+       //do something n times, where n is the number of points
+}
+------------------------------------
+
+
+
+=== Points of a primitive
+//  Each primitive is connected to some points, here is how to find them in a wrangle.
+
+//  In this example I take the name attribute of the two points connected at the contraints
+int vt0 = primvertex(0, @primnum, 0);
+int vt1 = primvertex(0, @primnum, 1);
+
+int pt0 = vertexpoint(0, vt0);
+int pt1 = vertexpoint(0, vt1);
+
+​int name_pt0 = point(0, "name", pt0);
+int name_pt1 = point(0, "name", pt1);
+------------------------------------
+​
+
+=== Change volume visualization
+//Some shelftools and nodes generate volumes that are hidden but could be useful to see.
+//This expression allow you to see this volume, turning them from "invisible" to "iso"
+setprimintrinsic(0,"volumevisualmode",@primnum,"iso","set");
+------------------------------------
+
+
+​=== Delete geometry outside of camera frustum
+//This snippet is from jonidunno on odforce (link to topic)
+v@ndcP= toNDC(chs("cam"),v@P);
+float padding = chf("padding");
+float nearclip = chf("nearclip");
+
+float farclip = chf("farclip");
+
+
+if(v@ndcP.x > (1 + padding) || v@ndcP.x < (0 - padding) || v@ndcP.y > (2 + padding) || v@ndcpos12321.y < (0 - padding) || -v@ndcP.z < nearclip || -v@ndcP.z > farclip){
+    removepoint(0,@ptnum);
+------------------------------------
+
+
+=========== weighted random 
+int i, steps = 80;
+float sumhist[], sum=0, slice = 1.0/float(steps);
+seed += 123456789;
+
+for (i=0;i<steps;i++) {
+    float pos = (i*slice);
+    float val = chramp("__rndweight", pos);
+    sum += val;    
+    push(sumhist, sum);
+}
+float rnd = random(seed) * sum;
+
+// linear search
+for(i=0;i<steps-1;i++) {
+    if (rnd > sumhist[i] && rnd <= sumhist[i+1])
+        break;
+}
+weight_random = float(i)/float(steps) + random(seed+123)*slice;
+------------------------------------
+
+====== bow vectors [then boat is swimming over the "surface"] ==
+vector bb, bbc, center, forward;
+float scaleramp, spread;
+
+bbc = getbbox_center(0);
+bbc = @P-bbc;
+bbc.z = 0;
+bbc *= ch('center_splay');
+
+bb = relpointbbox(0,@P);
+scaleramp = chramp('scaleramp',bb.z);
+
+forward = @v*ch('forward_add');
+center = {0,1,0}+forward+bbc;
+
+spread = ch('spread');
+@v = sample_direction_cone(center, spread, rand(@ptnum));
+@v *= ch('scale')*scaleramp;
+------------------------------------
+
+
+=========distance between points in primitive 
+int prpt[] = primpoints(0, @primnum);
+
+float distance[];
+float t2[];
+foreach (int i;int pt;prpt)
+{
+    int pt2 = prpt[i+1];
+    if (i == len(prpt)-1)
+        pt2=prpt[0];
+
+    vector pos = point(0,"P",pt);
+    vector pos2 = point(0,"P",pt2);
+    append(distance,distance(pos,pos2) );
+}
+
+f[]@distance = distance;
+
+float distmax= -10000;
+float distmin = 10000;
+foreach (int i;float dist;distance)
+{
+    distmax = max(distmax,dist);
+    distmin = min(distmin,dist);
+}
+@distmax = distmax;
+@distmin = distmin;
+------------------------------------
+
+============divider line 
+int new_pts[];
+for(int i=0;i<nprimitives(0);i++)
+{
+    int prpt[] = primpoints(0,i);
+    vector p1 = point(0,"P",prpt[0]);
+    vector p2 = point(0,"P",prpt[1]);
+    vector p_av = (p1+p2)/2.0;
+    int tmp_pt = addpoint(0,p_av);
+    append(new_pts,tmp_pt);
+    removeprim(0,i,1);
+}
+
+int prim0 =  addprim(0,"poly");
+int vtx0 = addvertex(0,prim0,new_pts[0]);
+int vtx1 = addvertex(0,prim0,new_pts[1]);
+------------------------------------
+
+
+==========shorthand 
+@active = @activeFrame <= @Frame;
+------------------------------------
+
+========constraints dynamic
+// стадия 1)
+f@restlength*=0;
+int prpt[] = primpoints(0,@primnum);
+vector p0 = point(0,"P",prpt[0]);
+vector p1 = point(0,"P",prpt[1]);
+vector pm = (p0+p1)*0.5;
+setpointattrib(geoself(),"P",prpt[0],pm);
+setpointattrib(geoself(),"P",prpt[1],pm);
+
+// это трансформ спейс для твист осей констрейна
+vector4 rori=quaternion(maketransform(normalize(p1-p0),{0,1,0}));
+setpointattrib(geoself(),"orient",prpt[0],rori);
+setpointattrib(geoself(),"orient",prpt[1],rori);
+
+
+// packed - 2
+// стадия 2) 
+int cpt=findattribval(1,"point","name",s@name);
+vector packed_rest=point(1,"rest",cpt);
+vector4 packed_orient=point(1,"orient",cpt);
+vector cP=point(1,"P",cpt); // point P of packed
+
+//v@P = cP; // how we can return to packeds position
+//@P=qrotate(qinvert(packed_orient),(@P-cP));//+packed_rest;
+@P=qrotate(qinvert(packed_orient),(@P-cP))+packed_rest;
+p@orient=qmultiply(qinvert(packed_orient),p@orient);
+
+------------------------------------
+
+============delete all numbers in the string 
+@name = re_replace(r'(.+?)\d+', r'\1', @name);
+
+@name = re_replace('nameOfCharacter.*', 'nameOfCharacter', @name);
+------------------------------------
+
+
+
+=== non uniform scaling on arbitary vector 
+vector scale = chv("scale");
+vector axis = chv("axis");
+
+matrix3 oriented_space = dihedral({0,1,0}, normalize(axis));
+
+matrix3 transform = primintrinsic(0, "transform", @primnum);
+
+transform *= invert(oriented_space);
+scale(transform, scale);
+transform *= oriented_space;
+
+setprimintrinsic(0, "transform", @primnum, transform);
+------------------------------------
+
+
+
+
+==== Group Shared Opposite Faces
+// prim wrangle
+int pts[] = sort(array(i@cellpt, i@clippt));
+s@common = sprintf("%d-%d", pts[0], pts[1]);
+
+
+-------- in for loop wrangle 
+vector pos0 = prim(1, "P", 0);
+vector pos1 = prim(1, "P", 1);
+int pt0 = addpoint(0, pos0);
+int pt1 = addpoint(0, pos1);
+int prim = addprim(0, "polyline", pt0, pt1);
+vector color = prim(1, "Cd", 0);
+setprimattrib(0, "Cd", prim, color);
+
+------------------------------------
+
+
+========= average N ===
+float radmax = .05;
+int nrpt[] = nearpoints(0,v@P,radmax);
+//int nrpt[] = pcfind(0,"P",v@P,radmax,10); alternate
+vector N_av = {0,0,0};
+foreach(int pt;nrpt)
+{
+//    printf("\n %g, %g",@ptnum,pt);
+    vector N_c = point(0,"N",pt);
+    N_av += N_c;
+}
+v@N = N_av/len(nrpt);
+----------------------
+
+
+==============rotate matrix by 3 components ===
+matrix m = ident();
+float ax1 = 0;
+float ay1 = 0;
+float az1 = 0;
+rotate(m,radians(ax1),{1,0,0});
+rotate(m,radians(ay1),{0,1,0});
+rotate(m,radians(az1),{0,0,1});
+p@orient = quaternion(matrix3(m) );
+----------------------
+
+
+
+
+
+
+

@@ -1,0 +1,146 @@
+// Magic: 9cd7a937
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Thu Aug  1 19:51:25 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+pattern.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Texture Pattern", "pattern") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    pattern.menu;
+
+    { HSTRETCH }
+
+}
+
+patternsize.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ patternsize.label = PARM_LABEL("Pattern Size", "patternsize") WIDTH(1.5);
+ PARM(float, 1, "patternsize", none, none) RANGE(0.0001,1)
+	LOCK_RANGE_MIN LABELREF(patternsize.label) HSTRETCH;
+
+}
+
+showglyph.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("showglyph", "Show Orientation Glyph") toggle VALUE(showglyph.val);
+
+    { HSTRETCH }
+
+}
+
+invertpattern.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("invertpattern", "Invert Pattern") toggle VALUE(invertpattern.val);
+
+    { HSTRETCH }
+
+}
+
+overridechoice.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    overridechoice.menu;
+
+    { HSTRETCH }
+
+}
+
+intoverride.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ PARM(integer, 1, "intoverride", none, none) RANGE(0,2000)
+	LOCK_RANGE_MIN HSTRETCH;
+
+}
+
+floatverride.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ PARM(float, 1, "floatverride", none, none) RANGE(0,10)
+	LOCK_RANGE_MIN HSTRETCH;
+
+}
+
+apply.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    { WIDTH(1.5) }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("apply", "Apply")
+	push VALUE(apply.val);
+
+}
+showenforced.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+showenforced.gad = ROW
+{
+    
+
+    PARM_BUTTON("showenforced", "Visualize Enforced Edges") toggle VALUE(showenforced.val);
+
+    {  }
+
+}
+
+showunenforced.gad = ROW
+{
+    
+
+    PARM_BUTTON("showunenforced", "Visualize Unenforced Segments") toggle VALUE(showunenforced.val);
+
+    {  }
+
+}
+}	// Template join.bot
+
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    pattern.gad; 
+    patternsize.gad; 
+    showglyph.gad; 
+    invertpattern.gad; 
+    overridechoice.gad; 
+    intoverride.gad; 
+    floatverride.gad; 
+    apply.gad; 
+    showenforced.row.join; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

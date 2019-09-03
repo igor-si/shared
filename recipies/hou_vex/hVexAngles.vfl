@@ -1,0 +1,78 @@
+
+
+
+// Point wrangle.
+// Get 0-360 angle between vectors in VEX
+#define PI 3.1415926535897932384
+float angle = acos(dot(v@up, v@aim));
+int first_half = sign(dot(v@z, cross(v@up, v@aim))) >= 0;
+angle = first_half ? angle : 2*PI - angle;
+
+@angle = degrees(angle);
+
+
+//If v is your base, and w the clock hand, and n is a 
+//reference vector perpendicular to both (this is necessary 
+//if you want an angle in 0-360), then the angle is given as
+res = atan2(dot(cross(n,v), w), dot(v,w)); 
+
+
+======================Radar
+//group geo by sides
+groupexpression/snippet
+    Radar X
+    chi("X_Axis")==0 ? degrees(acos(normalize(set(@P.x,0,@P.z)).x))<ch("angle") : degrees(acos(-normalize(set(@P.x,0,@P.z)).x))<ch("angle")
+
+groupexpression/snippet
+    Radar Y
+    chi("Y_Axis")==0 ? degrees(acos(normalize(set(@P.x,@P.y,0)).y))<ch("angle") : degrees(acos(-normalize(set(@P.x,@P.y,0)).y))<ch("angle")
+
+groupexpression/snippet
+    Radar Z
+    chi("Z_Axis")==0 ? degrees(acos(normalize(set(@P.x,0,@P.z)).z))<ch("angle") : degrees(acos(-normalize(set(@P.x,0,@P.z)).z))<ch("angle")
+--------------------------------------
+
+=====================radar_v2
+groupexpression/snippet
+    Radar
+    chi("Axis")==0 ? degrees(acos(normalize(set(@P.x,0,@P.z)).x))<ch("angle") :
+    chi("Axis")==1 ? degrees(acos(-normalize(set(@P.x,0,@P.z)).x))<ch("angle") :
+    chi("Axis")==2 ? degrees(acos(normalize(set(@P.x,@P.y,0)).y))<ch("angle") :
+    chi("Axis")==3 ? degrees(acos(-normalize(set(@P.x,@P.y,0)).y))<ch("angle") :
+    chi("Axis")==4 ? degrees(acos(normalize(set(@P.x,0,@P.z)).z))<ch("angle") : degrees(acos(-normalize(set(@P.x,0,@P.z)).z))<ch("angle") 
+----------------------------------
+
+========================aw_angleBtwTwoVectors
+vector compVec = {1,0,0};
+vector axis = {0,1,0};
+f@angle = degrees( acos(dot(normalize(compVec),normalize(axis))) );
+
+
+======================aw_angleNormalCheck
+vector v1 = {0,1,0};
+vector v2 = v@N;
+float thresh = chf("thresh");
+float check = dot(v1,v2);
+if (check<-thresh || check>thresh)
+{
+    removeprim(0,@primnum,1);
+}
+
+
+
+=====================find angle and sign btw two vectors======
+// Point wrangle.
+#define PI 3.1415926535897932384
+float angle = acos(dot(v@up, v@aim));
+int first_half = sign(dot(v@z, cross(v@up, v@aim))) >= 0;
+angle = first_half ? angle : 2*PI - angle;
+@angle = degrees(angle);
+--------------------------------------------------------------
+
+
+
+=====================find angle and sign btw two vectors======
+float _sign = dot(up,cross(v_plain,axis_main))
+
+
+--------------------------------------------------------------

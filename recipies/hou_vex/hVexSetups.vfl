@@ -1,0 +1,55 @@
+
+==========================smorganic sheet
+
+float maxdistance = ch("maxdistance");
+int maxpoints = int(ch("maxpoints"));
+int fillmode = int(ch("fillmode"));
+float stepsize = ch("stepsize");
+int divisions = int(ch("divisions"));
+float mindistancethreshold = ch("mindistancethreshold");
+float randomspread = ch("randomspread");
+
+int closept[] = pcfind(0, "P", @P, maxdistance, maxpoints);
+
+//approx normals
+vector dir1 = @P - point(0, "P", closept[1]);
+vector dir2 = @P - point(0, "P", closept[2]);
+vector approxn = normalize(cross(dir1, dir2));
+
+for(int i = 1; i < len(closept); i++)
+{
+    vector closepos = point(0, "P", closept[i]);
+    vector dir = closepos - @P;
+    float l = length(dir);
+    dir = normalize(dir);
+    vector spreaddir = normalize(cross(dir, approxn));
+    
+    //Even Divisions
+    if(fillmode == 0 && l > mindistancethreshold)
+    {
+        for(int n = 1; n <= divisions; n++)
+        {
+            //add new point and inherit all point attributes and group membership
+            int newpt = addpoint(geoself(), @ptnum);
+            //use spread ramp
+            randomspread *= chramp("spreadramp", float(n)/float(divisions));
+            vector newpos = @P + (dir * l/(divisions + 1) * n) + spreaddir*fit01(rand(newpt), -randomspread, randomspread);
+            setpointattrib(geoself(), "P", newpt, newpos, "set");
+        }
+    }
+    
+    //Step Size
+    if(fillmode == 1 && l > stepsize)
+    {
+        for(float n = stepsize; n <= l; n += stepsize)
+        {
+            //add new point and inherit all point attributes and group membership
+            int newpt = addpoint(geoself(), @ptnum);
+            //use spread ramp
+            randomspread *= chramp("spreadramp", n/l);
+            vector newpos = @P + (dir * n) + spreaddir*fit01(rand(newpt), -randomspread, randomspread);
+            setpointattrib(geoself(), "P", newpt, newpos, "set");
+        }
+    }
+}
+========================================

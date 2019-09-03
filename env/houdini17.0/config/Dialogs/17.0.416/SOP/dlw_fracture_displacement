@@ -1,0 +1,1754 @@
+// Magic: 7bf38c04
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Thu Aug 15 23:35:44 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+autoclean.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("autoclean", "Enable") toggle VALUE(autoclean.val);
+
+    { HSTRETCH }
+
+}
+
+gen_name.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("gen_name", "Generate Name") toggle VALUE(gen_name.val);
+
+    { HSTRETCH }
+
+}
+
+loadfromdisk.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("loadfromdisk", "Load from Disk     ") toggle VALUE(loadfromdisk.val);
+
+    { HSTRETCH }
+
+}
+
+file.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ file.label = PARM_LABEL("Geometry File", "file") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "file") LABELREF(file.label)
+	VALUE(file.val) HSTRETCH;
+
+    file.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(file.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+execute.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    { WIDTH(1.5) }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("execute", "Save to Disk")
+	push VALUE(execute.val);
+
+}
+
+enable_mask.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("enable_mask", "Mask Preview") toggle VALUE(enable_mask.val);
+
+    { HSTRETCH }
+
+}
+
+no_mask.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("no_mask", "Disable Mask") toggle VALUE(no_mask.val);
+
+    { HSTRETCH }
+
+}
+
+remap.si_rampedit = FLOAT_RAMP VALUE(remap.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+remap.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	remap.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(remap.pointno.val) HSTRETCH;
+    }
+}
+
+remap.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(remap.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(remap.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    remap.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(remap.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    remap.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(remap.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+remap.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    remap.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	remap.buttons.gad VSTRETCH;
+
+	remap.si_rampedit HSTRETCH;
+    }
+}
+
+remap.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Refine Mask", "remap");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	remap.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(remap.hideparms.val) HSTRETCH
+	    remap.multiramp;
+	    {}
+	}
+    }
+}
+
+prev_disp.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("prev_disp", "Displacement Preview") toggle VALUE(prev_disp.val);
+
+    { HSTRETCH }
+
+}
+
+globalDispMult.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ globalDispMult.label = PARM_LABEL("Global Disp Mult", "globalDispMult") WIDTH(1.5);
+ PARM(float, 1, "globalDispMult", none, none) RANGE(0,10)
+	 LABELREF(globalDispMult.label) HSTRETCH;
+
+}
+
+maxThr.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ maxThr.label = PARM_LABEL("Max Dist Threshold", "maxThr") WIDTH(1.5);
+ PARM(float, 1, "maxThr", none, none) RANGE(0,10)
+	 LABELREF(maxThr.label) HSTRETCH;
+
+}
+
+vm_displacebound.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ vm_displacebound.label = PARM_LABEL("Displacement Bound", "vm_displacebound") WIDTH(1.5);
+ PARM(float, 1, "vm_displacebound", none, none) RANGE(0,10)
+	 LABELREF(vm_displacebound.label) HSTRETCH;
+
+}
+
+diff_enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("diff_enable", "Enable Diffuse") toggle VALUE(diff_enable.val);
+
+    { HSTRETCH }
+
+}
+
+diff_int.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ diff_int.label = PARM_LABEL("Diffuse Intensity", "diff_int") WIDTH(1.5);
+ PARM(float, 1, "diff_int", none, none) RANGE(0,1)
+	 LABELREF(diff_int.label) HSTRETCH;
+
+}
+
+diff_min.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ diff_min.label = PARM_LABEL("Diffuse Minimum", "diff_min") WIDTH(1.5);
+ PARM(float, 1, "diff_min", none, none) RANGE(0,1)
+	 LABELREF(diff_min.label) HSTRETCH;
+
+}
+
+diff_rough.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ diff_rough.label = PARM_LABEL("Diffuse Roughness", "diff_rough") WIDTH(1.5);
+ PARM(float, 1, "diff_rough", none, none) RANGE(0,1)
+	 LABELREF(diff_rough.label) HSTRETCH;
+
+}
+
+diff_col.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    diff_col.label = PARM_LABEL("Diffuse Colour", "diff_col") WIDTH(1.5);
+    PARM(float, 3, "diff_col", none, COLOR, "R,G,B") 
+	LABELREF(diff_col.label) HSTRETCH;
+
+}
+
+diff_texture_switch.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("diff_texture_switch", "Use Texture") toggle VALUE(diff_texture_switch.val);
+
+    { HSTRETCH }
+
+}
+
+cmap.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ cmap.label = PARM_LABEL("Diffuse Texture", "cmap") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "cmap") LABELREF(cmap.label)
+	VALUE(cmap.val) HSTRETCH;
+
+    cmap.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(cmap.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+diff_label.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    diff_label.label = PARM_LABEL("Diffuse Component", "diff_label") WIDTH(1.5);
+    PARM_FIELD(string, "diff_label") VALUE(diff_label.val) 
+	LABELREF(diff_label.label) HSTRETCH;
+
+}
+
+sss_enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sss_enable", "Enable Subsurface Scattering") toggle VALUE(sss_enable.val);
+
+    { HSTRETCH }
+
+}
+
+sss_int.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ sss_int.label = PARM_LABEL("Subsurface Albedo", "sss_int") WIDTH(1.5);
+ PARM(float, 1, "sss_int", none, none) RANGE(0,1)
+	 LABELREF(sss_int.label) HSTRETCH;
+
+}
+
+sss_clr2.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    sss_clr2.label = PARM_LABEL("Subsurface Color", "sss_clr2") WIDTH(1.5);
+    PARM(float, 3, "sss_clr2", none, COLOR, "R,G,B") 
+	LABELREF(sss_clr2.label) HSTRETCH;
+
+}
+
+sss_min.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ sss_min.label = PARM_LABEL("Subsurface Minimum", "sss_min") WIDTH(1.5);
+ PARM(float, 1, "sss_min", none, none) RANGE(0,1)
+	 LABELREF(sss_min.label) HSTRETCH;
+
+}
+
+sss_atten.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ sss_atten.label = PARM_LABEL("Attenuation Density", "sss_atten") WIDTH(1.5);
+ PARM(float, 1, "sss_atten", none, none) RANGE(0,20)
+	 LABELREF(sss_atten.label) HSTRETCH;
+
+}
+
+sss_attenclr.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    sss_attenclr.label = PARM_LABEL("Attenuation Color", "sss_attenclr") WIDTH(1.5);
+    PARM(float, 3, "sss_attenclr", none, COLOR, "R,G,B") 
+	LABELREF(sss_attenclr.label) HSTRETCH;
+
+}
+
+sss_phase.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ sss_phase.label = PARM_LABEL("Scattering Phase", "sss_phase") WIDTH(1.5);
+ PARM(float, 1, "sss_phase", none, none) RANGE(-1,1)
+	 LABELREF(sss_phase.label) HSTRETCH;
+
+}
+
+sss_spectral.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sss_spectral", "Enable RGB Spectral Scattering") toggle VALUE(sss_spectral.val);
+
+    { HSTRETCH }
+
+}
+
+sss_1enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sss_1enable", "Enable Single Scattering") toggle VALUE(sss_1enable.val);
+
+    { HSTRETCH }
+
+}
+
+sss_1intensity.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ sss_1intensity.label = PARM_LABEL("Single Intensity", "sss_1intensity") WIDTH(1.5);
+ PARM(float, 1, "sss_1intensity", none, none) RANGE(0,1)
+	 LABELREF(sss_1intensity.label) HSTRETCH;
+
+}
+
+sss_1quality.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ sss_1quality.label = PARM_LABEL("Single Quality", "sss_1quality") WIDTH(1.5);
+ PARM(integer, 1, "sss_1quality", none, none) RANGE(1,10)
+	 LABELREF(sss_1quality.label) HSTRETCH;
+
+}
+
+sss_2enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("sss_2enable", "Enable Multiple Scattering") toggle VALUE(sss_2enable.val);
+
+    { HSTRETCH }
+
+}
+
+sss_2model.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Multi Model", "sss_2model") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    sss_2model.menu;
+
+    { HSTRETCH }
+
+}
+
+sss_pcmode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Point Cloud Mode", "sss_pcmode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    sss_pcmode.menu;
+
+    { HSTRETCH }
+
+}
+
+sss_pcname.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ sss_pcname.label = PARM_LABEL("Point Cloud", "sss_pcname") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "sss_pcname") LABELREF(sss_pcname.label)
+	VALUE(sss_pcname.val) HSTRETCH;
+
+    sss_pcname.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(sss_pcname.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+sss_2intensity.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ sss_2intensity.label = PARM_LABEL("Multi Intensity", "sss_2intensity") WIDTH(1.5);
+ PARM(float, 1, "sss_2intensity", none, none) RANGE(0,1)
+	 LABELREF(sss_2intensity.label) HSTRETCH;
+
+}
+
+sss_2quality.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ sss_2quality.label = PARM_LABEL("Multi Quality", "sss_2quality") WIDTH(1.5);
+ PARM(float, 1, "sss_2quality", none, none) RANGE(0.01,10)
+	 LABELREF(sss_2quality.label) HSTRETCH;
+
+}
+
+refl_enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refl_enable", "Enable Base Reflections") toggle VALUE(refl_enable.val);
+
+    { HSTRETCH }
+
+}
+
+refl_lights.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refl_lights", "Reflect Lights") toggle VALUE(refl_lights.val);
+
+    { HSTRETCH }
+
+}
+
+spec_model.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Specular Model", "spec_model") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    spec_model.menu;
+
+    { HSTRETCH }
+
+}
+
+spec_int.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ spec_int.label = PARM_LABEL("Specular Intensity", "spec_int") WIDTH(1.5);
+ PARM(float, 1, "spec_int", none, none) RANGE(0,1)
+	 LABELREF(spec_int.label) HSTRETCH;
+
+}
+
+spec_min.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ spec_min.label = PARM_LABEL("Specular Minimum", "spec_min") WIDTH(1.5);
+ PARM(float, 1, "spec_min", none, none) RANGE(0,1)
+	 LABELREF(spec_min.label) HSTRETCH;
+
+}
+
+spec_clr3.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    spec_clr3.label = PARM_LABEL("Specular Color", "spec_clr3") WIDTH(1.5);
+    PARM(float, 3, "spec_clr3", none, COLOR, "R,G,B") 
+	LABELREF(spec_clr3.label) HSTRETCH;
+
+}
+
+spec_metallic.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ spec_metallic.label = PARM_LABEL("Metal/Conductor Reflection", "spec_metallic") WIDTH(1.5);
+ PARM(float, 1, "spec_metallic", none, none) RANGE(0,1)
+	 LABELREF(spec_metallic.label) HSTRETCH;
+
+}
+
+spec_edgetint.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    spec_edgetint.label = PARM_LABEL("Edge Tint", "spec_edgetint") WIDTH(1.5);
+    PARM(float, 3, "spec_edgetint", none, COLOR, "R,G,B") 
+	LABELREF(spec_edgetint.label) HSTRETCH;
+
+}
+
+spec_rough3.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ spec_rough3.label = PARM_LABEL("Specular Roughness", "spec_rough3") WIDTH(1.5);
+ PARM(float, 1, "spec_rough3", none, none) RANGE(0,1)
+	 LABELREF(spec_rough3.label) HSTRETCH;
+
+}
+
+spec_aniso.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ spec_aniso.label = PARM_LABEL("Specular Anisotropy", "spec_aniso") WIDTH(1.5);
+ PARM(float, 1, "spec_aniso", none, none) RANGE(0,1)
+	 LABELREF(spec_aniso.label) HSTRETCH;
+
+}
+
+spec_anisodir.gad = ROW
+{
+   HSTRETCH
+
+   spec_anisodir.label = PARM_LABEL( "Specular Anisotropy Direction", "spec_anisodir" ) WIDTH(1.5);
+   PARM(float, 1, "spec_anisodir", none, none) RANGE(0, 1)
+	LABELREF( spec_anisodir.label ) HSTRETCH;
+
+}
+
+refl_objs.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refl_objs", "Reflect Objects") toggle VALUE(refl_objs.val);
+
+    { HSTRETCH }
+
+}
+
+refl_sep.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refl_sep", "Separate Object Reflection Parameters") toggle VALUE(refl_sep.val);
+
+    { HSTRETCH }
+
+}
+
+refl_int.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ refl_int.label = PARM_LABEL("Reflection Intensity", "refl_int") WIDTH(1.5);
+ PARM(float, 1, "refl_int", none, none) RANGE(0,1)
+	 LABELREF(refl_int.label) HSTRETCH;
+
+}
+
+refl_clr.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    refl_clr.label = PARM_LABEL("Reflection Color", "refl_clr") WIDTH(1.5);
+    PARM(float, 3, "refl_clr", none, COLOR, "R,G,B") 
+	LABELREF(refl_clr.label) HSTRETCH;
+
+}
+
+refl_edgetint.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    refl_edgetint.label = PARM_LABEL("Edge Tint", "refl_edgetint") WIDTH(1.5);
+    PARM(float, 3, "refl_edgetint", none, COLOR, "R,G,B") 
+	LABELREF(refl_edgetint.label) HSTRETCH;
+
+}
+
+refl_rough.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ refl_rough.label = PARM_LABEL("Reflection Roughness", "refl_rough") WIDTH(1.5);
+ PARM(float, 1, "refl_rough", none, none) RANGE(0,1)
+	 LABELREF(refl_rough.label) HSTRETCH;
+
+}
+
+refl_label.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    refl_label.label = PARM_LABEL("Reflection Component", "refl_label") WIDTH(1.5);
+    PARM_FIELD(string, "refl_label") VALUE(refl_label.val) 
+	LABELREF(refl_label.label) HSTRETCH;
+
+}
+
+refl_enable2.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refl_enable2", "Enable Coat Reflections") toggle VALUE(refl_enable2.val);
+
+    { HSTRETCH }
+
+}
+
+refl_lights2.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refl_lights2", "Reflect Lights") toggle VALUE(refl_lights2.val);
+
+    { HSTRETCH }
+
+}
+
+spec_model2.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Specular Model", "spec_model2") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    spec_model2.menu;
+
+    { HSTRETCH }
+
+}
+
+spec_int2.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ spec_int2.label = PARM_LABEL("Specular Intensity", "spec_int2") WIDTH(1.5);
+ PARM(float, 1, "spec_int2", none, none) RANGE(0,1)
+	 LABELREF(spec_int2.label) HSTRETCH;
+
+}
+
+spec_min2.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ spec_min2.label = PARM_LABEL("Specular Minimum", "spec_min2") WIDTH(1.5);
+ PARM(float, 1, "spec_min2", none, none) RANGE(0,1)
+	 LABELREF(spec_min2.label) HSTRETCH;
+
+}
+
+spec_clr2.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    spec_clr2.label = PARM_LABEL("Specular Color", "spec_clr2") WIDTH(1.5);
+    PARM(float, 3, "spec_clr2", none, COLOR, "R,G,B") 
+	LABELREF(spec_clr2.label) HSTRETCH;
+
+}
+
+spec_rough2.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ spec_rough2.label = PARM_LABEL("Specular Roughness", "spec_rough2") WIDTH(1.5);
+ PARM(float, 1, "spec_rough2", none, none) RANGE(0,1)
+	 LABELREF(spec_rough2.label) HSTRETCH;
+
+}
+
+spec_aniso2.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ spec_aniso2.label = PARM_LABEL("Specular Anisotropy", "spec_aniso2") WIDTH(1.5);
+ PARM(float, 1, "spec_aniso2", none, none) RANGE(0,1)
+	 LABELREF(spec_aniso2.label) HSTRETCH;
+
+}
+
+spec_anisodir2.gad = ROW
+{
+   HSTRETCH
+
+   spec_anisodir2.label = PARM_LABEL( "Specular Anisotropy Direction", "spec_anisodir2" ) WIDTH(1.5);
+   PARM(float, 1, "spec_anisodir2", none, none) RANGE(0, 1)
+	LABELREF( spec_anisodir2.label ) HSTRETCH;
+
+}
+
+refl_objs2.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refl_objs2", "Reflect Objects") toggle VALUE(refl_objs2.val);
+
+    { HSTRETCH }
+
+}
+
+refl_sep2.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refl_sep2", "Separate Object Reflection Parameters") toggle VALUE(refl_sep2.val);
+
+    { HSTRETCH }
+
+}
+
+refl_int2.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ refl_int2.label = PARM_LABEL("Reflection Intensity", "refl_int2") WIDTH(1.5);
+ PARM(float, 1, "refl_int2", none, none) RANGE(0,1)
+	 LABELREF(refl_int2.label) HSTRETCH;
+
+}
+
+refl_clr2.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    refl_clr2.label = PARM_LABEL("Reflection Color", "refl_clr2") WIDTH(1.5);
+    PARM(float, 3, "refl_clr2", none, COLOR, "R,G,B") 
+	LABELREF(refl_clr2.label) HSTRETCH;
+
+}
+
+refl_rough2.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ refl_rough2.label = PARM_LABEL("Reflection Roughness", "refl_rough2") WIDTH(1.5);
+ PARM(float, 1, "refl_rough2", none, none) RANGE(0,1)
+	 LABELREF(refl_rough2.label) HSTRETCH;
+
+}
+
+refl_label2.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    refl_label2.label = PARM_LABEL("Reflection Component", "refl_label2") WIDTH(1.5);
+    PARM_FIELD(string, "refl_label2") VALUE(refl_label2.val) 
+	LABELREF(refl_label2.label) HSTRETCH;
+
+}
+
+refr_enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refr_enable", "Enable Refractions") toggle VALUE(refr_enable.val);
+
+    { HSTRETCH }
+
+}
+
+refr_lights.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refr_lights", "Refract Lights") toggle VALUE(refr_lights.val);
+
+    { HSTRETCH }
+
+}
+
+refr_model.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Refraction Model", "refr_model") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    refr_model.menu;
+
+    { HSTRETCH }
+
+}
+
+refr_int.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ refr_int.label = PARM_LABEL("Refraction Intensity", "refr_int") WIDTH(1.5);
+ PARM(float, 1, "refr_int", none, none) RANGE(0,1)
+	 LABELREF(refr_int.label) HSTRETCH;
+
+}
+
+refr_min.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ refr_min.label = PARM_LABEL("Refraction Minimum", "refr_min") WIDTH(1.5);
+ PARM(float, 1, "refr_min", none, none) RANGE(0,1)
+	 LABELREF(refr_min.label) HSTRETCH;
+
+}
+
+refr_clr.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    refr_clr.label = PARM_LABEL("Refraction Color", "refr_clr") WIDTH(1.5);
+    PARM(float, 3, "refr_clr", none, COLOR, "R,G,B") 
+	LABELREF(refr_clr.label) HSTRETCH;
+
+}
+
+refr_rough.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ refr_rough.label = PARM_LABEL("Refraction Roughness", "refr_rough") WIDTH(1.5);
+ PARM(float, 1, "refr_rough", none, none) RANGE(0,1)
+	 LABELREF(refr_rough.label) HSTRETCH;
+
+}
+
+refr_aniso.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ refr_aniso.label = PARM_LABEL("Refraction Anisotropy", "refr_aniso") WIDTH(1.5);
+ PARM(float, 1, "refr_aniso", none, none) RANGE(0,1)
+	 LABELREF(refr_aniso.label) HSTRETCH;
+
+}
+
+refr_anisodir.gad = ROW
+{
+   HSTRETCH
+
+   refr_anisodir.label = PARM_LABEL( "Refraction Anisotropy Direction", "refr_anisodir" ) WIDTH(1.5);
+   PARM(float, 1, "refr_anisodir", none, none) RANGE(0, 1)
+	LABELREF( refr_anisodir.label ) HSTRETCH;
+
+}
+
+refr_objs.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refr_objs", "Refract Objects") toggle VALUE(refr_objs.val);
+
+    { HSTRETCH }
+
+}
+
+atten_enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("atten_enable", "Enable Attenuation") toggle VALUE(atten_enable.val);
+
+    { HSTRETCH }
+
+}
+
+atten_den.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ atten_den.label = PARM_LABEL("Attenuation Density", "atten_den") WIDTH(1.5);
+ PARM(float, 1, "atten_den", none, none) RANGE(0,1)
+	 LABELREF(atten_den.label) HSTRETCH;
+
+}
+
+atten_clr.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    atten_clr.label = PARM_LABEL("Attenuation Color", "atten_clr") WIDTH(1.5);
+    PARM(float, 3, "atten_clr", none, COLOR, "R,G,B") 
+	LABELREF(atten_clr.label) HSTRETCH;
+
+}
+
+refr_thin.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("refr_thin", "Thin Film Refraction") toggle VALUE(refr_thin.val);
+
+    { HSTRETCH }
+
+}
+
+refr_label.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    refr_label.label = PARM_LABEL("Refraction Component", "refr_label") WIDTH(1.5);
+    PARM_FIELD(string, "refr_label") VALUE(refr_label.val) 
+	LABELREF(refr_label.label) HSTRETCH;
+
+}
+
+emit_enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("emit_enable", "Enable Emission") toggle VALUE(emit_enable.val);
+
+    { HSTRETCH }
+
+}
+
+emit_int.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ emit_int.label = PARM_LABEL("Emission Intensity", "emit_int") WIDTH(1.5);
+ PARM(float, 1, "emit_int", none, none) RANGE(0,1)
+	 LABELREF(emit_int.label) HSTRETCH;
+
+}
+
+emit_clr2.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    emit_clr2.label = PARM_LABEL("Emission Color", "emit_clr2") WIDTH(1.5);
+    PARM(float, 3, "emit_clr2", none, COLOR, "R,G,B") 
+	LABELREF(emit_clr2.label) HSTRETCH;
+
+}
+
+emit_illum.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("emit_illum", "Emission Illuminates Objects") toggle VALUE(emit_illum.val);
+
+    { HSTRETCH }
+
+}
+
+opac_int.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ opac_int.label = PARM_LABEL("Opacity Scale", "opac_int") WIDTH(1.5);
+ PARM(float, 1, "opac_int", none, none) RANGE(0,1)
+	 LABELREF(opac_int.label) HSTRETCH;
+
+}
+
+opac_clr.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    opac_clr.label = PARM_LABEL("Opacity", "opac_clr") WIDTH(1.5);
+    PARM(float, 3, "opac_clr", none, COLOR, "R,G,B") 
+	LABELREF(opac_clr.label) HSTRETCH;
+
+}
+
+fake_enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("fake_enable", "Enable Fake Caustics") toggle VALUE(fake_enable.val);
+
+    { HSTRETCH }
+
+}
+
+fake_transmit.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ fake_transmit.label = PARM_LABEL("Transmission Tint", "fake_transmit") WIDTH(1.5);
+ PARM(float, 1, "fake_transmit", none, none) RANGE(0,1)
+	 LABELREF(fake_transmit.label) HSTRETCH;
+
+}
+
+fake_shadow.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ fake_shadow.label = PARM_LABEL("Shadow", "fake_shadow") WIDTH(1.5);
+ PARM(float, 1, "fake_shadow", none, none) RANGE(0,1)
+	 LABELREF(fake_shadow.label) HSTRETCH;
+
+}
+
+opac_falloff.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("opac_falloff", "Enable Opacity Falloff") toggle VALUE(opac_falloff.val);
+
+    { HSTRETCH }
+
+}
+
+opac_para.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ opac_para.label = PARM_LABEL("Parallel Opacity", "opac_para") WIDTH(1.5);
+ PARM(float, 1, "opac_para", none, none) RANGE(0,1)
+	 LABELREF(opac_para.label) HSTRETCH;
+
+}
+
+opac_perp.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ opac_perp.label = PARM_LABEL("Perp Opacity", "opac_perp") WIDTH(1.5);
+ PARM(float, 1, "opac_perp", none, none) RANGE(0,1)
+	 LABELREF(opac_perp.label) HSTRETCH;
+
+}
+
+opac_rolloff.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ opac_rolloff.label = PARM_LABEL("Opacity Rolloff", "opac_rolloff") WIDTH(1.5);
+ PARM(float, 1, "opac_rolloff", none, none) RANGE(0,10)
+	 LABELREF(opac_rolloff.label) HSTRETCH;
+
+}
+
+ior_in.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ ior_in.label = PARM_LABEL("Inside IOR", "ior_in") WIDTH(1.5);
+ PARM(float, 1, "ior_in", none, none) RANGE(1,3)
+	 LABELREF(ior_in.label) HSTRETCH;
+
+}
+
+ior_out.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ ior_out.label = PARM_LABEL("Outside IOR", "ior_out") WIDTH(1.5);
+ PARM(float, 1, "ior_out", none, none) RANGE(1,3)
+	 LABELREF(ior_out.label) HSTRETCH;
+
+}
+
+conserveenergy.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("conserveenergy", "Conserve Energy") toggle VALUE(conserveenergy.val);
+
+    { HSTRETCH }
+
+}
+
+fres_enable.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("fres_enable", "Fresnel Blending") toggle VALUE(fres_enable.val);
+
+    { HSTRETCH }
+
+}
+
+fres_style.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Fresnel Style", "fres_style") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    fres_style.menu;
+
+    { HSTRETCH }
+
+}
+
+facefwd.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("facefwd", "Ensure Faces Point Forward") toggle VALUE(facefwd.val);
+
+    { HSTRETCH }
+
+}
+
+tan_style.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Tangent Style", "tan_style") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    tan_style.menu;
+
+    { HSTRETCH }
+
+}
+maxdist_enable.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+maxdist_enable.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+maxdist_enable.gad = PARM_BUTTON("maxdist_enable", "") toggle VALUE(maxdist_enable.val);
+
+maxdist.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ maxdist.label = PARM_LABEL("Max Ray Distance", "maxdist") WIDTH(1.32);
+ PARM(float, 1, "maxdist", none, none) RANGE(0,100)
+	 LABELREF(maxdist.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+noise_col.si_rampedit = COLOR_RAMP VALUE(noise_col.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+noise_col.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	noise_col.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(noise_col.pointno.val) HSTRETCH;
+    }
+}
+
+noise_col.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(noise_col.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(noise_col.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    noise_col.toggleparms.gad
+      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+	HELP("Hide Controls")
+	VALUE(noise_col.toggle.val)
+	SENDSKEY("h.pane.parms.toggle_ramp_parms")
+	LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+}
+
+noise_col.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    noise_col.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	noise_col.buttons.gad VSTRETCH;
+
+	noise_col.si_rampedit HSTRETCH;
+    }
+}
+
+noise_col.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Noise Colour", "noise_col");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(lightline) HSTRETCH
+
+	noise_col.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(noise_col.hideparms.val) HSTRETCH
+	    noise_col.multiramp;
+	    {}
+	}
+    }
+}
+
+type.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Noise Type", "type") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    type.menu;
+
+    { HSTRETCH }
+
+}
+
+freq.gad = ROW
+{
+   HSTRETCH
+
+   freq.label = PARM_LABEL("Frequency", "freq") WIDTH(1.5);
+   PARM(float, 3, "freq", none, none, "#1,#2,#3")
+	RANGE(0,10)  LABELREF(freq.label)
+	HSTRETCH;
+
+}
+
+offset.gad = ROW
+{
+   HSTRETCH
+
+   offset.label = PARM_LABEL("Offset", "offset") WIDTH(1.5);
+   PARM(float, 3, "offset", none, none, "#1,#2,#3")
+	RANGE(0,10)  LABELREF(offset.label)
+	HSTRETCH;
+
+}
+
+rough.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ rough.label = PARM_LABEL("Roughness", "rough") WIDTH(1.5);
+ PARM(float, 1, "rough", none, none) RANGE(0,1)
+	 LABELREF(rough.label) HSTRETCH;
+
+}
+
+atten.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ atten.label = PARM_LABEL("Attenuation", "atten") WIDTH(1.5);
+ PARM(float, 1, "atten", none, none) RANGE(0,1)
+	 LABELREF(atten.label) HSTRETCH;
+
+}
+
+turb.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ turb.label = PARM_LABEL("Turbulence", "turb") WIDTH(1.5);
+ PARM(integer, 1, "turb", none, none) RANGE(0,10)
+	 LABELREF(turb.label) HSTRETCH;
+
+}
+
+diffuse_folder.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "diffuse_folder.gad"
+    { 
+	VALUE(diffuse_folder.gad.val) STRETCH(1,0)
+
+	TAB "Diffuse"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    diff_enable.gad;		
+	    diff_int.gad;		
+	    diff_min.gad;		
+	    diff_rough.gad;		
+	    diff_col.gad;		
+	    diff_texture_switch.gad;		
+	    cmap.gad;		
+	    diff_label.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Subsurface"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    sss_enable.gad;		
+	    sss_int.gad;		
+	    sss_clr2.gad;		
+	    sss_min.gad;		
+	    sss_atten.gad;		
+	    sss_attenclr.gad;		
+	    sss_phase.gad;		
+	    sss_spectral.gad;		
+	    sss_1enable.gad;		
+	    sss_1intensity.gad;		
+	    sss_1quality.gad;		
+	    sss_2enable.gad;		
+	    sss_2model.gad;		
+	    sss_pcmode.gad;		
+	    sss_pcname.gad;		
+	    sss_2intensity.gad;		
+	    sss_2quality.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Base Reflection"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    refl_enable.gad;		
+	    refl_lights.gad;		
+	    spec_model.gad;		
+	    spec_int.gad;		
+	    spec_min.gad;		
+	    spec_clr3.gad;		
+	    spec_metallic.gad;		
+	    spec_edgetint.gad;		
+	    spec_rough3.gad;		
+	    spec_aniso.gad;		
+	    spec_anisodir.gad;		
+	    refl_objs.gad;		
+	    refl_sep.gad;		
+	    refl_int.gad;		
+	    refl_clr.gad;		
+	    refl_edgetint.gad;		
+	    refl_rough.gad;		
+	    refl_label.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Coat Reflection"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    refl_enable2.gad;		
+	    refl_lights2.gad;		
+	    spec_model2.gad;		
+	    spec_int2.gad;		
+	    spec_min2.gad;		
+	    spec_clr2.gad;		
+	    spec_rough2.gad;		
+	    spec_aniso2.gad;		
+	    spec_anisodir2.gad;		
+	    refl_objs2.gad;		
+	    refl_sep2.gad;		
+	    refl_int2.gad;		
+	    refl_clr2.gad;		
+	    refl_rough2.gad;		
+	    refl_label2.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Refract"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    refr_enable.gad;		
+	    refr_lights.gad;		
+	    refr_model.gad;		
+	    refr_int.gad;		
+	    refr_min.gad;		
+	    refr_clr.gad;		
+	    refr_rough.gad;		
+	    refr_aniso.gad;		
+	    refr_anisodir.gad;		
+	    refr_objs.gad;		
+	    atten_enable.gad;		
+	    atten_den.gad;		
+	    atten_clr.gad;		
+	    refr_thin.gad;		
+	    refr_label.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Emission"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    emit_enable.gad;		
+	    emit_int.gad;		
+	    emit_clr2.gad;		
+	    emit_illum.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Opacity"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    opac_int.gad;		
+	    opac_clr.gad;		
+	    fake_enable.gad;		
+	    fake_transmit.gad;		
+	    fake_shadow.gad;		
+	    opac_falloff.gad;		
+	    opac_para.gad;		
+	    opac_perp.gad;		
+	    opac_rolloff.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Settings"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    ior_in.gad;		
+	    ior_out.gad;		
+	    conserveenergy.gad;		
+	    fres_enable.gad;		
+	    fres_style.gad;		
+	    facefwd.gad;		
+	    tan_style.gad;		
+	    maxdist_enable.row.join;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder3.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder3.gad"
+    { 
+	VALUE(folder3.gad.val) STRETCH(1,0)
+
+	TAB "Top Shader"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    diffuse_folder.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Bottom Shader"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(2p) SPACING(2p)
+	    noise_col.gad;		
+	    type.gad;		
+	    freq.gad;		
+	    offset.gad;		
+	    rough.gad;		
+	    atten.gad;		
+	    turb.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+folder1.gad = 
+GROUP simple "Displacement"
+{ 
+    VALUE(folder1.gad.val) LAYOUT(vertical) HSTRETCH 
+	    prev_disp.gad;		
+	    globalDispMult.gad;		
+	    maxThr.gad;		
+	    vm_displacebound.gad;		
+} 
+
+folder0_1.gad = 
+GROUP simple "Bound Geometry"
+{ 
+    VALUE(folder0_1.gad.val) LAYOUT(vertical) HSTRETCH 
+	    loadfromdisk.gad;		
+	    file.gad;		
+	    execute.gad;		
+} 
+
+folder0.gad = 
+GROUP simple "Auto Clean Geometry"
+{ 
+    VALUE(folder0.gad.val) LAYOUT(vertical) HSTRETCH 
+	    autoclean.gad;		
+	    gen_name.gad;		
+} 
+
+folder2.gad = 
+{
+    LAYOUT(vertical) HSTRETCH
+
+    TABDIALOG2 "folder2.gad"
+    { 
+	VALUE(folder2.gad.val) STRETCH(1,0)
+
+	TAB "Geometry Setup"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    folder0.gad;		
+	    folder0_1.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Edge Mask"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    enable_mask.gad;		
+	    no_mask.gad;		
+	    remap.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+
+	TAB "Shader"
+	{
+	    LAYOUT(vertical) STRETCH
+
+	    MARGIN(0.05) SPACING(2p)
+	    folder1.gad;		
+	    folder3.gad;		
+
+	    { STRETCH(1,1) LOOK(plain) }
+	}
+    } 
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    folder2.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

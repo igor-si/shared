@@ -1,0 +1,103 @@
+//
+//  File:    vih_noise.vfl
+//  Version: 0001
+//  Author:  Shawn Lipowski
+//  Date:    2014 08 14
+//  Note:    Generic noise functions for float and vector valued turbulent
+//           noises.
+//
+
+//  turb:
+//      parms:
+//          sample_point : sample position of the noise value to return
+//          roughness    : each octave of noise is added to the previous
+//                         values after being multiplied by this factor
+//          lacunarity   : increase in frequency when sampling successive
+//                         octaves
+//          octaves      : layers of noise added together
+//      returns:
+//          float in the range -0.5 to 0.5
+float turb(vector sample_point;
+           float  roughness;
+           float  lacunarity;
+           int    octaves;)
+{
+    float  sum    = 0;
+    float  weight = 1.0;
+    vector samp_p = sample_point;
+
+    for (int i=0; i<octaves+1; i++) {
+        // vector noise -0.5 to 0.5 range
+        sum += (noise(samp_p) - 0.5) * weight;
+
+        // next octave will be scaled in size
+        samp_p *= lacunarity;
+
+        // and reduced in contribution
+        weight *= roughness;
+    }
+    return sum;
+}
+
+
+//  v_turb:
+//      parms:
+//          [same as turb]
+//      returns:
+//          vector in the range -0.5 to 0.5
+vector v_turb(vector sample_point;
+              float  roughness;
+              float  lacunarity;
+              int    octaves;)
+{
+    vector sum    = 0;
+    float  weight = 1.0;
+    vector samp_p = sample_point;
+
+    for (int i=0; i<octaves+1; i++) {
+        // vector noise -0.5 to 0.5 range
+        sum += (noise(samp_p) - {0.5, 0.5, 0.5}) * weight;
+
+        // next octave will be scaled in size
+        samp_p *= lacunarity;
+
+        // and reduced in contribution
+        weight *= roughness;
+    }
+    return sum;
+}
+
+
+//  pow_abs_turb:
+//      parms:
+//          sample_point : sample position of the noise value to return
+//          roughness    : each octave of noise is added to the previous values
+//                         after being multiplied by this scaling factor
+//          lacunarity   : increase in frequency when sampling successive octaves
+//          octaves      : layers of noise added together
+//          exponent     : noise is in the range of 0-1 so this acts as a
+//                         smoothing factor. 0.5 is a good default
+//      returns:
+//          float in the range 0 to 1
+float pow_abs_turb(vector sample_point;
+                   float  roughness;
+                   float  lacunarity;
+                   int    octaves;
+                   float  exponent;)
+{
+    float  sum    = 0;
+    float  weight = 1.0;
+    vector samp_p = sample_point;
+
+    for (int i=0; i<octaves+1; i++) {
+        // absolute value noise with valley smoothing
+        sum += pow(abs(fit01(noise(samp_p), -1.0, 1.0)), exponent) * weight;
+
+        // next octave will be scaled in size
+        samp_p *= lacunarity;
+
+        // and reduced in contribution
+        weight *= roughness;
+    }
+    return sum;
+}

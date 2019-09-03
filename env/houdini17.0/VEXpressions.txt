@@ -1,0 +1,228 @@
+attribwrangle/snippet
+	basic_ramp
+	float remap = fit(@P.y, 127, 166, 0, 1);
+	@scale = chramp('myRampName', remap);
+
+attribwrangle/snippet
+	attrib_transfer
+	float rad = chf("rad");
+	string attribName = chs("attribName");
+	int handle = pcopen(1,"P",v@P,rad,1);
+		float val = pcfilter(handle,attribName);
+		setpointattrib(0,attribName,@ptnum,val,"set");
+
+attribwrangle/snippet
+	find_minmaxValue
+	string varName = "test";
+	float var = point(0,varName,@ptnum);
+	setdetailattrib(geoself(), "min_val", var, "min");
+	setdetailattrib(geoself(), "max_val", var, "max");
+
+attribwrangle/snippet
+	find_getbbox
+	vector min, max;
+	getbbox(0, "", min, max);
+
+attribwrangle/snippet
+	pcnumfound_removeByRadius
+	//remove points by number of neighbors in radius
+	int pcloud = pcopen(0, "P", @P, 2, 10);
+	if (pcnumfound(pcloud) > 3)
+    {removepoint(0,@ptnum);}
+
+attribwrangle/snippet
+	pcfind_isolateOverlap
+	//point clouds and arrays – isolate overlapping points
+	int near[] = pcfind(0, "P", @P, 0.0001, 2);
+	if(len(near) > 1) setpointgroup(0, "double",@ptnum,"set")
+
+attribwrangle/snippet
+	remove_dotProduct
+	vector v1 = {0,1,0};
+	vector v2 = v@N;
+	float dp = dot(v1,v2);
+	if (dp>chf("dot_cut"))
+	{ removepoint(0,@ptnum);}
+	
+
+attribwrangle/snippet
+	remove_byVolumeSample
+	int sdf_type = chi("sdf_type");
+	float vs = volumesample(1,0,v@P);
+	if (sdf_type)
+	{
+		if (vs<0)
+		{removepoint(0,@ptnum);}
+	}
+	else
+	{
+		if (vs>0)
+		{removepoint(0,@ptnum);}	
+	}
+
+attribwrangle/snippet
+	rotate_dihedral
+	//incomplete!!!
+	vector v1 = normalize(v@vecD);
+	vector v2 = {0,1,0};
+
+	matrix dh = dihedral(v1,v2);
+	v@P*=dh;
+
+attribwrangle/snippet
+	create_ptCenterEachPrim
+	//run over prims
+	//create pts in centroid of each prim
+	int prim_points[];
+	vector accum_pos, pos;
+	accum_pos = {0, 0, 0};
+
+	for (int i = 0; i < primvertexcount(geoself(), @primnum); i++)
+	{
+	    int vtx_index = vertexindex(geoself(), @primnum, i);
+	    int vtx_point = vertexpoint(geoself(), vtx_index); 
+	    prim_points[i] = vtx_point;
+	    getattribute(@OpInput1, pos, "point", "P", vtx_point, 0);
+	    accum_pos += pos;
+	}
+
+	addpoint(geoself(), accum_pos / len(prim_points));
+	removeprim(geoself(), @primnum, 1);
+
+attribwrangle/snippet
+	nearpoint_removeByDistance
+	//run over points
+	//check distance by nearpoint
+	float dist = -1;
+	float maxSearchRad = chf("radius");
+	int nPt = nearpoint(1,v@P,maxSearchRad);
+
+	if (nPt!=-1)
+	{
+
+		//dist=distance(v@P,point(1,"P",nPt));
+		removepoint(0,@ptnum);
+
+	}
+	//f@dist=dist;
+
+
+attribwrangle/snippet
+	neighbour_groupByneighbour
+	if ( neighbourcount ( 0, @ptnum ) > 3 )
+	{setpointgroup (0, "grouped", @ptnum, 1);}
+
+
+attribwrangle/snippet
+	xyzdist_findDistance
+	//run over prims
+	//check distance by xyzdist
+	float maxSearchRad = chf("radius");
+
+	int prim;
+	vector primuv;
+	float dist = xyzdist(1,"",v@P,prim,primuv,maxSearchRad);
+	@dist = dist;
+	//vector primP = primuv(1,"P",prim,primuv);
+	//vector primN = primuv(1,"N",prim,primuv);
+
+
+groupexpression/snippet
+    Radar
+    chi("Axis")==0 ? degrees(acos(normalize(set(@P.x,0,@P.z)).x))<ch("angle") :
+    chi("Axis")==1 ? degrees(acos(-normalize(set(@P.x,0,@P.z)).x))<ch("angle") :
+    chi("Axis")==2 ? degrees(acos(normalize(set(@P.x,@P.y,0)).y))<ch("angle") :
+    chi("Axis")==3 ? degrees(acos(-normalize(set(@P.x,@P.y,0)).y))<ch("angle") :
+    chi("Axis")==4 ? degrees(acos(normalize(set(@P.x,0,@P.z)).z))<ch("angle") : degrees(acos(-normalize(set(@P.x,0,@P.z)).z))<ch("angle")
+
+
+attribwrangle/snippet
+	=============================
+	// create a new attribute simply by typing *@attrib_name with
+	// * representing its signature
+	// v@ ‐ vector, i@ ‐ integer, f@ ‐ float, 3@ ‐ matrix3, p@ ‐ vector4
+	// 4@ ‐ matrix4, 2@ ‐ matrix2, u@ ‐ vector2, s@ ‐ string,
+	v@myVector = {1,2,3};
+	// vectors with functions/variables in them need to be created with set()
+	u@myVectorFunc = set(@Frame, v@P.y);
+	u@myVector2 = {4,5};
+	f@myFloat = 400.0;
+	i@myInteger = 727;
+	3@myMatrix3x3 = matrix3( ident() ); // function casting, will be explained in other node
+	4@myMatrix4x4 = matrix( ident() );
+	s@myString = "abc";
+
+	// arrays can be exported as well
+	v[]@myVectorArray = { {1,2,3}, {4,5,6}, {7,8,9} };
+	u[]@myVector2Array = { {4,5}, {6,7} };
+	f[]@myFloatArray = { 4.0, 2.7, 1.3};
+	i[]@myIntegerArray = {132, 456, 789};
+	// arrays containing functions/variables need to be initialized with array() function
+	3[]@myMatrix3x3Array = array( matrix3( ident() ), matrix3( ident() ) * 5 ); // refer to functions_casting node for the meaning of matrix3()
+	4[]@myMatrix4x4Array = array( matrix( ident() ), matrix( ident() ) * 9 );
+	s[]@myStringArray = { "abc", "def", "efg" };
+	
+	int numbers[] = array(1,2,3,4);
+	// arrays can be handled in Pythonic way
+	numbers = numbers[::‐1];
+	// rading from arrays
+	i@firstItem = numbers[0];
+	// writing into arrays
+	numbers[0] += 1;
+
+
+	string var_string = "abcdef";
+	float var_float = 1.23456789;
+	int var_int = 256;
+	printf("string: %+10s, float: %10.3f, integer: %‐6d \n", var_string, var_float, var_int);
+	// string = abcdef
+	// %[+‐][length]s
+	// %10s ‐> ____abcdef
+	// %‐10s ‐> abcdef____
+	// %+10s ‐> __"abcdef"
+	// %+‐10s ‐> "abcdef"__
+	// float = 1.23456789
+	// %[+‐][0][length][precision]f
+	// %8.3f ‐> ___1.235
+	// %‐8.3f ‐> 1.235___
+	// %08.3f ‐> 0001.235
+	// %+8.3f ‐> __+1.235 (+ shows sign)
+	// integer = 256
+	// %[+‐][0][length]d
+	// %6d ‐> ___256
+	// %+6d ‐> __+256
+	// %‐6d ‐> 256___
+	// %06d ‐> 000256
+	printf("\n");
+	// escaping characters in string
+	// from my testing it requires 4 more backslashes to escape \n
+	// when using raw strings, they are automatically escaped, but @ symbol still
+	// needs to be escaped
+	// following lines will output the same thing
+	// 4 backslashes are needed probably because hscript is parsing this text field
+	// and sending to vop's field, see the node bellow
+	string a = 'abc \\\\\n \\\\\t v\@P, %04.2f';
+	string b = "abc \\\\\n \\\\\t v\@P, %04.2f";
+	string c = r"abc \n \t v\@P, %04.2f";
+	string d = R"(abc \n \t v\@P, %04.2f)";
+	printf(a + "\n");
+	printf(b + "\n");
+	printf(c + "\n");
+	printf(d + "\n");
+	string multiLine = 
+	R"(It is possible to easily create multi
+	line strings with this syntax.
+	In some cases it might
+	be useful to do it this way,
+	rather then using \n
+	However as you have noticed it has weird
+	4 characters offset starting on the second line,
+	not sure if it is a bug or feature)";
+	printf(multiLine);
+	printf("\n\n");
+
+	//foreach
+	int an_array[] = {1, 2}
+	foreach (int num; an_array) {
+    	printf("%d", num);
+	}

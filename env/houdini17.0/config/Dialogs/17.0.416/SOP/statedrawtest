@@ -1,0 +1,98 @@
+// Magic: e4b5a1bd
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Thu Jul 25 22:13:43 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+texture.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+ texture.label = PARM_LABEL("texture to paint", "texture") WIDTH(1.5);
+
+ PARM_FIELD (pathstring, "texture") LABELREF(texture.label)
+	VALUE(texture.val) HSTRETCH;
+
+    texture.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+ ACTION_ICONBUTTON "BUTTONS_chooser_file" VALUE(texture.plus) LOOKFLAT
+    HELP("Open floating file chooser") UI_FLAT_ICON_BTN_SIZE_SMALL;
+
+}
+
+clr0.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    clr0.label = PARM_LABEL("main color", "clr0") WIDTH(1.5);
+    PARM(float, 3, "clr0", none, COLOR, "R,G,B") 
+	LABELREF(clr0.label) HSTRETCH;
+
+}
+
+clr1.gad = 
+{
+    LAYOUT (horizontal) HSTRETCH
+
+    clr1.label = PARM_LABEL("back color", "clr1") WIDTH(1.5);
+    PARM(float, 3, "clr1", none, COLOR, "R,G,B") 
+	LABELREF(clr1.label) HSTRETCH;
+
+}
+
+rad.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ rad.label = PARM_LABEL("radius", "rad") WIDTH(1.5);
+ PARM(float, 1, "rad", none, none) RANGE(1,10)
+	 LABELREF(rad.label) HSTRETCH;
+
+}
+
+texres.gad = ROW
+{
+   HSTRETCH
+
+   texres.label = PARM_LABEL("texres", "texres") WIDTH(1.5);
+   PARM(integer, 2, "texres", none, none, "X,Y")
+	RANGE(-1,1)  LABELREF(texres.label)
+	HSTRETCH;
+
+}
+
+reinittex.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    { WIDTH(1.5) }
+    { WIDTH(0.1) }
+
+    PARM_BUTTON("reinittex", "reinitialize texture file")
+	push VALUE(reinittex.val);
+
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    texture.gad; 
+    clr0.gad; 
+    clr1.gad; 
+    rad.gad; 
+    texres.gad; 
+    reinittex.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

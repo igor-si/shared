@@ -1,0 +1,422 @@
+// Magic: 206c9dd9
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug  4 17:50:06 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+
+dist.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ dist.label = PARM_LABEL("Length", "dist") WIDTH(1.5);
+ PARM(float, 1, "dist", none, none) RANGE(0,10)
+	LOCK_RANGE_MIN LABELREF(dist.label) HSTRETCH;
+
+}
+
+segs.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ segs.label = PARM_LABEL("Segments", "segs") WIDTH(1.5);
+ PARM(integer, 1, "segs", none, none) RANGE(1,5000)
+	LOCK_RANGE_MIN LABELREF(segs.label) HSTRETCH;
+
+}
+
+start_radius.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ start_radius.label = PARM_LABEL("Start Radius", "start_radius") WIDTH(1.5);
+ PARM(float, 1, "start_radius", none, none) RANGE(0,2)
+	 LABELREF(start_radius.label) HSTRETCH;
+
+}
+
+end_radius.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ end_radius.label = PARM_LABEL("End Radius", "end_radius") WIDTH(1.5);
+ PARM(float, 1, "end_radius", none, none) RANGE(0,2)
+	 LABELREF(end_radius.label) HSTRETCH;
+
+}
+
+start_angle.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ start_angle.label = PARM_LABEL("Start Angle", "start_angle") WIDTH(1.5);
+ PARM(float, 1, "start_angle", none, none) RANGE(0,360)
+	 LABELREF(start_angle.label) HSTRETCH;
+
+}
+
+end_angle.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ end_angle.label = PARM_LABEL("End Angle", "end_angle") WIDTH(1.5);
+ PARM(float, 1, "end_angle", none, none) RANGE(0,36000)
+	 LABELREF(end_angle.label) HSTRETCH;
+
+}
+
+length_bias_mode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Mode", "length_bias_mode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    length_bias_mode.menu;
+
+    { HSTRETCH }
+
+}
+
+simple_bias.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ simple_bias.label = PARM_LABEL("Bias", "simple_bias") WIDTH(1.5);
+ PARM(float, 1, "simple_bias", none, none) RANGE(-1,1)
+	 LABELREF(simple_bias.label) HSTRETCH;
+
+}
+
+height_bias.si_rampedit = FLOAT_RAMP VALUE(height_bias.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+height_bias.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	height_bias.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(height_bias.pointno.val) HSTRETCH;
+    }
+}
+
+height_bias.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(height_bias.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(height_bias.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    height_bias.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(height_bias.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    height_bias.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(height_bias.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+height_bias.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    height_bias.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	height_bias.buttons.gad VSTRETCH;
+
+	height_bias.si_rampedit HSTRETCH;
+    }
+}
+
+height_bias.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Ramp", "height_bias");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	height_bias.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(height_bias.hideparms.val) HSTRETCH
+	    height_bias.multiramp;
+	    {}
+	}
+    }
+}
+
+bias_mode.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Mode", "bias_mode") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    bias_mode.menu;
+
+    { HSTRETCH }
+
+}
+
+radius_bias.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ radius_bias.label = PARM_LABEL("Bias", "radius_bias") WIDTH(1.5);
+ PARM(float, 1, "radius_bias", none, none) RANGE(-1,1)
+	 LABELREF(radius_bias.label) HSTRETCH;
+
+}
+
+amplitude1.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ amplitude1.label = PARM_LABEL("Amp (Ramp > 0.5)", "amplitude1") WIDTH(1.5);
+ PARM(float, 1, "amplitude1", none, none) RANGE(0,10)
+	LOCK_RANGE_MIN LABELREF(amplitude1.label) HSTRETCH;
+
+}
+
+amplitude2.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ amplitude2.label = PARM_LABEL("Amp (Ramp < 0.5)", "amplitude2") WIDTH(1.5);
+ PARM(float, 1, "amplitude2", none, none) RANGE(0,2)
+	LOCK_RANGE_MIN LABELREF(amplitude2.label) HSTRETCH;
+
+}
+
+bias.si_rampedit = FLOAT_RAMP VALUE(bias.ramp_val)
+			LAYOUT(horizontal)  HSTRETCH;
+
+bias.multiramp = 
+{
+    LAYOUT(vertical) STRETCH
+
+    ROW
+    {
+	LOOK(plain) JUSTIFY(left,center) SPACING(0.1) VMARGIN(0.02) HSTRETCH
+
+	COL
+	{
+	    JUSTIFY(right,center) WIDTH(1.5)
+	    LABEL "Point No.";
+	}
+
+	bias.pointno.gad
+	    = INT_SLIDER_FIELD VALUE(bias.pointno.val) HSTRETCH;
+    }
+}
+
+bias.buttons.gad = COL
+{
+    VSTRETCH
+
+    ICON_BUTTON_STRIP
+    {
+	LAYOUT(horizontal) INITSIZE(20p, 20p) 
+
+	ACTION_ICONBUTTON "BUTTONS_delete"
+		HELP("Remove Point") VALUE(bias.delpoint.val);
+	ACTION_ICONBUTTON "BUTTONS_add"
+		HELP("Add Point") VALUE(bias.addpoint.val);
+    }
+
+    { VSTRETCH }
+
+    ROW
+    {
+	    bias.toggleparms.gad
+	      = ACTION_ICONBUTTON "BUTTONS_show_controls"
+		HELP("Hide Controls")
+		VALUE(bias.toggle.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_parms")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+
+	    bias.togglerampsize.gad
+	      = ACTION_ICONBUTTON "BUTTONS_restore_mini"
+		HELP("Maximize ramp")
+		VALUE(bias.togglerampsize.val)
+		SENDSKEY("h.pane.parms.toggle_ramp_size")
+		LOOKFLAT UI_FLAT_ICON_BTN_SIZE_TINY;
+    }
+}
+
+bias.parm =
+{
+    LAYOUT(vertical) HSTRETCH JUSTIFY(left, center)
+
+    bias.ramp.gad = ROW
+    {
+	MARGIN(0.02) SPACING(0.02) JUSTIFY(left, top) HSTRETCH
+
+	bias.buttons.gad VSTRETCH;
+
+	bias.si_rampedit HSTRETCH;
+    }
+}
+
+bias.gad =
+{
+    LAYOUT(vertical) MARGIN(2p) HSTRETCH
+
+    {
+	LAYOUT(horizontal) HSTRETCH
+
+	PARM_LABEL_SIMPLE("Ramp (value = 0.5 means no bias)", "bias");
+
+	{ HSTRETCH }
+
+    }
+
+    {
+	LAYOUT(vertical) MARGIN(2p) SPACING(0.02) LOOK(darkline) HSTRETCH
+
+	bias.parm;
+
+	SWITCHER tight
+	{
+	    LAYOUT(overlap) VALUE(bias.hideparms.val) HSTRETCH
+	    bias.multiramp;
+	    {}
+	}
+    }
+}
+enable_pt_radius.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+enable_pt_radius.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+enable_pt_radius.gad = PARM_BUTTON("enable_pt_radius", "") toggle VALUE(enable_pt_radius.val);
+
+pt_radius.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    pt_radius.label = PARM_LABEL("Pt Radius", "pt_radius") WIDTH(1.32);
+    PARM_FIELD(string, "pt_radius") VALUE(pt_radius.val) 
+	LABELREF(pt_radius.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+enable_pt_ratio.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+enable_pt_ratio.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+enable_pt_ratio.gad = PARM_BUTTON("enable_pt_ratio", "") toggle VALUE(enable_pt_ratio.val);
+
+pt_ratio.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    pt_ratio.label = PARM_LABEL("Pt Ratio", "pt_ratio") WIDTH(1.32);
+    PARM_FIELD(string, "pt_ratio") VALUE(pt_ratio.val) 
+	LABELREF(pt_ratio.label) HSTRETCH;
+
+}
+}	
+}	// Template join.bot
+
+
+folder2.gad = 
+GROUP simple "Attr Output"
+{ 
+    VALUE(folder2.gad.val) LAYOUT(vertical) HSTRETCH 
+	    enable_pt_radius.row.join;		
+	    enable_pt_ratio.row.join;		
+} 
+
+folder1.gad = 
+GROUP simple "Radius Bias"
+{ 
+    VALUE(folder1.gad.val) LAYOUT(vertical) HSTRETCH 
+	    bias_mode.gad;		
+	    radius_bias.gad;		
+	    amplitude1.gad;		
+	    amplitude2.gad;		
+	    bias.gad;		
+} 
+
+folder0.gad = 
+GROUP simple "PosZ Bias"
+{ 
+    VALUE(folder0.gad.val) LAYOUT(vertical) HSTRETCH 
+	    length_bias_mode.gad;		
+	    simple_bias.gad;		
+	    height_bias.gad;		
+} 
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    dist.gad; 
+    segs.gad; 
+    start_radius.gad; 
+    end_radius.gad; 
+    start_angle.gad; 
+    end_angle.gad; 
+    folder0.gad; 
+    folder1.gad; 
+    folder2.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}

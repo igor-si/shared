@@ -1,0 +1,400 @@
+// Magic: 3f0d84e2
+// Automatically generated PSI dialog (PSI version 17.0.416)
+// Sun Aug 25 16:44:18 2019
+
+
+f_tmp = FLOAT_FIELD;	// dialog.top.ui
+center_grid.row.join =		
+{
+  LAYOUT(horizontal) HSTRETCH JUSTIFY(left, center)
+
+center_grid.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    PARM_BUTTON("center_grid", "center_grid")
+	push VALUE(center_grid.val);
+
+}
+
+fit_grid.gad = ROW
+{
+    JUSTIFY(left, center)
+
+    PARM_BUTTON("fit_grid", "fit_grid")
+	push VALUE(fit_grid.val);
+
+}
+
+simple_mode.gad = ROW
+{
+    
+
+    {  }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("simple_mode", "simple_mode") toggle VALUE(simple_mode.val);
+
+    {  }
+
+}
+}	// Template join.bot
+
+
+sepparm2.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+use_cutting_object.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("use_cutting_object", "use_cutting_object") toggle VALUE(use_cutting_object.val);
+
+    { HSTRETCH }
+
+}
+
+t.gad = ROW
+{
+   HSTRETCH
+
+   t.label = PARM_LABEL("Translate", "t") WIDTH(1.5);
+   PARM(float, 3, "t", none, none, "X,Y,Z")
+	RANGE(-1,1)  LABELREF(t.label)
+	HSTRETCH;
+
+}
+
+r.gad = ROW
+{
+   HSTRETCH
+
+   r.label = PARM_LABEL("Rotate", "r") WIDTH(1.5);
+   PARM(float, 3, "r", none, none, "X,Y,Z")
+	RANGE(-1,1)  LABELREF(r.label)
+	HSTRETCH;
+
+}
+
+s.gad = ROW
+{
+   HSTRETCH
+
+   s.label = PARM_LABEL("Scale", "s") WIDTH(1.5);
+   PARM(float, 3, "s", none, none, "X,Y,Z")
+	RANGE(-1,1)  LABELREF(s.label)
+	HSTRETCH;
+
+}
+
+sepparm.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+shape.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Cutting Shape", "shape") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    shape.menu;
+
+    { HSTRETCH }
+
+}
+
+rows.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ rows.label = PARM_LABEL("Rows", "rows") WIDTH(1.5);
+ PARM(integer, 1, "rows", none, none) RANGE(1,50)
+	LOCK_RANGE_MIN LABELREF(rows.label) HSTRETCH;
+
+}
+
+cols.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ cols.label = PARM_LABEL("Columns", "cols") WIDTH(1.5);
+ PARM(integer, 1, "cols", none, none) RANGE(1,50)
+	LOCK_RANGE_MIN LABELREF(cols.label) HSTRETCH;
+
+}
+
+divrate.gad = ROW
+{
+   HSTRETCH
+
+   divrate.label = PARM_LABEL("Axis Divisions", "divrate") WIDTH(1.5);
+   PARM(integer, 3, "divrate", none, none, "#1,#2,#3")
+	RANGE(1,50) LOCK_RANGE_MIN LABELREF(divrate.label)
+	HSTRETCH;
+
+}
+
+freq.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ freq.label = PARM_LABEL("Frequency", "freq") WIDTH(1.5);
+ PARM(integer, 1, "freq", none, none) RANGE(1,10)
+	LOCK_RANGE_MIN LABELREF(freq.label) HSTRETCH;
+
+}
+
+sepparm3.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+height.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ height.label = PARM_LABEL("Height", "height") WIDTH(1.5);
+ PARM(float, 1, "height", none, none) RANGE(0,10)
+	 LABELREF(height.label) HSTRETCH;
+
+}
+
+elementsize.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ elementsize.label = PARM_LABEL("Element Size", "elementsize") WIDTH(1.5);
+ PARM(float, 1, "elementsize", none, none) RANGE(0,10)
+	 LABELREF(elementsize.label) HSTRETCH;
+
+}
+
+elementscale.gad = ROW
+{
+   HSTRETCH
+
+   elementscale.label = PARM_LABEL("Scale", "elementscale") WIDTH(1.5);
+   PARM(float, 3, "elementscale", none, none, "X,Y,Z")
+	RANGE(0,10)  LABELREF(elementscale.label)
+	HSTRETCH;
+
+}
+
+offset.gad = ROW
+{
+   HSTRETCH
+
+   offset.label = PARM_LABEL("Offset", "offset") WIDTH(1.5);
+   PARM(float, 3, "offset", none, none, "X,Y,Z")
+	RANGE(0,10)  LABELREF(offset.label)
+	HSTRETCH;
+
+}
+
+sepparm4.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+transfer_scatter.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ transfer_scatter.label = PARM_LABEL("transfer_scatter", "transfer_scatter") WIDTH(1.5);
+ PARM(float, 1, "transfer_scatter", none, none) RANGE(0,10)
+	 LABELREF(transfer_scatter.label) HSTRETCH;
+
+}
+
+pointattriblist.gad = ROW
+{
+    HSTRETCH JUSTIFY(left, center)
+
+    pointattriblist.label = PARM_LABEL("Points", "pointattriblist") WIDTH(1.5);
+    PARM_FIELD(string, "pointattriblist") VALUE(pointattriblist.val) 
+	LABELREF(pointattriblist.label) HSTRETCH;
+
+    pointattriblist.menu SIZE(0.26, 0.26) LOOK(menuiconbutton);
+
+}
+
+thresholddist.gad = 
+{
+ LAYOUT(horizontal) HSTRETCH
+
+ thresholddist.label = PARM_LABEL("Distance Threshold", "thresholddist") WIDTH(1.5);
+ PARM(float, 1, "thresholddist", none, none) RANGE(0,10)
+	 LABELREF(thresholddist.label) HSTRETCH;
+
+}
+
+sepparm6.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+asurface.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Treat As", "asurface") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    asurface.menu;
+
+    { HSTRETCH }
+
+}
+
+bsurface.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Treat As", "bsurface") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    bsurface.menu;
+
+    { HSTRETCH }
+
+}
+
+booleanop.gad = 
+{
+    LAYOUT(horizontal) JUSTIFY(left, center) HSTRETCH
+
+    PARM_LABEL_SIMPLE("Operation", "booleanop") WIDTH(1.5);
+    { WIDTH(0.09) }
+
+    booleanop.menu;
+
+    { HSTRETCH }
+
+}
+
+generateaaseams.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("generateaaseams", "Generate A-A Seams") toggle VALUE(generateaaseams.val);
+
+    { HSTRETCH }
+
+}
+
+generatebbseams.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("generatebbseams", "Generate B-B Seams") toggle VALUE(generatebbseams.val);
+
+    { HSTRETCH }
+
+}
+
+generateabseams.gad = ROW
+{
+    HSTRETCH
+
+    { WIDTH(1.5) }
+    { WIDTH(0.08) }
+
+    PARM_BUTTON("generateabseams", "Generate A-B Seams") toggle VALUE(generateabseams.val);
+
+    { HSTRETCH }
+
+}
+
+sepparm5.gad = 
+
+{
+    LAYOUT(vertical) HSTRETCH 
+
+    { HEIGHT(0.1) }
+    SEPARATOR; 
+    { HEIGHT(0.1) }
+}
+
+dialog_norm.gad = 
+{
+    LAYOUT(vertical) SPACING(0.02) HSTRETCH LOOK(plain) 
+    center_grid.row.join; 
+    sepparm2.gad; 
+    use_cutting_object.gad; 
+    t.gad; 
+    r.gad; 
+    s.gad; 
+    sepparm.gad; 
+    shape.gad; 
+    rows.gad; 
+    cols.gad; 
+    divrate.gad; 
+    freq.gad; 
+    sepparm3.gad; 
+    height.gad; 
+    elementsize.gad; 
+    elementscale.gad; 
+    offset.gad; 
+    sepparm4.gad; 
+    transfer_scatter.gad; 
+    pointattriblist.gad; 
+    thresholddist.gad; 
+    sepparm6.gad; 
+    asurface.gad; 
+    bsurface.gad; 
+    booleanop.gad; 
+    generateaaseams.gad; 
+    generatebbseams.gad; 
+    generateabseams.gad; 
+    sepparm5.gad; 
+} 
+// dialog.bot.ui
+
+extrastuffstowbar_minimize.val := 1;
+
+dialog = OPENNOTIFIER
+{
+    LAYOUT(vertical) SPACING(0.02) LOOK(bg) VALUE(open.val) HSTRETCH
+
+    { HEIGHT(1p) LOOK(bg) HSTRETCH }
+
+    dialog_norm.gad;
+}
