@@ -1,0 +1,21 @@
+generations 30
+random scale -
+random seed - $F
+continuous* False
+tube>rows3 columns0 thickness0.15 thicknessScale.3 vertical increment.1
+values
+	stepsize 0.03
+	stepsizescale 0.9
+	angle 13
+	anglescale 0.0
+	variable* 1
+	gravity 0
+rules
+	premise A
+	r1 A=-F+A:0.45
+	r2 A=+F-A:0.45
+	r3 A=~(30)[--"!A]A:0.05
+	r4 A=[++"!A]A:0.05
+
+
+func>pic image file>$HFS/houdini/pic/circle.pic

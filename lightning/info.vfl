@@ -1,0 +1,75 @@
+// generations 30
+// random scale -
+// random seed - $F
+// continuous* False
+// tube>rows3 columns0 thickness0.15 thicknessScale.3 vertical increment.1
+// values
+// 	stepsize 0.03
+// 	stepsizescale 0.9
+// 	angle 13
+// 	anglescale 0.0
+// 	variable* 1
+// 	gravity 0
+// rules
+// 	premise A
+// 	r1 A=-F+A:0.45
+// 	r2 A=+F-A:0.45
+// 	r3 A=~(30)[--"!A]A:0.05
+// 	r4 A=[++"!A]A:0.05
+
+
+// func>pic image file>$HFS/houdini/pic/circle.pic
+vector pos0 = point(1,"P",0);
+vector pos1 = point(2,"P",0);
+vector P = v@P;
+
+
+vector p0 = point(0,"P",0);
+vector p1 = point(0,"P",npoints(0)-1);
+vector p_val = v@P-p0;
+
+vector axis = pos1-pos0;
+vector up = p1-p0;
+
+matrix m = ident();
+float lendiff = length(axis)/length(up);
+scale(m,set(lendiff,lendiff,lendiff));
+p_val *=m;
+
+matrix dh = dihedral(normalize(up),normalize(axis) );
+
+p_val*=dh;
+p_val+=pos0;
+
+v@P = p_val;
+i@id = i@ptnum;
+//===============run over prims
+int mpr = 0;
+int prpt[] = primpoints(0,@primnum);
+foreach(int pt;prpt)
+{
+    int id =  point(0,"id",pt);
+    if( id == 0 || id == npoints(0) )
+    {
+        mpr++;
+    }
+}
+if( int(mpr) )
+{@it = 0;}
+else
+{@it = @primnum;}
+//==================
+int ptpr = pointprims(0,@primnum)[0];
+if( prim(0,"it",ptpr)!=0)
+{
+    @arc*=1.5;
+}
+//=============life 
+float life = 4;
+float afr = 4;
+float time = fit(@Frame,afr,afr+life,0,1);
+float time2 = fit(@Frame-life,afr+life,afr,1,0);
+if (@arc<time && @arc>time2 )
+{v@Cd = {1,0,0};}
+//==================
+
