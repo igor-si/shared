@@ -1,0 +1,9 @@
+
+
+============condensator wave=====
+float val = chinput(1,@C,@I);
+if (@V<val)
+{
+	@V=0;
+
+}

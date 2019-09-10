@@ -1,0 +1,1 @@
+hou.hipFile.setSaveMode(hou.saveMode.Text)

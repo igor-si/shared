@@ -1,0 +1,214 @@
+`padzero(4,($F-1)%100+1)`  - cicling of animation
+
+opchange -i monkey ape
+
+The above would change monkey7.bgeo, and monkeyboo.bgeo to ape7.bgeo, apeboo.bgeo  etc. Help explains it well.
+Help below:
+
+===========входяше ноды
+`chs(strcat(opinputpath(".",0),"/file"))`  - параметр файл входящей ноды
+`opname(opinputpath(".",0))` - имя входящей ноды
+
+
+=============================DOP object name from object id?============
+//Aha!!! You can just put object ids into the dopfield expression. (But you need to use dopfields to return a string).
+
+`dopfields("/obj/sphere_object1/dopnet1", 1, "", "Options", 0, "name")`
+==========================================================================
+
+
+===============DOP object name from object id
+`dopfields("../../", 1, "", "Options", 0, "name")`
+
+===============DOP object id from object name 
+`dopfields("../../", "rbd", "", "Options", 0, "objid")`
+--------------------------------------------------------------
+
+==============DOP object how to access impacts
+dopfield("/obj/AutoDopNetwork", "box", "Impacts", "Impacts", 0, "positionx")
+
+--------------------------------------------------------------
+================DOP object list
+dopobjectlist("/obj/dopnet1", "obj? object*", 1)
+Returns a string such as "obj1 obj2 object1 objectfoo".
+---------------------
+
+
+Parameters
+
+    center position ----------$CEX, $CEY, $CEZ
+        centroid("../node", 0) ------ 0-X 1-Y 2-Z
+    group center ------------$GCX, $GCY, $GCZ
+    number of points -------$NPT
+        npoints("../node")
+    number of primitive-----$NPR
+    how many primitive or point the group has ----$NGRP
+    bounding box -----------$BBX, $BBY, $BBZ
+        bbox("../node", 0) ------ 0-minX 1-minY 2-minZ   3-maxX 4-maxY 5-maxZ   6-sizeX 7-sizeY 8-sizeZ
+
+Expression by VEX code Example(using Vector in float parm)
+
+{
+
+float $a = 10;
+
+float $a = 10;
+
+float $a = 10;
+
+return length($a,$b,$c);
+
+}
+
+Channel frame expression﻿
+
+chf("channel", frame)
+
+cht("channel", time)
+
+Attribute
+
+We can quickly select groups of stuff by using a condition such as:
+
+@attribute>0
+
+@attribute.x==0
+
+@Cd.x>0.3
+
+@id=="0 10 125 128 150-180"
+
+Volume
+
+volumeres("../node", prim number, axis)
+
+Name
+
+select name(group or attribute) exception
+
+* ^aa ^bb
+
+Global
+
+    $FPS----------------fps
+    $FSTART ----------start frame
+    $RFSTART ----------reference start frame
+    $FEND -------------start end
+    $RFEND -------------reference start end
+    $HIP ----------------directory
+    $HIPNAME ----------file name
+
+String
+
+Change lower case letter to Capital
+
+`toupper(chs("attrib"))`
+
+Path
+
+open file from connection node
+
+op:`opinputpath("..",1)` ﻿
+
+get the Number from node name
+
+opdigits("..")
+
+get image information from COPS
+
+for attrbute
+
+tex("op:obj/COPS/COPsnode(ex,Null1)",  $MAPU, $MAPV, l)
+
+for image pass
+
+op:/obj/COPS/COPsnode
+
+op:/img/comp1/vopcop2gen1
+
+Detector
+
+Point Distance form Rrimitive
+
+pointdist("../nullPoint", $PT, "../nullPrim", -1, 0)
+
+put -1 on Rrim number then you can detect closest Primitive.
+
+* return_type = 0 returns the minimum distance.
+
+* return_type = 1 returns the u parametric value at the point of minimum distance.
+
+* return_type = 2 returns the v parametric value at the point of minimum distance.
+
+* return_type = 3 returns the primitive number that was closest. Enter -1 as the <prim_num>.
+
+Measure Curve Length
+
+arclen("../curve1", 0, 0, 1)
+
+arclen("../curve1", prim num, ustart, ustop)
+
+SOP
+
+how to access to the ramp parameter
+
+ex. chramp("/obj/geo1/popnet1/color1", 0.33, 1) 
+
+If it is a just liner 0 to 1, returns the value 0.33 
+
+In I want to use it for stamps of copy, just like that! 
+
+chramp("ramp", stamp("../copy1","life",-1), 1)
+
+For Each
+
+Stamp
+
+stamp("..", "FORVALUE",0)
+
+Stamps when Group mask
+
+opdigits(stamps("..", "FORVALUE",""))
+
+DOP
+
+dopoption & dopfield
+
+﻿sub network
+
+dopoption("..",$OBJID,"Position","impactValue")
+
+more inside
+
+dopfield("..",$OBJID,"Impacts","Impacts",0,"impulse")
+
+dopfield("..",$OBJID,"Impacts","Impacts",0,"positiony")
+
+more more inside
+
+dopfield("/obj/dopnet1", "obj0", "Forces/Gravity_gravity1", "Options", 0, "forcey")
+
+how many points
+
+dopnumrecords("..",$OBJID,"Impacts","Impacts")
+
+access to geometry in Dop
+
+detail("..:$OBJID/Geometry", "inGRP", 0)
+
+detail("/obj/AutoDopNetwork:$OBJID/Geometry", "inGRP", 0)
+
+collision division on RDB
+
+bbox("..:$OBJID/Geometry", 6)
+
+bbox("..:$OBJID/Geometry", 7)
+
+bbox("..:$OBJID/Geometry", 8)
+
+Centroid
+
+centroid("..:$OBJID/Geometry", 0)
+
+==================== compare two strings expr
+if(strcmp(chs("../random_node/geotype"), "poly")==0)

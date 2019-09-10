@@ -1,0 +1,1458 @@
+
+//==============================vex snippets
+
+
+
+
+
+==========================average attrib vector start====================
+vector computeAverage ( )
+{
+    string aN = chs("attribute_name");
+    int count = npoints ( 0 );
+    vector tmp = 0;
+    for ( int i = 0; i < count; ++i )
+    {
+        vector prob = point ( 0, aN, i );
+        tmp+= prob;
+    
+    }
+    
+    vector out = tmp / count;
+    
+    for ( int j = 0; j < count; ++j )
+    {
+    vector curVec = point(0,aN,j);
+    out = lerp(curVec,out,chf("mix"));
+    setpointattrib(0,aN,j,out,'set');    
+    }
+    
+    
+    return out;
+
+    
+}
+computeAverage();
+==========================average attrib vector end====================
+
+
+==========================uv remove by cam start====================
+if (v@uv.x<chf("clip_x")) removepoint(0,@ptnum);
+if (v@uv.y<chf("clip_y")) removepoint(0,@ptnum);
+if (v@uv.z<chf("clip_z")) removepoint(0,@ptnum);
+==========================uv remove by cam end====================
+
+
+
+
+
+=========================rotate velocity
+vector v = v@v;
+float angle = fit01(rand(i@id),-chf("angle"),chf("angle"));
+float angleRad = radians(angle);
+//vector axis = normalize(v);
+vector axis = {0,1,0};
+matrix3 m = ident();
+rotate(m,angleRad,axis);
+v = v*m;
+
+v@v = v;
+=========================
+
+
+
+
+
+=========================scale intrinistic packed
+vector scale = {.9,.9,.9};
+//fit01(vector(rand(@primnum)), 0.2,1);
+
+matrix3 trn = primintrinsic(0, "transform", @primnum);
+matrix scalem = maketransform(0, 0, {0,0,0}, {0,0,0}, scale, @P);
+trn *= matrix3(scalem);
+setprimintrinsic(0, "transform", @primnum, trn);
+=========================
+
+=======================simple prim scale
+vector min,max;
+getbbox(0,min,max);
+vector center = (min+max)/2;
+
+vector rootPos = center;
+matrix m = 1;
+
+float scf = chf("scale");
+vector sc = set(scf,scf,scf);
+
+translate(m, -rootPos);
+scale(m, sc);
+translate(m, rootPos);
+v@P *= m;
+======================
+
+
+
+
+
+
+======aw_matchByString
+if(match("leave*",s@name) )
+{
+    removepoint(0,@ptnum);
+}
+============================================
+
+======aw_print function
+printf("avDist:%g \n", avDist);
+============================================
+
+=====aw_rotateByTrMatrix
+float angle = ch('angle');
+float angleRad = radians(angle);
+
+vector axis = {0,0,1};
+matrix3 m = ident();
+rotate(m,angleRad,axis);
+@P = v@P*m;
+============================================
+
+
+========================aw_AddPtAttribIfEnable
+int enable = int(ch("enable"));
+if( enable)
+{
+    addpointattrib(geoself(), "oldVel", set(v@v.x,v@v.y,v@v.z)) ;
+
+}
+============================================
+
+
+
+===========входяше ноды
+`chs(strcat(opinputpath(".",0),"/file"))`  - параметр файл входящей ноды
+`opname(opinputpath(".",0))` - имя входящей ноды
+
+=========трансфер аттрибутов=====
+int handle; 
+
+handle = pcopen(@OpInput2, "P", @P, 1000, 1); 
+@N = pcfilter(handle, "N"); 
+pcclose(handle); 
+=================================
+
+// Copy attributes from particles to surface 
+int handle; 
+
+handle = pcopen(@OpInput2, "P", @P, 1000, 1); 
+@v = pcfilter(handle, "v"); 
+// @Cd = pcfilter(handle, "Cd"); 
+pcclose(handle); 
+
+============================================
+
+
+=======vex_forloop
+int closepts[] = pcfind(0, "id", i@id, @numpt,1);
+
+foreach (int pt; closepts) {
+  int p = addprim(0,"polyline");
+  addvertex(0,p,@ptnum);
+  addvertex(0,p,pt);
+} 
+
+
+=======vex_foreach============
+for (int i=0;i<@numpt;i++) {
+   int otherid = point(0,'id',i);
+   if (otherid == @id && i != @ptnum) {
+      int prim = addprim(0,'polyline');
+      addvertex(0,prim,@ptnum);
+      addvertex(0,prim,i);
+   }
+}
+==============================
+
+
+=====================centroid point
+vector min,max;
+getbbox(0,min,max);
+vector centr = (min+max)/2;
+
+removepoint(0,@ptnum);
+
+addpoint(0,centr);
+=====================================
+
+
+
+string ptgrps[] = detailintrinsic(0, "pointgroups");
+s[]@ptingrps = {};
+foreach(string grp;ptgrps)
+{
+    if (inpointgroup(0, grp, @ptnum)) append(s[]@ptingrps, grp);
+}
+
+============================================
+
+
+
+
+vector newP =@P + vector(onoise(@P+@Time*0.5,5,0.5,1))*1*{1,0,2}+{0,0.1,0};
+int prim;
+vector uv;
+xyzdist(@OpInput2,newP,prim,uv);
+@P = primuv(@OpInput2,"P",prim,uv);
+
+============================================
+
+----centroid
+
+vector min, max;
+getbbox(min, max);
+vector center = (min+max)/2;
+vector center = (min+max)/2;
+vector center = (min+max)/2;
+============================================
+
+============maximum value vel
+int pts = npoints(0);
+float @maxVel = 0;
+for(int i=0;i<pts;i++){
+    vector vel = point(0,"v",i);
+    float mag = length(vel);
+    @maxVel = max(@maxVel,mag);
+}
+
+
+
+
+
+
+---frame num with offset
+
+`padzero(4,$F-3)`
+.`padzero(4,clamp($F-14,1,200))
+============================================
+---------compare two points
+
+int np1 = npoints(0);
+int np2 = npoints(1);
+
+vector pos1;
+vector pos2;
+int extract = 0;
+
+for (int i=0; i<np1;i++)
+{
+    pos1 = point(0, "P",i);
+    
+    for (int j=0; j<np2;j++)
+    {
+        pos2 = point(1, "P",j);
+        if (pos1==pos2)
+        {
+        //extract = 1;
+        removepoint(0,i);
+        }
+        else
+        {
+        //removepoint(0,i);
+        }
+    }
+    
+}
+
+============================================Collision
+
+float dist = volumesample(1,"sdf",@P);
+
+if (dist<0){
+
+    vector grad = volumegradient(1,"sdf",@P);
+    vector disp_dir = normalize(grad);
+
+    @P += disp_dir * abs(dist);
+    @Cd = {0,1,0};
+    
+}
+
+============================================
+
+=======================add padzero padding=========
+int pnum = @ptnum;
+string ms = sprintf("%5d", pnum+10000*ch("body_part"));
+int msi = atoi(ms);
+i@wcluster = msi;
+===================================================
+
+====================remove by array
+int n[];
+int np = npoints(0)-1;
+n = {1,2,7,8,9};
+
+int nlen; 
+int curpt;
+//nlen = arraylength(n);
+
+
+for (int i=0; i<np;i++)
+{
+
+    foreach(int j;n)
+        if (@restpt == j)
+        {
+            removepoint(0,@ptnum);
+        }
+}
+
+=============================================
+
+-----------------------remove by percent
+
+int np = npoints(0)-1;
+float percprob =25;
+float prob = (100/percprob);
+
+for (int i=0; i<np;i++)
+{
+    if (@restpt % prob)
+    {
+    removepoint(0,@ptnum);
+    }
+}
+=============================================
+
+
+==============find number of groups==============================
+for primitive groups 
+argc(primgrouplist("../atWhatNode")) 
+
+for point groups 
+argc(pointgrouplist("../atWhatNode"))
+============================================
+
+
+
+============================================ notawhale ray
+vector newP =@P;
+//vector(onoise(@P+@Time*0.5,5,0.5,1))*1*{1,0,2}+{0,0.1,0};
+int prim;
+vector uv;
+xyzdist(@OpInput2,newP,prim,uv);
+vector compP = primuv(@OpInput2,"P",prim,uv);
+@P = lerp(v@P,compP,mix);
+============================================
+
+
+=============================================
+
+import hou
+import os
+import sys
+import glob
+import dis
+import re
+import time
+import datetime
+import subprocess
+import shutil
+
+#import htMainFunc
+#reload(htMainFunc)
+
+try:
+    import htMainFunc
+    reload(htMainFunc)
+    #import htCmnFunc.convertSlash as _convertSlash
+except:
+    print 'cant find htCmnFunc'
+
+
+#reload(convertSlash)
+
+def testPrint(path=''):
+    print 'htMainFunc.py here'
+
+
+def splitPadDigPath(path=''): #list filename/extension
+        index1 = path.find('.')
+        outPath = []
+        outPath.append(path[:index1])
+        outPath.append(path[index1:])
+        
+        
+        #print outPath
+        return outPath
+        #print path
+    
+    
+def splitExt(path='',extList=[]): # list root/filename/extension
+        pathFolderName = os.path.dirname(path)
+        pathBaseName = ''
+
+
+        if len(extList) == 0:
+                print 'genList'
+        else:
+                tmpStr = ''
+                tmpStrLen = len(path)
+                pathBaseName = os.path.basename(path)
+
+                
+                for f in range(4):
+                        
+                        for ext in extList:
+                                if os.path.splitext(pathBaseName)[1]==ext:
+                                        pathBaseName=os.path.splitext(pathBaseName)[0]
+
+        pathExtName = os.path.basename(path).replace(pathBaseName,'') #get file name
+        pathFileName = os.path.basename(path).replace(pathExtName,'') #get extention name
+                
+        output=[]
+        output.append(os.path.dirname(path))
+        output.append(pathFileName)
+        output.append(pathExtName)
+
+        #print output
+        return output    
+    
+    
+    
+def checkRopStr(path = ''):
+        #path = '(<hou.SopNode of type file at /obj/geo1/file11>, <hou.RopNode of type rop_geometry at /obj/geo1/rop_geometry1>)'
+        s = path
+
+        #print s
+        try:
+                nodeType = s.type().name()
+                #print 'nodeType = ',nodeType
+                if nodeType == 'file' or nodeType == 'filecache' or nodeType == 'filecache_ht' or nodeType == 'filecacheHt' or nodeType == 'geo' :
+                        outStr = s.parm('file')
+                        #print unExpStr
+                elif nodeType == 'rop_geometry':
+                        outStr = s.parm('sopoutput')
+
+                elif nodeType == 'rop_alembic':
+                        outStr = s.parm('filename')
+
+                elif nodeType == 'alembic':
+                        outStr = s.parm('fileName')
+
+                elif nodeType == 'ifd':
+                        outStr = s.parm('vm_picture')
+
+                elif nodeType == 'group':
+                        outStr = s.parm('crname')
+
+                elif nodeType == 'groupcreate':
+                        outStr = s.parm('groupname')                    
+
+                elif nodeType == 'object_merge':
+                        outStr = s.parm('objpath1')
+
+                elif nodeType == 'blast':
+                        outStr = s.parm('group')
+
+                elif nodeType == 'color':
+                        outStr = s.parm('rampattribute')
+
+
+                else:
+                        print 'check your selection'
+
+                #print 'outStr = ',outStr
+                return outStr
+        except:
+                pass
+
+                
+                
+#=====================saveSessionToInfo_start================
+def saveSessionToInfo():
+    print '\n'*3
+    print '\n' + 'saveSessionToInfo_start' + '\n'
+
+    selNode = hou.pwd()    
+    
+    subFolder = 'info/'
+
+    
+    #cachePath = selNode.parm('render/sopoutput').eval()
+    #cachePath = selNode.parm('sopoutput').eval()
+    cachePath = checkRopStr(selNode).eval()
+    cachePath = os.path.dirname(cachePath) + '/' + str(subFolder);
+      
+    hipVar = (str(hou.getenv("HIP")))
+    hipNameVar = (str(hou.getenv("HIPNAME")))
+    
+    oldBackUp = (str(hou.getenv("HOUDINI_BACKUP_DIR")))
+    print oldBackUp
+    
+    if oldBackUp=='None':
+            #print 'test'
+            oldBackUp = hipVar + '/backup/'
+    else:
+            pass
+    
+    print 'oldBackUp',oldBackUp
+
+    timeStr = str(  datetime.datetime.now().strftime("%Y%m%dT%H%M%S")       )
+    saveFileName = (cachePath+'hip/'+hipNameVar+'.'+timeStr+'.hip')
+    tmpFileName = (cachePath+'hip/'+hipNameVar+'_bak1'+'.hip')
+    print tmpFileName
+
+    hou.unsetenv("HOUDINI_BACKUP_DIR")
+    hou.putenv("HOUDINI_BACKUP_DIR",cachePath+'hip/')
+    print 'curBackUp',
+    
+    print hou.getenv("HOUDINI_BACKUP_DIR")
+
+    hou.hipFile.saveAsBackup()
+    os.rename(tmpFileName, saveFileName)
+    
+
+    hou.unsetenv("HOUDINI_BACKUP_DIR")
+    hou.putenv("HOUDINI_BACKUP_DIR",oldBackUp)
+    
+    print hou.getenv("HOUDINI_BACKUP_DIR")
+
+    
+    print '\n' + 'saveSessionToInfo_end' + '\n'
+
+    return saveFileName                
+                
+def openFileFolder(): #open current folder
+    print('\n' * 10)
+    print datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
+    s = hou.pwd()
+    
+    
+    curPath = os.path.split(checkRopStr(s).eval())[0]
+    print s,curPath
+    os.chdir(curPath)
+    subprocess.Popen(["caja", curPath])
+    os.system("start"+curPath)
+        
+    
+    
+            
+            
+                
+                
+                
+                
+    
+def spoolJobName(path=''):
+    #path = 
+    #print('\n' * 5)
+    #print 'setJobName here'
+    #print 'path = ',path
+
+    baseStr = checkRopStr(path).eval()
+    #print baseStr    
+    ropStr =  os.path.basename(baseStr)
+    extList = ['.bgeo','.gz','.vdb','sc']
+    ropStrTmp = splitExt(ropStr,extList)[1]
+        
+    dirPathTmp = os.path.dirname(baseStr)
+    dirPath = os.path.basename(dirPathTmp)
+
+    ropStr = splitPadDigPath(ropStrTmp)[0]
+    ropStr = '_ver='+dirPath+'_|_bname='+ropStr
+
+    return ropStr
+    
+    
+    
+    
+    
+def setupSpool():
+    print('\n' * 5)
+    print 'afSpool here'
+    print('\n' * 2)
+    newRopType = 'afanasy'
+    fcNode = hou.pwd()
+    fcRopNode = hou.node(fcNode.path()+'/render')
+
+    takeRoot = hou.parm('takeRoot')
+    takeName = hou.parm('takeName')
+    
+    jobNamePref = hou.parm('jobNamePref').eval()
+    
+    path = hou.parm('file')
+
+    f1 = fcNode.parm("f1")
+    f2 = fcNode.parm("f2")
+    f3 = fcNode.parm("f3")
+    trange = fcNode.parm("trange")
+    take = fcNode.parm("take")
+    
+    fcNodePath = fcNode.path()  #file cache node path
+    fcRopNodePath = fcNodePath + '/render' #file cache rop node path
+    fcLinkedRop = fcNode.parm('linkedRop')  #linked rop node path
+    
+    if fcNode.parm('simMode').eval()==0: #check sim mode
+        spoolType = 'GEO'
+        subTaskDep = 0
+    else:
+        spoolType = 'SIM'
+        subTaskDep = 1
+    print 'spoolType = ',spoolType
+    
+    
+    if fcNode.parm('jobName').eval() == '': #check if job name empty
+        try:
+            spoolJobNameStr = spoolType+' '+jobNamePref+''+spoolJobName(fcNode) #setup job name
+            fcNode.parm('jobName').set(spoolJobNameStr)
+        except:
+            print 'cant setup job name'
+    else:
+        spoolJobNameStr = spoolType+' '+jobNamePref+''+spoolJobName(fcNode)
+        fcNode.parm('jobName').set(spoolJobNameStr)
+    
+    
+    afPreNode = fcLinkedRop.eval()
+       
+    #=================check if node exists start
+    nodeExisted=0
+    if len( fcLinkedRop.eval() )==0: #check zero linkedRop
+        try:
+           fcLinkedRop.set('/out/'+newRopType+'1')        #set first link time
+           print 'creating first linkedRop name '
+        except:
+            #print 'node created but dont linked'
+            pass
+    else:
+        print 'linkedRop name already created'
+    
+        
+    
+    # == check paths
+    try:
+        str1 = fcNode.path()+'/render' 
+        print str1
+    except:
+        str1 = ''
+    
+    try:
+        str2 = hou.node(afPreNode).parm('output_driver').eval() 
+    except:
+        str2 = ''
+    
+    if ( str1 == str2 ):
+        print 'rop node already linked'
+        ropNode = hou.node(afPreNode)
+        #ropNode.parm('output_driver').set(fcNodePath)
+        print ropNode,ropNode.parm('output_driver').eval()
+    else:
+        print 'rop node dont linked | creating new node'
+        ropNode = hou.node('/out').createNode(newRopType)  #create new rop node
+        #print ropNode.name()
+        ropNodeS = hou.node('/out/'+str(ropNode.name()) )
+        ropNode = ropNodeS
+        #print 'ropNodeS = ',ropNodeS
+        ropNodeName = os.path.basename( fcLinkedRop.eval() ) #property node name from path
+        #print ropNodeName
+        try:
+            ropNode.setName( str(ropNodeName) )
+            #print ropNode.name()
+            fcLinkedRop.set(ropNode.name())
+        except:
+            print 'please choise another rop name'
+        ropNode.parm('output_driver').set(fcNodePath+'/render')
+        print ropNode,ropNode.parm('output_driver').eval()
+        fcLinkedRop.set('/out/'+ropNode.name())
+        
+        #==============create new node if dont linked
+    #==================chech if node exists stop
+    
+    afNode = ropNode
+    
+    f1 = fcRopNode.parm('f1') 
+    f2 = fcRopNode.parm('f2')
+    f3 = fcRopNode.parm('f3')
+    fcTake = fcRopNode.parm('take')
+    fcTrange = fcRopNode.parm('trange')
+    fcJobName = fcNode.parm('jobName')
+    subTaskDep = fcNode.parm('simMode')
+    #print hou.node(afNode.path())
+    
+    afNode.parm("f1").deleteAllKeyframes()
+    afNode.parm("f2").deleteAllKeyframes()
+    afNode.parm("f3").deleteAllKeyframes()
+    afNode.parm('take').deleteAllKeyframes()
+    afNode.parm('trange').deleteAllKeyframes()
+    afNode.parm('job_name').deleteAllKeyframes()
+    afNode.parm('subtaskdepend').deleteAllKeyframes()
+    afNode.parm("f1").set(f1)
+    afNode.parm("f2").set(f2)
+    afNode.parm("f3").set(f3)
+    afNode.parm('take').set(fcTake)
+    afNode.parm('trange').set(fcTrange)
+    afNode.parm('job_name').set(fcJobName)
+    afNode.parm('subtaskdepend').set(subTaskDep)
+    
+    if fcNode.parm('simMode').eval()==1: 
+        afNode.parm('frame_pertask').deleteAllKeyframes()
+        afNodeF1 = afNode.parm("f1")
+        afNodeF2 = afNode.parm("f2")
+        #afNodeExpr = afNodeF2-afNodeF1+1
+        afNode.parm('frame_pertask').setExpression('ch("./f2")-ch("./f1")+1')
+    else:
+        afNode.parm('frame_pertask').deleteAllKeyframes()
+        afNode.parm('frame_pertask').set(3)
+    
+def afSpool():
+    fcNode = hou.pwd()
+    if fcNode.parm('linkedRop').eval()=='':
+        try:
+            setupSpool()
+            pass
+        except:
+            print 'cant setup spool. try to hit setupAfanasy button'
+            
+    try:
+        afNodePath = fcNode.parm('linkedRop').eval()        
+        afNode = hou.node(afNodePath)
+        afNode.parm('submit').pressButton()
+        print 'starting Spool'
+    except:
+        print 'cant start Spool'
+    
+def genRopName(rmPref = 'af'):
+    print ''
+    print 'genRopName here'
+    fcNode = hou.pwd()    
+    fcNodePath = fcNode.path()
+    pathList = fcNodePath.split(os.sep)
+    
+    strTmp = ''
+    for i in range( len(pathList)):
+        strTmp = strTmp + '_'
+        print i
+    strTmp = strTmp[:-2]
+    
+    
+    genRopName = '/out/'+rmPref+'_'+pathList[2]+strTmp+pathList[len(pathList)-1] 
+    fcNode.parm('linkedRop').set(genRopName)
+    print genRopName
+    print pathList
+
+    
+def openAfParm():
+    afNodeTmp = hou.parm('linkedRop').eval()
+    afNode = hou.node(afNodeTmp)
+    cmd = 'oppane -t parmeditor '+ afNode.path() #open afNode
+    hou.hscript(cmd)
+
+def destroyAfNode():
+    afNodeTmp = hou.parm('linkedRop').eval()
+    afNode = hou.node(afNodeTmp)
+    afNode.destroy()
+    
+def spoolTakes():
+    print 'spoolTakes here'
+    fcNode = hou.pwd()
+    fcNodeCurrentTake = fcNode.parm('take').eval()  #backup current take
+    fcNodeCurrentJobName = fcNode.parm('jobName').eval()  #backup current take
+    print 'fcNodeCurrentTake = ',fcNodeCurrentTake
+    
+    
+    #============compute sorted takes
+    takeRoot = fcNode.parm('takeRoot').eval()
+    takeMask = fcNode.parm('takeMask').eval()
+    print 'takeRoot =',takeRoot    
+    print 'takeMask  =',takeMask      
+     
+    parent = takeRoot
+    childTakes = hou.hscript("takels -p {0}".format(parent))[0].split()
+    #print childTakes
+
+    childTakesSorted = []
+    for c in childTakes:    #sort by mask
+            index1 = c.find(takeMask)
+            if index1 != -1:
+                    childTakesSorted.append(c)
+            else:
+                    pass
+    print 'childTakesSorted = ',childTakesSorted
+    childTakes = childTakesSorted
+    
+    print ('\n' *2)
+    #===========main computation
+    for c in childTakes:
+        print "set take = ",c
+        fcNode.parm('take').set(c)
+        print 'current take = ',fcNode.parm('take').eval()
+        
+        if fcNode.parm('simMode').eval()==0: #check sim mode
+            spoolType = 'GEO'
+            subTaskDep = 0
+        else:
+            spoolType = 'SIM'
+            subTaskDep = 1
+        #print 'spoolType = ',spoolType
+        
+        spoolJobNameStr = spoolType+' '+fcNode.parm('jobNamePref').eval()+''+spoolJobName(fcNode)+'||| take='+fcNode.parm('take').eval() #setup job name
+        fcNode.parm('jobName').set(spoolJobNameStr)
+        
+        
+        print spoolJobNameStr 
+        afSpool()   #main start afanasy spool
+        
+    fcNode.parm('take').set(fcNodeCurrentTake) #return backuped take
+    fcNode.parm('jobName').set(fcNodeCurrentJobName ) #return backuped job name
+'''     
+'''
+#===============================tracktorSpoolTakes start
+def tracktorSpoolTakes(showGui=0,frameDepend=0):
+    
+    print('\n' * 5)
+    fcNode = hou.pwd()
+    takeRoot = fcNode.parm('takeRoot').eval()
+    takeMask = fcNode.parm('takeMask').eval()
+
+    sN = [fcNode]
+    s = fcNode
+    
+    if fcNode.parm('simMode').eval()==0: #check sim mode
+        spoolType = 'GEO'
+        subTaskDep = 0
+    else:
+        spoolType = 'SIM'
+        subTaskDep = 1
+    #print 'spoolType = ',spoolType
+    renderType = subTaskDep
+    
+    if subTaskDep==1:
+        framesPerMachine = 10000
+    else:
+        framesPerMachine = 5
+
+
+    message = 'choise you destiny'
+    
+    
+    
+    print 'takeRoot =',takeRoot
+    print 'renderType =',renderType 
+
+    parent = takeRoot
+    childTakes = hou.hscript("takels -p {0}".format(parent))[0].split()
+    #print childTakes
+
+    childTakesSorted = []
+    for c in childTakes:    #sort by mask
+            index1 = c.find(takeMask)
+            if index1 != -1:
+                    childTakesSorted.append(c)
+            else:
+                    pass
+    print 'childTakesSorted = ',childTakesSorted
+    childTakes = childTakesSorted
+
+
+    
+    def spoolToTractorGUI(GUI,postDestroi,framesPerMachine,s,numTakes,postjobname):
+
+        #sel_list = hou.selectedNodes()
+        sel_list = [s]
+        tracktor_node = hou.node('/out').createNode('renderToTractor')
+        tracktor_node.parm('deleteTractorNode').set(1)
+        num = len(sel_list)
+        i = 1
+        for rop in sel_list:
+            if rop.parm('f1'):
+                tracktor_node.parm('nrops').set(i)
+                tracktor_node.parm('ROP_Node_m'+str(i)).set(rop.path())
+                tracktor_node.parm('deleteTractorNode').set(0)
+                tracktor_node.parm('postjobname').set(postjobname)
+                tracktor_node.parm('fpm_m11').set(framesPerMachine)
+                tracktor_node.parm('spool').pressButton()
+                
+                
+                i += 1
+        
+        cmd = 'oppane -t parmeditor '+ tracktor_node.path()
+        hou.hscript(cmd)
+                #import time
+                #time.sleep(1)
+
+        if postDestroi==1:
+            tracktor_node.destroy()
+                        #try:
+                        #       tracktor_node.destroy()
+                        #except:
+                        #       'cant destroy'
+    
+                        
+    childTakes = hou.hscript("takels -p {0}".format(parent))[0].split()
+    #print childTakes
+
+    childTakesSorted = []
+    for c in childTakes:    #sort by mask
+            index1 = c.find(takeMask)
+            if index1 != -1:
+                    childTakesSorted.append(c)
+            else:
+                    pass
+    print 'childTakesSorted = ',childTakesSorted
+    childTakes = childTakesSorted
+    
+    for takeName in childTakes:
+        #print 'takeName = ',takeName
+        numTakes = len(childTakes)
+
+        #print 'pre takeName = ',takeName
+        #print s
+        s.parm("take").set(takeName)
+                        
+        spoolStr = fcNode.parm('jobName').eval()+'_|_take='+s.parm("take").eval()+'|'+'_mode='+spoolType
+                        
+                                
+                                
+                        #print spoolStr
+                        
+        
+        spoolToTractorGUI(0,1,framesPerMachine,s,numTakes,spoolStr) #worked GUI,postDestroi,framesPerMachine,s,numTakes,postjobname
+                        
+                        
+        import time
+        time.sleep(1)
+        print 'post takeName = ',s.parm("take").eval()
+        print ''
+#===============================tracktorSpoolTakes end   
+        
+        
+def tracktorSpool():
+    print 'spoolTakes here'
+    fcNode = hou.pwd()
+    fcNodeCurrentTake = fcNode.parm('take').eval()  #backup current take
+    fcNodeCurrentJobName = fcNode.parm('jobName').eval()  #backup current take
+    print 'fcNodeCurrentTake = ',fcNodeCurrentTake
+    
+    
+    #============compute sorted takes
+    takeRoot = fcNode.parm('takeRoot').eval()
+    takeMask = fcNode.parm('takeMask').eval()
+    print 'takeRoot =',takeRoot    
+    print 'takeMask  =',takeMask      
+     
+    parent = takeRoot
+    childTakes = hou.hscript("takels -p {0}".format(parent))[0].split()
+    #print childTakes
+
+    childTakesSorted = []
+    for c in childTakes:    #sort by mask
+            index1 = c.find(takeMask)
+            if index1 != -1:
+                    childTakesSorted.append(c)
+            else:
+                    pass
+    print 'childTakesSorted = ',childTakesSorted
+    childTakes = childTakesSorted
+    
+    print ('\n' *2)
+    #===========main computation
+    for c in childTakes:
+        print "set take = ",c
+        fcNode.parm('take').set(c)
+        print 'current take = ',fcNode.parm('take').eval()
+        
+        if fcNode.parm('simMode').eval()==0: #check sim mode
+            spoolType = 'GEO'
+            subTaskDep = 0
+        else:
+            spoolType = 'SIM'
+            subTaskDep = 1
+        #print 'spoolType = ',spoolType
+        
+        spoolJobNameStr = spoolType+' '+fcNode.parm('jobNamePref').eval()+''+spoolJobName(fcNode)+'||| take='+fcNode.parm('take').eval() #setup job name
+        fcNode.parm('jobName').set(spoolJobNameStr)
+        
+        
+        print spoolJobNameStr 
+        afSpool()   #main start afanasy spool
+        
+    fcNode.parm('take').set(fcNodeCurrentTake) #return backuped take
+    fcNode.parm('jobName').set(fcNodeCurrentJobName ) #return backuped job name
+'''     
+'''
+
+def tracktorSpool(showGui=0,frameDepend=0):
+    
+    print('\n' * 5)
+    fcNode = hou.pwd()
+    takeRoot = fcNode.parm('takeRoot').eval()
+    takeMask = fcNode.parm('takeMask').eval()
+
+    sN = [fcNode]
+    s = fcNode
+    numTakes = 1
+    
+    if fcNode.parm('simMode').eval()==0: #check sim mode
+        spoolType = 'GEO'
+        subTaskDep = 0
+    else:
+        spoolType = 'SIM'
+        subTaskDep = 1
+    #print 'spoolType = ',spoolType
+    renderType = subTaskDep
+    
+    if subTaskDep==1:
+        framesPerMachine = 10000
+    else:
+        framesPerMachine = 5
+
+
+    message = 'choise you destiny'
+    
+    
+    
+    print 'takeRoot =',takeRoot
+    print 'renderType =',renderType 
+
+    parent = takeRoot
+    childTakes = hou.hscript("takels -p {0}".format(parent))[0].split()
+    #print childTakes
+
+    childTakesSorted = []
+    for c in childTakes:    #sort by mask
+            index1 = c.find(takeMask)
+            if index1 != -1:
+                    childTakesSorted.append(c)
+            else:
+                    pass
+    print 'childTakesSorted = ',childTakesSorted
+    childTakes = childTakesSorted
+
+
+    
+    def spoolToTractorGUI(GUI,postDestroi,framesPerMachine,s,numTakes,postjobname):
+
+        #sel_list = hou.selectedNodes()
+        sel_list = [s]
+        tracktor_node = hou.node('/out').createNode('renderToTractor')
+        tracktor_node.parm('deleteTractorNode').set(1)
+        num = len(sel_list)
+        i = 1
+        for rop in sel_list:
+            if rop.parm('f1'):
+                tracktor_node.parm('nrops').set(i)
+                tracktor_node.parm('ROP_Node_m'+str(i)).set(rop.path())
+                tracktor_node.parm('deleteTractorNode').set(0)
+                tracktor_node.parm('postjobname').set(postjobname)
+                tracktor_node.parm('fpm_m11').set(framesPerMachine)
+                tracktor_node.parm('spool').pressButton()
+                
+                import time
+                time.sleep(1)
+
+                i += 1
+        
+        cmd = 'oppane -t parmeditor '+ tracktor_node.path()
+        hou.hscript(cmd)
+                
+        if postDestroi==1:
+            tracktor_node.destroy()
+                        #try:
+                        #       tracktor_node.destroy()
+                        #except:
+                        #       'cant destroy'
+    spoolStr = fcNode.parm('jobName').eval()+'_|_take='+s.parm("take").eval()+'|'+'_mode='+spoolType
+            
+    spoolToTractorGUI(0,1,framesPerMachine,s,numTakes,spoolStr) #worked GUI,postDestroi,framesPerMachine,s,numTakes,postjobname
+                        
+    
+    
+
+
+
+    ==========================================================================
+    //
+// VEX Code Generated by Houdini 16.0.600
+// Date: Sun Feb 11 16:02:55 2018
+// File: /studio/Dropbox/tools/hou/snippets/setups_rbd_v1029
+// Node: /obj/snippets/popnet/rot
+//
+
+#ifndef VOP_OP
+#define VOP_OP
+#endif
+#ifndef VOP_CVEX
+#define VOP_CVEX
+#endif
+
+#pragma opname rot
+#pragma oplabel "Local Vop Code"
+#pragma opmininputs 1
+#pragma opmaxinputs 1
+#pragma label   ptnum   "Point Number"
+#pragma hint    ptnum   invisible
+#pragma range   ptnum   0       10
+#pragma label   vtxnum  "Vertex Number"
+#pragma hint    vtxnum  invisible
+#pragma range   vtxnum  0       10
+#pragma label   primnum "Primitive Number"
+#pragma hint    primnum invisible
+#pragma range   primnum 0       10
+#pragma label   id      Id
+#pragma hint    id      invisible
+#pragma range   id      0       10
+#pragma label   numpt   "Number of Points"
+#pragma hint    numpt   invisible
+#pragma range   numpt   0       10
+#pragma label   numvtx  "Number of Vertices"
+#pragma hint    numvtx  invisible
+#pragma range   numvtx  0       10
+#pragma label   numprim "Number of Prims"
+#pragma hint    numprim invisible
+#pragma range   numprim 0       10
+#pragma label   Time    Time
+#pragma hint    Time    invisible
+#pragma range   Time    0       1
+#pragma label   TimeInc "Time Inc"
+#pragma hint    TimeInc invisible
+#pragma range   TimeInc 0       1
+#pragma label   Frame   Frame
+#pragma hint    Frame   invisible
+#pragma range   Frame   0       1
+#pragma label   life    Life
+#pragma hint    life    invisible
+#pragma range   life    0       1
+#pragma label   age     Age
+#pragma hint    age     invisible
+#pragma range   age     0       1
+#pragma label   OpInput2        "Second Input"
+#pragma hint    OpInput2        invisible
+#pragma label   OpInput3        "Third Input"
+#pragma hint    OpInput3        invisible
+#pragma label   OpInput4        "Fourth Input"
+#pragma hint    OpInput4        invisible
+#pragma label   OpInput1        "First Input"
+#pragma hint    OpInput1        invisible
+#pragma label   uv      UV
+#pragma hint    uv      invisible
+#pragma label   P       P
+#pragma hint    P       invisible
+#pragma label   v       Velocity
+#pragma hint    v       invisible
+#pragma label   force   Force
+#pragma hint    force   invisible
+#pragma label   Cd      Cd
+#pragma hint    Cd      invisible
+#pragma label   N       N
+#pragma hint    N       invisible
+
+#pragma ramp_flt pscale_remap pscale_remap_the_basis_strings pscale_remap_the_key_positions pscale_remap_the_key_values
+#pragma label   pscale_remap    pscale_remap
+#pragma parmtag  pscale_remap rampbasisdefault linear
+#pragma parmtag  pscale_remap rampshowcontrolsdefault 1
+#pragma label   destmin "Minimum Value In Destination Range"
+#pragma range   destmin 0       1
+#pragma label   destmax "Maximum Value In Destination Range"
+#pragma range   destmax 0       1
+
+#pragma label   groundObjId     groundObjId
+#pragma range   groundObjId     0       10
+
+
+
+
+
+
+
+#include <voptype.h>
+#include <voplib.h>
+
+void 
+_obj_snippets_popnet_rot_snippet1(int hitGround; int groundObjId; int hitGroundCounter; const string _bound_hitpath)
+{
+    string objId = itoa(groundObjId);
+    string hitobjid[] = split(_bound_hitpath, ":");
+    if (hitobjid[2] == objId)
+    hitGround = 1;
+    
+    if(hitGround)
+    hitGroundCounter++;
+    
+}
+
+
+#include <voptype.h>
+#include <voplib.h>
+
+#include <voptype.h>
+#include <voplib.h>
+
+#include <voptype.h>
+#include <voplib.h>
+
+#include <voptype.h>
+#include <voplib.h>
+cvex
+obj_snippets_popnet_rot(int ptnum = 0;
+        int vtxnum = 0;
+        int primnum = 0;
+        int id = -1;
+        int numpt = 0;
+        int numvtx = 0;
+        int numprim = 0;
+        float Time = 0;
+        float TimeInc = 0;
+        float Frame = 0;
+        float life = 0;
+        float age = 0;
+        string OpInput2 = "";
+        string OpInput3 = "";
+        string OpInput4 = "";
+        string OpInput1 = "";
+        vector uv = { 0, 0, 0 };
+        vector P = { 0, 0, 0 };
+        vector v = { 0, 0, 0 };
+        vector force = { 0, 0, 0 };
+        vector Cd = { 1, 1, 1 };
+        vector N = { 0, 0, 0 };
+        vector vel_dir = { 0, 0, 0 };
+        string pscale_remap_the_basis_strings[] = { "linear", "linear" }; float pscale_remap_the_key_positions[] = { 0, 1 }; float pscale_remap_the_key_values[] = { 0, 1 };
+        float destmin = 0.050000000000000003;
+        float destmax = 0.10000000000000001;
+        export float mass = 0;
+        int groundObjId = 0;
+        export int hitGroundCounter = 0;
+        export int hitGround = 0;
+        export float pscale = 0;
+        export float dis = 0;
+        export vector4 orient = { 0, 0, 0, 0 };
+        string hitpath = "")
+{
+    vector      P_tmp;
+    vector      v_tmp;
+    vector      force_tmp;
+    vector      Cd_tmp;
+    vector      uv_tmp;
+    vector      N_tmp;
+    float       pscale_remap1;
+    string      pscale_remap_the_color_space;
+    int hitGroundCounter_tmp;
+    float       dis_tmp;
+    float       rand;
+    float       shift;
+    int hitGround1;
+    int outhitGround;
+    int outgroundObjId;
+    int outhitGroundCounter;
+    float       shift1;
+    vector      Value;
+    vector      nvec;
+    vector      crossprod;
+    vector      nvec1;
+    float       fval1;
+    float       fval2;
+    float       fval3;
+    float       fval11;
+    float       fval21;
+    float       fval31;
+    vector      crossprod1;
+    vector      nvec2;
+    float       fval12;
+    float       fval22;
+    float       fval32;
+    matrix3     matx;
+    float       scaled;
+    float       Value1;
+    float       product;
+    float       scaled1;
+    float       div;
+    float       scaled2;
+    float       rad;
+    matrix3     rmatrix;
+    vector4     quat;
+    
+    // Code produced by: geometryvopglobal1
+    vector      P1 = vector();
+    vector      v1 = vector();
+    vector      force1 = vector();
+    float       age1 = 0.0;
+    float       life1 = 0.0;
+    int id1 = 0;
+    vector      Cd1 = vector();
+    vector      uv1 = vector();
+    vector      N1 = vector();
+    float       Time1 = 0.0;
+    float       TimeInc1 = 0.0;
+    float       Frame1 = 0.0;
+    int ptnum1 = 0;
+    int primnum1 = 0;
+    int vtxnum1 = 0;
+    int numpt1 = 0;
+    int numprim1 = 0;
+    int numvtx1 = 0;
+    string      OpInput11 = "";
+    string      OpInput21 = "";
+    string      OpInput31 = "";
+    string      OpInput41 = "";
+    {
+        
+        // Code produced by: geometryvopglobal1/P
+        P_tmp = P;
+        
+        // Code produced by: geometryvopglobal1/v
+        v_tmp = v;
+        
+        // Code produced by: geometryvopglobal1/force
+        force_tmp = force;
+        
+        // Code produced by: geometryvopglobal1/Cd
+        Cd_tmp = Cd;
+        
+        // Code produced by: geometryvopglobal1/uv
+        uv_tmp = uv;
+        
+        // Code produced by: geometryvopglobal1/N
+        N_tmp = N;
+        
+        // Code produced by: geometryvopglobal1/suboutput1
+        P1 = P_tmp;
+        v1 = v_tmp;
+        force1 = force_tmp;
+        age1 = age;
+        life1 = life;
+        id1 = id;
+        Cd1 = Cd_tmp;
+        uv1 = uv_tmp;
+        N1 = N_tmp;
+        Time1 = Time;
+        TimeInc1 = TimeInc;
+        Frame1 = Frame;
+        ptnum1 = ptnum;
+        primnum1 = primnum;
+        vtxnum1 = vtxnum;
+        numpt1 = numpt;
+        numprim1 = numprim;
+        numvtx1 = numvtx;
+        OpInput11 = OpInput1;
+        OpInput21 = OpInput2;
+        OpInput31 = OpInput3;
+        OpInput41 = OpInput4;
+    }
+    
+    // Code produced by: geometryvopoutput1
+    vector      _P = vector();
+    vector      _v = vector();
+    vector      _force = vector();
+    vector      _Cd = vector();
+    vector      _N = vector();
+    {
+    }
+    
+    // Code produced by: random1
+    #ifdef __vex
+        if (1)
+                rand = random(id1);
+        else
+           rand = rand(id1);
+    #else
+        rand = cellnoise(id1);
+    #endif
+    
+    // Code produced by: ramp1
+    pscale_remap_the_color_space = "rgb";
+    pscale_remap1 = spline(pscale_remap_the_basis_strings, rand, pscale_remap_the_key_values, pscale_remap_the_key_positions);
+    
+    // Code produced by: fit2
+    shift = vop_fit(rand, 0, 1, 1, 0.5);
+    
+    // Code produced by: bind3
+    mass = shift;
+    
+    // Code produced by: bind4
+    hitGroundCounter_tmp = hitGroundCounter;
+    
+    // Code produced by: const2
+    hitGround1 = 0;
+    
+    // Code produced by: snippet1
+    outhitGround = hitGround1;
+    outgroundObjId = groundObjId;
+    outhitGroundCounter = hitGroundCounter_tmp;
+    
+    _obj_snippets_popnet_rot_snippet1(outhitGround, outgroundObjId, outhitGroundCounter, hitpath);
+    
+    // Code produced by: bind5
+    hitGroundCounter = outgroundObjId;
+    
+    // Code produced by: bind6
+    hitGround = outhitGround;
+    
+    // Code produced by: fit1
+    shift1 = vop_fit(pscale_remap1, 0, 1, destmin, destmax);
+    
+    // Code produced by: bind7
+    pscale = shift1;
+    
+    // Code produced by: bind8
+    dis_tmp = dis;
+    
+    // Code produced by: const1
+    Value = { 0, 1, 0 };
+    
+    // Code produced by: normalize1
+    nvec = normalize(vel_dir);
+    
+    // Code produced by: cross1
+    crossprod = vop_cross(Value, nvec);
+    
+    // Code produced by: normalize2
+    nvec1 = normalize(crossprod);
+    
+    // Code produced by: vectofloat1
+    vop_vectofloat(nvec1, fval1, fval2, fval3);
+    
+    // Code produced by: vectofloat2
+    vop_vectofloat(nvec, fval11, fval21, fval31);
+    
+    // Code produced by: cross2
+    crossprod1 = vop_cross(nvec1, nvec);
+    
+    // Code produced by: normalize3
+    nvec2 = normalize(crossprod1);
+    
+    // Code produced by: vectofloat3
+    vop_vectofloat(nvec2, fval12, fval22, fval32);
+    
+    // Code produced by: floattomatx1
+    matx = set(fval1, fval2, fval3,
+                fval11, fval21, fval31,
+                fval12, fval22, fval32);
+    
+    // Code produced by: divconst1
+    scaled = dis_tmp * (1.0 / 24);
+    
+    // Code produced by: const3
+    Value1 = 3.1415926535897931;
+    
+    // Code produced by: multiply1
+    product = Value1 * shift1;
+    
+    // Code produced by: mulconst1
+    scaled1 = product * 2;
+    
+    // Code produced by: divide1
+    div = scaled / scaled1;
+    
+    // Code produced by: mulconst2
+    scaled2 = div * 360;
+    
+    // Code produced by: degtorad1
+    rad = vop_radians(scaled2);
+    
+    // Code produced by: rotate1
+    rmatrix = vop_rotate(matx, rad, nvec1);
+    
+    // Code produced by: matxtoquat1
+    quat = quaternion(rmatrix);
+    
+    // Code produced by: bind9
+    orient = quat;
+}

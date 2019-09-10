@@ -1,0 +1,86 @@
+vector freq = {1,1,1};
+vector offset = {0,0,0};
+float amp = 0;
+int turb = 5;
+float rough = 0.5;
+float atten = 1;
+
+onoise(@P*freq - offset, turb, rough, atten) * amp
+snoise(@P*freq - offset, turb, rough, atten) * amp
+anoise(@P*freq - offset, turb, rough, atten) * amp
+
+vop_correctperlinNoiseVF(@P*freq - offset, turb, rough, atten) * amp
+vop_correctperlinNoiseVV(@P*freq - offset, turb, rough, atten) * amp
+vop_simplexNoiseVF(@P*freq - offset, turb, rough, atten) * amp
+vop_simplexNoiseVV(@P*freq - offset, turb, rough, atten) * amp
+vop_perlinNoiseVF(@P*freq - offset, turb, rough, atten) * amp
+vop_perlinNoiseVV(@P*freq - offset, turb, rough, atten) * amp
+
+
+=============Anti-Aliased Noise==============
+#include <voplib.h>
+vector4 pos = set(v@P.x, v@P.y, v@P.z, 0);
+v@Cd = vop_fbmNoiseFP(pos, 0.5, 8, 'noise') + 0.5;
+=============================================
+
+=============Vein Noise==============
+vector npos = v@P/1. + set(0., 666., 0.);   // Noise input 3D position
+float namp = 1.;                            // namp (Noise amplitude)
+float nval = 0., nweight = 0.;              // Init nval (Noise output value), and nweight (Used to normalize octaves)
+int oct = 9;                                // Number of Octaves
+for( int i = 0; i < oct; i++ )    {
+    float __nval = fit(abs(-0.5+noise(set(npos.x,npos.y,npos.z,f@Time))), 0.0, 0.1, 1., 0.);
+    nval += __nval * namp;                  // Amplitude
+    nweight += namp;                        // Accumulate weight
+    npos *= 2.132433;                       // Lacunarity
+    namp *= 0.666;                          // Roughness
+}
+v@Cd = 1 - pow(nval / nweight, 0.8765);     // Visualize Noise Output
+
+=============================================
+
+
+
+============================aw_noiceA
+vector rP = v@P;
+v@P = v@P+v@N*pow(anoise(rP*chv("freq1")+chv("offset"),ch("turb1"),ch("rough1"),ch("atten1") )*ch("turbMult1") ,ch("pow") ); //
+=============================================
+
+
+
+============================aw_noices
+vector tempP = v@P;
+
+//v@P += anoise(tempP)*0.3; //vector anoise(vector pos) 
+//v@P += anoise(tempP,1,.05,.05)*0.35; //vector anoise(vector pos, int turbulence, float rough, float atten) 
+
+//v@P += curlnoise(v@P)*0.25;  //vector curlnoise(vector xyz) 
+
+//v@P += flownoise(v@P*3,.1);//vector flownoise(vector xyz, float flow) 
+
+//v@P +=  snoise(v@P,1,.1,.1)*0.15;//float snoise(vector pos, int turbulence, float rough, float atten) 
+
+//v@P += onoise(v@P,1,.1,.1)*0.15; //vector onoise(vector pos, int turbulence, float rough, float atten)
+
+v@P += pnoise(v@P*4,{.2,.2,.3}); //pnoise(vector , vector ) 
+
+
+=========Time comparison
+
+//Perlin noise (noise) 1.0
+//Original perlin noise (onoise) 1.1
+//Worley noise (wnoise) 1.8
+//Sparse Convolution noise (snoise) 2.1
+// alligator noise (anoise) 2.3 
+
+=========ranges
+--attrib wrangle
+anoise 0.017 - 0.74
+
+--attrib vop 
+unified noise simplex  0 - 1
+Worley / Cellular | F1  0.0002 - 0.804079
+Worley / Cellular | F2  0.0002 - 0.78433
+
+
+

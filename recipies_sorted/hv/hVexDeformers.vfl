@@ -1,0 +1,168 @@
+
+========Collision Deform
+//attribexpression/snippet
+//- 1st input - Geo to deform
+//- 2nd input - Collider
+    length(@P-point(1,"P",nearpoint(1, @P)))<ch("dist")?lerp(@P,@P+@N,ch("deform")*chramp("lip",fit(length(@P-point(1,"P",nearpoint(1,@P))),0,1,0,1))*(1-length(@P-point(1,"P",nearpoint(1,@P))))):@P
+====================================
+
+==========Collision Deform_2
+//attribexpression/snippet
+@P;
+int nearestptid = nearpoint(1,@P);
+vector nearestpt = point(1,"P",nearestptid);
+float dist=length(@P-nearestpt);
+@P = dist<ch("range")?lerp(@P,@P+@N,ch("deform")*chramp("lip",fit(dist,0,2*ch("range"),0,1))*(1-dist)) : @P
+------------------------------------
+
+============Taper
+//attribexpression/snippet
+Taper
+    @P;
+    if(chi("axis")==0)
+    {
+        @P=set(self.x,self.y*chramp("profile",relbbox(@P).x)*ch("mult"),self.z*chramp("profile",relbbox(@P).x)*ch("mult"));
+    }
+    else
+    {
+        if(chi("axis")==1)
+        {
+            @P=set(self.x*chramp("profile",relbbox(@P).y)*ch("mult"),self.y,self.z*chramp("profile",relbbox(@P).y)*ch("mult"));    
+        }
+        else
+        {
+            @P=set(self.x*chramp("profile",relbbox(@P).z)*ch("mult"),self.y*chramp("profile",relbbox(@P).z)*ch("mult"),self.z);
+        }
+    }
+------------------------------------------------------
+
+
+
+
+========================wave wave deformer ========
+@d = length(v@P);
+@speed = @Time * ch("speed");
+@fallof = fit(@d,ch("start"),ch("end"),1,0);
+v@P.y = sin(@d*ch("scale")+@speed);
+v@P.y = ch("height");
+v@P.y = chramp("fallof",@fallof);
+---------------------------------------------------
+
+==========Spherify P==================
+//attribexpression/snippet
+lerp(self,(normalize(self - getbbox_center(0)) * ch("radius")) + getbbox_center(0),ch("Amt"))
+=========================
+
+
+
+=========================PlanarSymTaper
+//attribexpression/snippet
+    //PlanarSymTaper
+    @P;
+    int plane = chi("TaperPlane");
+    float tap = 10*ch("Taper");
+    float cent = ch("Centre");
+    vector c = getbbox_center(0);
+    vector relbbox = relbbox(0,@P);
+    
+    @P -= c;
+    if(plane==0)
+        {
+        @P.x *= cos(tap*abs(relbbox.y - cent));
+        }
+    else if(plane==1)
+        {
+        @P.y *= cos(tap*abs(relbbox.x - cent));
+        }
+    else if(plane==2)
+        {
+        @P.x *= cos(tap*abs(relbbox.z - cent));
+        }
+    else if(plane==3)
+        {
+        @P.z *= cos(tap*abs(relbbox.x - cent));
+        }
+    else if(plane==4)
+        {
+        @P.y *= cos(tap*abs(relbbox.z - cent));
+        }
+    else
+        {
+        @P.z *= cos(tap*abs(relbbox.y - cent));
+        }
+    @P += c;
+-----------------------------------------------------------
+
+
+==========================Melt
+//attribexpression/snippet
+    set(@P.x*ch("melt")*chramp("effect",relbbox(@P).y)+@P.x,clamp(@P.y + ch("thickness")*@N.y - ch("melt"),getbbox_min(0).y+ch("thickness")*@N.y,getbbox_max(0).y),@P.z*ch("melt")*chramp("effect",relbbox(@P).y)+@P.z)
+-------------------------------------------------------
+
+
+
+============#ROTATE LINE ALONG SELF (TWISTER)
+
+//uvtexture node to compute uv attrib on points
+//Texture type is set to Row & Columns
+
+//Get velocity vector along line
+int total = npoints(0)-1; //last point
+int after = total-1;//penultimate point
+
+int ntm = @ptnum+1;
+vector npos = point(0,"P",ntm);
+v@v = @P-npos;
+
+//get vel of last point
+if(@ptnum==total){
+ v@v = point(0,"P",after)-point(0,"P",total);
+}
+
+
+//Make orthogonal frame vectors v, up and side
+
+v@up = set(1,0,0);
+v@side = cross(normalize(v@v),normalize(v@up));
+v@up = cross(normalize(v@side),normalize(v@v));
+v@v = cross(normalize(v@side),normalize(v@up));
+
+
+//Matrices
+/*'offset' is scaled with up vector or side vector
+ so the offset position is usually perpendicular to the 
+angle of rotation, in the event that the line
+is rotatated before applying the twist */
+
+float offset  = chf("offset_multiplier");
+float freq = chf("frequency");
+float angle = @uv.x * freq;
+vector offset_pos = (v@side*offset) + @P;
+vector axis = v@v;
+matrix3 xform  = ident();
+
+rotate(xform,angle,axis);
+
+//EXTRACTING TRANSFORMS
+//Depending on the value of c, 
+//returns the translate (c=0), rotate (c=1), or scale (c=2) 
+//component of the transform (xform)
+
+#define XFORM_SRT       0  // Scale Rotate Translate
+#define XFORM_XYZ       0 // Rx Ry Rz
+
+int trs = XFORM_XYZ; //Transform Order
+int xyz = XFORM_SRT; //Rotation Order
+vector p = set(0,0,0); //pivot for crack/extracting transforms
+vector translate = cracktransform(trs, xyz, 0 , p, xform);
+vector rotate    = cracktransform(trs, xyz, 1 , p, xform);
+vector scale     = set(1,1,1);
+vector pivot     = @P; //pivot for rotations
+
+//MAKE TRANSFORM
+matrix newTrans = maketransform(trs, xyz, translate, rotate, scale, pivot);
+
+
+
+@P=offset_pos*newTrans;
+=====================================================

@@ -1,0 +1,240 @@
+=========== reading arrays
+
+// this is how you can create local array variables and load array attributes
+vector myVectorArray [] = v[]@myVectorArray;
+// ...
+// you get t he idea
+matrix3 a = ident() * 5;
+v@P.x *= a.yy; // you can access matrix components using this syntax
+// x ‐> 1, y ‐> 2, z ‐> 3, w ‐> 4
+v@P.y = 4[]@myMatrix4x4Array[1].ww;
+v@P.z = u[]@myVector2Array[1][0]; // this is how you can access array of vectors
+
+
+===========================Arrays
+int numbers[] = array(1,2,3,4);
+// arrays can be handled in Pythonic way
+numbers = numbers[::‐1];
+// rading from arrays
+i@firstItem = numbers[0];
+// writing into arrays
+numbers[0] += 1;
+// indexing can also go backwards
+i@secondLastItem = numbers[‐2];
+// slicing
+i[]@firstHalf = numbers[:2];
+i[]@secondHalf = numbers[2:];// some useful functions
+i@returnedPopVal = pop(numbers); // removes the last element and returns it
+push(numbers, i@returnedPopVal); // appends element to the array
+i@lenghtOfArray = len(numbers);
+HiQPdf Evaluation 02.13.2018
+// export into integer array attribute
+i[]@numbers = numbers;
+// flattening an array of vectors and reverting it
+vector vectors[] = { {1,2,3}, {4,5,6}, {7,8,9} };
+f[]@serializedVectors = serialize(vectors);
+v[]@unserializedFloats = unserialize(f[]@serializedVectors);
+=================================================
+
+
+
+============Create geometry from points array:
+float searchRadius = ch('searchRadius');
+int nearpnts[] = nearpoints(0, @P, searchRadius);
+foreach (int pnt;  nearpnts){
+    if(pnt != @ptnum){
+        int line = addprim(0, 'polyline');
+        addvertex(0, line, @ptnum);
+        addvertex(0, line, pnt );
+        }
+    } 
+
+
+
+=========Create geometry from points array:
+float searchRadius = ch('searchRadius');
+int nearpnts[] = nearpoints(0, @P, searchRadius);
+foreach (int pnt;  nearpnts){
+    if(pnt != @ptnum){
+        int line = addprim(0, 'polyline');
+        addvertex(0, line, @ptnum);
+        addvertex(0, line, pnt );
+        }
+    } 
+====================================
+
+
+=========Arrays and strings example
+// simple example of manipulating strings and arrays
+// it will convert /path/to/the/project/file/project_v3.hipnc
+// into            /path/to/the/project/file/preview/project_v3_img_0001.jpg
+// with 0001 being current frame number
+string path = chs("path"); // get string from path parameter of the current hipfile
+s@pathOrig = path; // store into attribute original value
+string pathSplit[] = split(path, "/"); // split path into array of strings based on "/" character
+string fileName = pop(pathSplit); // remove last value of the array and assign it into a variable
+string fileNameSplit[] = split(fileName, "."); // split string into an array based on "." character
+fileNameSplit[0] = fileNameSplit[0] + sprintf("_img_%04d", @Frame); // append into the string _img_0001 (current frame number)
+fileNameSplit[‐1] = "jpg"; // change file extension
+fileName = join(fileNameSplit, "."); // convert array of strings into a one string with "." between original array elements
+push(pathSplit, "preview"); // append "preview" string into the array of strings
+push(pathSplit, fileName); // append file name into the array of strings
+path = "/" + join(pathSplit, "/"); // convert array of strings into one string, starting with "/" for root, because it is not added before the 
+s@path = path; // output into the attribute
+====================================
+
+
+
+======Write point numbers to an array
+    //in detail mode
+    i[]@points = expandpointgroup(@OpInput1, "!");
+    //in point mode
+    int point[] = array(@ptnum);
+    setdetailattrib(geoself(), "points", point, "append");
+====================================================
+
+=============Prims from point array
+thanks to @petz from odforce:
+
+    int point = addpoint(0, @P);
+    int points[] = primpoints(0, @primnum);
+    for(int i = 0; i < len(points); i++)
+    {
+        int point_array[] = array(points[i - 1], points[i], point);
+        int prim = addprim(0, "poly", point_array); 
+    }
+    removeprim(0, @primnum, 0);
+======================================================
+
+
+
+==============REST POSITION FROM (ARRAY) NAME ATTRIBUTE
+//Often times when making RBD simulations, we receive notes to prune some pieces. This code makes isolating the pieces to be pruned to be easily selected in the viewport.
+//You don’t need to select all the polygons in the primitives to be pruned. A single polygon face for each piece(primitive) to be pruned is sufficient for as long as the polygon contains a valid name attribute. This code iterates through every isolated packed primitive (Input2) and adds their corresponding name attribute to an array stored on a single point at origin(Input1).
+
+//Set rest position from array
+
+//This two part code uses two attrib wrangle nodes
+//It generates an array that contains the name attribs
+//of selected pieces and stores this array attrib on a single point
+//steps: isolate points to not deform
+//attrib promote name to prim
+//pack and transfer name attrib to packed pts
+//Input 1 is a single pt to store array of blasted geo on
+//Input two is the packed pts
+
+i[]@pts = pcfind(1, "P", @P, chf("rad"), chi("num"));
+string nnme[];
+s[]@nme= nnme;
+string tok;
+foreach(int a;@pts){
+tok = prim(1,"name",a);
+push(@nme,tok);
+}
+
+//The following code goes into another attrib wrangle node
+//That sets the rest position in name attrib is in our array
+//Input 1 is our complete sim
+//Input 2 is the single pt that contains array attrib
+
+string names[] = point(1,"nme",0);
+
+foreach(string nme; names){
+if(s@name==nme)@P = v@rest;
+}
+===============================================================
+
+
+
+
+
+=============Prims from point array
+thanks to @petz from odforce:
+
+    int point = addpoint(0, @P);
+    int points[] = primpoints(0, @primnum);
+    for(int i = 0; i < len(points); i++)
+    {
+        int point_array[] = array(points[i - 1], points[i], point);
+        int prim = addprim(0, "poly", point_array); 
+    }
+    removeprim(0, @primnum, 0);
+======================================================
+
+
+=============================arrays===================
+//define
+int dFa[] = i[]@dFa;
+i[]@gF = {502,572};
+int an_array[] = {1, 2}
+
+
+foreach ([element_type] value; array) {
+}
+
+//This loops over the members of array. For each iteration, 
+//it copies the current member to value and then executes statement. For example:
+int an_array[] = {1, 2}
+foreach (int num; an_array) {
+    printf("%d", num);
+}
+
+
+//The second form lets you specify an enumeration variable:
+foreach (index, value; array) statement;
+foreach (int index; element_type value; array) statement;
+
+//For each iteration, this form assigns the current position 
+//in the array to index, copies the current member to value, and executes statement. For example:
+string days[] = { "Mon", "Tue", "Wed", "Thu", "Fri" }
+foreach (int i; string name; days) {
+    printf("Day number %d is %s", i, name);
+}
+
+//This is similar to the common Python idiom for i, x in enumerate(xs):.
+======================================================
+
+
+=====================compare two arrays and find current frame=============
+printf("frame:%fr \n", @Frame);
+
+int dFa[] = i[]@dFa;
+int gF[] = i[]@gF;
+int cNum;
+int num;
+//if (@cF)
+foreach(num,cNum;gF)
+{
+    //printf("nb:%g %g \n", num,cNum);    
+    if (@cF==cNum)
+    {
+    //printf("nb:%g \n", num);   
+    i@dF = dFa[num];
+    //printf("nb:%g \n", cNum);    
+    }
+}
+
+======================================================
+
+===================array of unique values
+i[]@List   = {1,8,8,2,7,3,8,4,8,6,7,1,1};
+int Count, Count_A;
+
+for(Count = 0; Count < len(i[]@List); Count++)
+    {
+    for(Count_A = 0; Count_A < len(i[]@List); Count_A++)
+        {
+        if( (i[]@List[Count] == i[]@List[Count_A]) && (Count != Count_A) )
+            {
+            removeindex(i@List, Count_A);
+            }
+        }
+    }
+======================================================
+
+
+==========rand element from array()
+int objA[] = detail(1,"objid_array")
+float rN = int(fit01(rand(@name_id),0,len(objA)));
+@objid = objA[rN];
+-----------------------------------------

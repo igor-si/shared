@@ -1,0 +1,6 @@
+
+// Query number of points in a group
+argc(pointlist("../node", "groupname"))
+argc(primlist("../node", "groupname"))
+// --------------------------------
+

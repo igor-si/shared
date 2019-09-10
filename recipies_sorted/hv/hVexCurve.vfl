@@ -1,0 +1,314 @@
+===Curve U Map - Runs over several primitives
+
+//Creates two point attributes. 
+//One 0 - 1 and one 0 - 1 - 0 along each curve,
+//based on point number / vertex order for each primitive.
+//Run in a Wrangle SOP (Run over - Primitives)
+
+int prim_points[];
+float umap, umap_half;
+
+addattrib(geoself(), "point", "umap", 0.0);
+addattrib(geoself(), "point", "umap_half", 0.0);
+
+prim_points = primpoints(geoself(), @primnum);
+
+for ( int i = 0; i < len(prim_points); i++ ){
+    
+    umap = float(i) / (len(prim_points) - 1);
+    umap_half = clamp(umap, 0, 0.5) * clamp(umap * -1 + 1, 0, 0.5) * 4;
+    
+    setattrib(geoself(), "point", "umap", prim_points[i], 0, umap, "set");
+    setattrib(geoself(), "point", "umap_half", prim_points[i], 0, umap_half, "set");
+}
+
+===Curve Normals - Runs over a single primitive
+//Creates a normal along a single curve, two point based,
+//unnormalized
+//Run in a Wrangle SOP (Run over - Points)
+
+vector pos, nor_a, nor_b;
+
+if ( @ptnum == 0) {
+    getattribute(@OpInput1, pos, "point", "P", @ptnum + 1, 0);
+    @N = @P - pos;
+} else if ( @ptnum == (npoints(@OpInput1) - 1) ) {
+    getattribute(@OpInput1, pos, "point", "P", @ptnum - 1, 0);
+    @N = pos - @P;
+} else {
+    getattribute(@OpInput1, pos, "point", "P", @ptnum - 1, 0);
+    nor_a = pos - @P;
+    getattribute(@OpInput1, pos, "point", "P", @ptnum + 1, 0);
+    nor_b = @P - pos;
+    @N = (nor_a + nor_b) / 2;
+}
+
+====Curve Normals - Runs over several primitives
+//Creates a normal along a curve for each primitive,
+//single point based, normalized
+//Run in a Wrangle SOP (Run over - Primitives)
+
+int prim_points[];
+vector pos_A, pos_B, dir;
+
+addattrib(geoself(), "point", "N", {0, 0, 0});
+
+prim_points = primpoints(geoself(), @primnum);
+
+for ( int i = 0; i < len(prim_points); i++ ){
+
+    getattribute(@OpInput1, pos_A, "point", "P", prim_points[i], 0);
+    
+    if ( i == 0) {
+        getattribute(@OpInput1, pos_B, "point", "P", prim_points[1], 0);
+        dir = normalize(pos_B - pos_A);
+    }
+    else {
+        getattribute(@OpInput1, pos_B, "point", "P", prim_points[i - 1], 0);
+        dir = normalize(pos_A - pos_B);
+    }
+    setattrib(geoself(), "point", "N", prim_points[i], 0, dir, "set");
+}
+Curve length
+
+Creates two attributes, one primitive attribute for the total length of each curve and one point attribute for the partial length of the curve up to that point
+
+Run in a Wrangle SOP (Run over - Primitives)
+
+int     prim_points[];
+float   length;
+vector  pos_A, pos_B;
+
+addattrib(geoself(), "point", "length_partial", 0.0);
+
+prim_points = primpoints(geoself(), @primnum);
+
+length = 0;
+
+for (int i = 1; i < len(prim_points); i++){
+    getattribute(@OpInput1, pos_A, "point", "P", prim_points[i - 1], 0);
+    getattribute(@OpInput1, pos_B, "point", "P", prim_points[i], 0);
+
+    length += distance(pos_A, pos_B);
+
+    setattrib(geoself(), "point", "length_partial", prim_points[i], 0, length, "set");
+}
+
+f@length = length;
+
+=====Curve Orient - Runs over several primitives
+
+//Creates a orient attribute along each curve. 
+//A point normal vector attribute pointing along 
+//the curve is needed. 
+//Uncomment line 21 if you have a 
+//unique up vector point attribute for each curve 
+//that you want to use.
+//Run in a Wrangle SOP (Run over - Primitives)
+
+addattrib(geoself(), "point", "up", {0, 0, 0});
+addattrib(geoself(), "point", "side", {0, 0, 0});
+addattrib(geoself(), "point", "orient", {0, 0, 0, 0});
+
+int curve_pts[];
+
+matrix3 matx;
+vector  v_align_to, v_align_from, v_up, v_side;
+vector4 quat;
+
+vector  v_ref = {1, 0, 0};
+
+curve_pts = primpoints(geoself(), @primnum);
+
+for (int i = 0; i < len(curve_pts); i++)
+{
+        if ( i == 0 )
+        {
+                // For the first point
+                getattribute(@OpInput1, v_align_to, "point", "N", curve_pts[0], 0);
+                //getattribute(@OpInput1, v_ref, "point", "up", curve_pts[0], 0);
+
+                v_up    = cross(normalize(v_align_to), normalize(v_ref));
+                v_side  = cross(normalize(v_align_to), normalize(v_up));
+
+                setattrib(geoself(), "point", "up",     curve_pts[0], 0, v_up,     "set");
+                setattrib(geoself(), "point", "side",   curve_pts[0], 0, v_side,   "set");
+
+                matx = lookat({ 0, 0, 0 }, v_align_to, v_up);
+                quat = quaternion(matx);
+
+                setattrib(geoself(), "point", "orient", curve_pts[0], 0, quat, "set");  
+        } 
+        
+        // Get the current points normal
+        getattribute(@OpInput1, v_align_from, "point", "N", curve_pts[i], 0);
+        
+        matx = dihedral(v_align_to, v_align_from);
+
+        v_align_to  = normalize(v_align_from);
+        v_up        = normalize(v_up * matx);
+        v_side      = normalize(v_side * matx);
+
+        setattrib(geoself(), "point", "up",     curve_pts[i], 0, v_up,     "set");
+        setattrib(geoself(), "point", "side",   curve_pts[i], 0, v_side,   "set");
+
+        matx = lookat({ 0, 0, 0 }, v_align_to, v_up);
+        quat = quaternion(matx);
+
+        setattrib(geoself(), "point", "orient", curve_pts[i], 0, quat, "set");
+}
+Curve Multi Carve
+
+Let's you carve several curves at one based on a unique primitive carve attribute for each curve. Based on point number and depends on a point U Map attribute between 0-1 on each curve.
+
+Run in a Wrangle SOP (Run over - Primitives)
+
+int prim_points[], carve_point_start, carve_point_end;
+float carve_start, carve_end, umap;
+vector pos_u;
+
+prim_points = primpoints(geoself(), @primnum);
+
+//carve_start = f@carve_start;
+//carve_end = f@carve_start;
+
+carve_start = ch("carve_start");
+carve_end = ch("carve_end");
+
+if ( carve_start >= carve_end )
+    removeprim(geoself(), @primnum, 1);
+else {
+    carve_point_start = -1;
+    carve_point_end = -1;
+    
+    // Carve Start
+    for ( int i = len(prim_points)-1; i >= 0; i-- ){
+        
+        getattribute(@OpInput1, umap, "point", "umap", prim_points[i], 0);
+        
+        if ( umap < carve_start ){
+             
+            carve_point_start = i;
+            
+            if ( i != len(prim_points) + 1 ){
+                
+                for ( int j = i - 1; j >= 0; j-- ){
+                    removepoint(geoself(), prim_points[j]);
+                }
+                break;
+            }
+        }
+    }
+    
+    // Carve End
+    for ( int i = 0; i < len(prim_points); i++ ){
+        
+        getattribute(@OpInput1, umap, "point", "umap", prim_points[i], 0);
+            
+        if ( umap > carve_end ){
+                                
+            carve_point_end = i;
+            
+            if ( i != len(prim_points) + 1 ){
+                
+                for ( int j = i + 1; j < len(prim_points); j++ ){
+                    removepoint(geoself(), prim_points[j]);
+                }
+                break;
+            }
+        }
+    }
+    
+    if ( carve_point_start >= 0 ){
+        pos_u = primuv(@OpInput1, "P", @primnum, set(carve_start, 0, 0));
+        setattrib(geoself(), "point", "P", prim_points[carve_point_start], 0, pos_u, "set");
+    }
+    
+    if ( carve_point_end >= 0 ){
+        pos_u = primuv(@OpInput1, "P", @primnum, set(carve_end, 0, 0));
+        setattrib(geoself(), "point", "P", prim_points[carve_point_end], 0, pos_u, "set");
+    }
+}
+Multi Skin
+
+A prim_id primitive attribute is needed to separate each group of primitives
+
+Run in a Wrangle SOP (Run over - Primitives)
+
+int prim_A_points[], prim_B_points[], newPrim_points[], prim, num_prim, prim_id[];
+
+num_prim = nprimitives(@OpInput1);
+
+removeprim(geoself(), @primnum, 0);
+
+if ( @primnum < num_prim - 1 ){
+    
+    getattribute(@OpInput1, prim_id[0], "primitive", "prim_id", @primnum, 0);
+    getattribute(@OpInput1, prim_id[1], "primitive", "prim_id", @primnum + 1, 0);
+    
+    if ( prim_id[0] == prim_id[1] ){
+        prim_A_points = primpoints(geoself(), @primnum);
+        prim_B_points = primpoints(geoself(), @primnum + 1);
+            
+        for ( int i = 0; i < len(prim_A_points); i++ ){
+            
+            prim = addprim(geoself(), "poly");
+            
+            if ( i == len(prim_A_points) - 1 ){
+                addvertex(geoself(), prim, prim_B_points[i]);
+                addvertex(geoself(), prim, prim_B_points[0]);
+                addvertex(geoself(), prim, prim_A_points[0]);
+                addvertex(geoself(), prim, prim_A_points[i]);
+            }
+            else {
+                addvertex(geoself(), prim, prim_B_points[i]);
+                addvertex(geoself(), prim, prim_B_points[i + 1]);
+                addvertex(geoself(), prim, prim_A_points[i + 1]);
+                addvertex(geoself(), prim, prim_A_points[i]);
+            }
+        }
+    }
+}
+Curve Sections
+
+Creates a unique primitive for each section of a curve
+
+Run in in a Wrangle SOP (Run Over - Primitive)
+
+int prim_points[], prim, point_A, point_B;
+vector pos_A, pos_B;
+prim_points = primpoints(geoself(), @primnum);
+
+for ( int i = 1; i < len(prim_points); i++ )
+{
+    prim = addprim(geoself(), "polyline");
+    
+    pos_A = attrib( 0, "point", "P", prim_points[i - 1] );
+    pos_B = attrib( 0, "point", "P", prim_points[i] );
+    
+    point_A = addpoint( geoself(), pos_A );
+    point_B = addpoint( geoself(), pos_B );
+        
+    addvertex(geoself(), prim, point_A );
+    addvertex(geoself(), prim, point_B );
+}
+removeprim(geoself(), @primnum, 1);
+
+
+
+============== get point uv from line
+//run over pts
+int posprim;
+vector primuv;
+float dist = xyzdist(1, @P, posprim, primuv);
+f@u = primuv.x;
+
+//run over pts part2
+float add_u = ch("add_u");
+float new_u = (f@u + add_u) % 1.0; // wrap points if they go past 1.0
+vector new_P = primuv(1, "P", 0, new_u);
+@P = new_P;
+
+---------------------------------------------
+
+

@@ -72,4 +72,6 @@ float time2 = fit(@Frame-life,afr+life,afr,1,0);
 if (@arc<time && @arc>time2 )
 {v@Cd = {1,0,0};}
 //==================
-
+vector up = {0,1,0};
+matrix3 m = dihedral(up,v@N); 
+p@orient = quaternion(m);

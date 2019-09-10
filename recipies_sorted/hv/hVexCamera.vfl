@@ -1,0 +1,60 @@
+===========Camera Orient
+//Object Merge the cameras camOrigin into 
+//SOP's with two extra point added on the add node in the camera
+
+Point 0: 0, 0, 0
+Point  1: 0,  1, 0
+Point 2: 0, 0, -1 
+
+Run in a Wrangle SOP (Run over - Points)
+
+if ( @ptnum == 0 ){
+    vector front, up, pos_front, pos_up;
+    matrix3     matx;
+    vector4     orient;
+    
+    getattribute(@OpInput1, pos_up,     "point", "P", 1, 0);
+    getattribute(@OpInput1, pos_front,  "point", "P", 2, 0);
+    
+    up = normalize(pos_up - @P);
+    front = normalize(pos_front - @P);
+    
+    matx = lookat({ 0, 0, 0 }, front, up);
+    
+    orient = quaternion(matx);
+
+    p@orient = orient;
+    
+} else {
+    removepoint(geoself(), @ptnum);
+}
+------------------------------------
+
+
+======================#VOLUME FRUSTRUM CULL
+vector pndc = toNDC(chs("camera_name"), @P);
+// padding
+float pad = .2;
+if(pndc.x1+pad || pndc.y1+pad || pndc.z>=0 ){
+@density=0;
+}
+------------------------------------------------
+
+
+======================# Culing in front of camera
+// input1 = geo; input2 = campos ; input2 = geo
+
+vector camP = point(1, "P", 0);
+vector dir = normalize(camP - @P);
+float bias = 0.01; // Error margin to avoid self-occlusions.
+
+// Get all intersections along the ray.
+vector hit_ps[];
+int hits = intersect_all(2, @P, dir * 100, hit_ps, {}, {});
+
+if (hits && distance(@P, hit_ps[-1]) > bias)
+{
+    // Occluded by some surface.
+    removepoint(0, @ptnum);
+}
+------------------------------------------------

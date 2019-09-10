@@ -1,0 +1,16 @@
+Here are a couple of handy Houdini viewport attributes you can use for when scenes start to get a little complex or when you want to isolate certain geometry objects. It can also work as a debugging aid of sorts.
+
+SET UP
+In order to set up these attributes you need to place down an Attribute Wrangle. Simple enough. However, the key is making sure you set the class or the Run Over parameter to Detail. Remember Detail attributes run over your whole geometry as opposed to Points which runs over… POINTS! 🙂
+
+GL_WIREFRAME
+The gl_wireframe attribute sets your geometry to always appear as wireframe in the viewport regardless of your viewport settings. In a Wrangle node, all you have to do is set gl_wireframe to either true or false. The default is false. The documentation says the value the attribute expects is a float but I believe it’s just an error. You can optionally enter 1 or 0 which is faster.
+
+// set true for ON and false for OFF
+@gl_wireframe = true;
+
+GL_LIT
+The gl_lit detail attribute works the same way as gl_wireframe. You set it to true or false for ON or OFF. This attribute sets the geometry object to always appear without lighting in your scene. The default for this attribute is OFF or true. The only thing you need to be aware of is this seems to only work if you have the Normal Lighting setting selected in the viewport. It does not respect the setting if you have High Quality Lighting on.
+
+// set true for ON and false for OFF
+@gl_lit = true;
