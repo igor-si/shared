@@ -172,3 +172,48 @@ hou.SopVerb.loadParmsFromNode(
 90960096109620963096409650966096709680969097009710972097309740975097609770978097
 90980098109820983098409850986098709880989099009910992099309940995099609970998099
 9
+
+
+
+
+todo list
+================================
+setups
+	wire destruction (wire solver)
+	wire destruction (vellum solver)
+	stiff wire sim (wire solver)
+	stiff wire sim (vellum solver)
+	rbd with custom attractors 
+	tank destruction
+
+snippets
+	create
+		fracture by spheres
+		visW
+		visSegment
+		mayaScale
+		houScale
+		cameraScaleChopRig
+		isGroutSlice from post fracture (by inside pieces)
+		isVoronoiFractureQuick
+		createTransformFromCentroid (scripted)
+		animationFromVelocity
+		aaNoiseVelVop
+		remeshAndPointDeform
+		pointDeformRig
+		attribTranfer (wrangle)
+		splitLateralChunks
+		fractureInsideName
+		velocityGuidesRig
+		bulletT
+	fix
+		dummy_rbd: add constraints inside snippet and break thresholds
+		isExplodeView (add color / add visualizer )
+		assembleIt (1 add attrib promote to pts option, change defaults
+					2 add second output? )
+		isFileCache (check if proper link)
+		isConstraintCreator (add fuse to proximity mode ??)
+
+scripts
+	fix
+		oobject_merge ( mrg.parm('xformtype').set
