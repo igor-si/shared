@@ -1,0 +1,48 @@
+
+
+========todo
+setups:
+	wire destruction (wire solver)
+	wire destriction (vellum solver)
+	stiff wire sim (wire)
+	stiff wire sim (vellum)
+	RBD with custrom attractor (guided)
+	Tank Destruction
+
+snippets:
+	create:
+		fracture by sphere
+		dummy_rbd (add constraints
+					add break threshold)
+
+		visW
+		visSegment
+		maxScale
+		houScale
+		cameraScaleChopRig
+		isGroutSlice (from post fracture, inside pieces)
+		isVoronoiFractureQuick
+	fix:
+		assembleIt ( 1) add attrib to pt promotion
+					2) add second input	)
+		isExplodeView (add color / vis)
+
+scripts:
+	create:
+		convertSlashes (win/lin)
+		loadLatestCrashHip
+		add logger for "save work space"
+		playblast maker
+		dummy scene parser
+
+	fix:
+		oobjectmerge ( first choise)
+		hotkeys
+
+
+3dsmax:
+	find hood hotkey cheatsheet
+
+
+
+url:
