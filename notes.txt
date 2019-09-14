@@ -177,6 +177,7 @@ hou.SopVerb.loadParmsFromNode(
 
 
 todo list
+todo list
 ================================
 setups
 	wire destruction (wire solver)
@@ -205,7 +206,9 @@ snippets
 		splitLateralChunks
 		fractureInsideName
 		velocityGuidesRig
-		bulletT
+		rampedVdb
+
+
 	fix
 		dummy_rbd: add constraints inside snippet and break thresholds
 		isExplodeView (add color / add visualizer )
@@ -215,5 +218,25 @@ snippets
 		isConstraintCreator (add fuse to proximity mode ??)
 
 scripts
-	fix
-		oobject_merge ( mrg.parm('xformtype').set
+		oobject_merge ( mrg.parm('xformtype').set(0) )
+		hotkeys for toggles check
+		htMagicWand (add to filecache,
+					alembic rop,
+					geometry[rop] )
+		savescene class. add argument to not archive
+	create
+		slashesConvertor (win/lin)
+		load lates crash file from HOUDINI_TEMP_DIR
+		add logger for "save workspace" (_versions padding 4)
+		garbage node collector
+		scene_backup simple with and without archiving
+		playblast maker
+		dummy scene parser
+		from shelf to isGalleries parser
+		checkCacheSize (for file cache)
+
+		boundingBoxFromSelection
+		
+
+3dsmax
+	find good hotkey cheatsheet
