@@ -1,4 +1,98 @@
 
+todo list
+todo list
+================================
+setups
+	wire destruction (wire solver) +
+	wire destruction (vellum solver)
+	stiff wire sim (wire solver)
+	stiff wire sim (vellum solver)
+	rbd with custom attractors 
+	tank destruction
+
+snippets
+	create
+		fracture by spheres
+		visW+
+		visSegment+
+		mayaScale+
+		houScale+
+		cameraScaleChopRig
+		isGroutSlice from post fracture (by inside pieces)
+		isVoronoiFractureQuick
+		createTransformFromCentroid (scripted)
+		animationFromVelocity
+		aaNoiseVelVop
+		remeshAndPointDeform
+		pointDeformRig +
+		attribTranfer (wrangle) +
+		splitLateralChunks 
+		fractureInsideName
+		velocityGuidesRig
+		rampedVdb
+
+
+	fix
+		dummy_rbd: add constraints inside snippet and break thresholds
+		isExplodeView (add color / add visualizer ) +
+		assembleIt (1 add attrib promote to pts option, change defaults
+					2 add second output? ) +
+		isFileCache (check if proper link)
+		isConstraintCreator (add fuse to proximity mode ??)
+
+scripts
+		oobject_merge ( mrg.parm('xformtype').set(0) ) +
+		hotkeys for toggles check
+		htMagicWand (add to filecache,
+					alembic rop,
+					geometry[rop] )
+		savescene class. add argument to not archive +
+	create
+		slashesConvertor (win/lin)
+		load lates crash file from HOUDINI_TEMP_DIR
+		add logger for "save workspace" (_versions padding 4)
+		garbage node collector
+		scene_backup simple with and without archiving
+		playblast maker
+		dummy scene parser
+		from shelf to isGalleries parser
+		checkCacheSize (for file cache)
+
+		boundingBoxFromSelection
+	
+
+3dsmax
+	find good hotkey cheatsheet
+
+tosend
+	/studio/Dropbox/tools/dev/isutils/scripts/savescene.py
+	/studio/Dropbox/tools/dev/isutils/toolbar/isrbd.shelf
+	/studio/Dropbox/tools/dev/isutils/scripts/htools/htMagicWand.py
+	/studio/Dropbox/tools/dev/isutils/toolbar/ishotnodes.shelf
+	/studio/Dropbox/tools/dev/isutils/toolbar/isvis.shelf
+	/studio/Dropbox/tools/dev/isutils/toolbar/ispyro.shelf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+https://www.sidefx.com/docs/houdini/dyno/vellumattributes.html
+
+
+
+
+
+
 
 ========todo
 setups:
@@ -46,3 +140,15 @@ scripts:
 
 
 url:
+/studio/Dropbox/tools/dev/isutils/toolbar/isrbd.shelf
+
+
+
+Hi Per.  Here is the note about PnP office location :
+
+BC Provincial Nominee Program Office
+450 - 605 Robson Street
+Vancouver, BC V6B 5J3
+Canada
+
+Office hours: 8:30 am to 4:30 pm, Monday to Friday, excluding statutory holidays.
