@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="htools_shelf" label="HTools">
+    <memberTool name="htMagicWand"/>
+    <memberTool name="exprHelper"/>
+    <memberTool name="openFileFolder"/>
+  </toolshelf>
+
+  <tool name="magicWand" label="magicWand" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import htMagicWand
+reload(htMagicWand)
+htMagicWand.htMagicWand()]]></script>
+  </tool>
+
+  <tool name="htMagicWand" label="htMagicWand" icon="SOP_lidarimport">
+    <script scriptType="python"><![CDATA[#from isutils.scripts.htools import htMagicWand
+from isutils.scripts.htools import htMagicWand
+reload(htMagicWand)
+htMagicWand.htMagicWand()]]></script>
+  </tool>
+
+  <tool name="exprHelper" label="exprHelper" icon="SOP_script">
+    <script scriptType="python"><![CDATA[from isutils.scripts.htools import htMainFunc
+reload(htMainFunc)
+htMainFunc.exprHelper()]]></script>
+  </tool>
+
+  <tool name="openFileFolder" label="openFileFolder" icon="SOP_file">
+    <script scriptType="python"><![CDATA[from isutils.scripts.htools import htools
+reload(htools)
+htools.openFileFolder()
+
+]]></script>
+  </tool>
+</shelfDocument>
