@@ -1,0 +1,1449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="ispyro_shelf" label="ISPyro">
+    <memberTool name="subnet11"/>
+    <memberTool name="subnet19"/>
+    <memberTool name="subnet20"/>
+    <memberTool name="subnet21"/>
+  </toolshelf>
+
+  <tool name="subnet11" label="isVdbMerge" icon="SOP_subnet">
+    <helpURL>operator:Sop/subnet</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/subnet</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('subnet'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_grout_slice_plane_isVdbMerge (Sop/subnet)
+set _obj_grout_slice_plane_isVdbMerge = `run("opadd -e -n -v subnet isVdbMerge")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_grout_slice_plane_isVdbMerge
+opspareds '    parm {         name    "label1"         baseparm         label   "Input #1 Label"         invisible         export  all     }     parm {         name    "label2"         baseparm         label   "Input #2 Label"         invisible         export  all     }     parm {         name    "label3"         baseparm         label   "Input #3 Label"         invisible         export  all     }     parm {         name    "label4"         baseparm         label   "Input #4 Label"         invisible         export  all     }     parm {         name    "grouptype"         label   "Group Type"         type    ordinal         default { "points" }         menu {             "guess"         "Guess from Group"             "breakpoints"   "Breakpoints"             "edges"         "Edges"             "points"        "Points"             "prims"         "Primitives"         }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "operation"         label   "Operation"         type    ordinal         default { "sdfunion" }         menu {             "copya"             "Copy A"             "copyb"             "Copy B"             "inverta"           "Invert A"             "add"               "Add"             "subtract"          "Subtract"             "multiply"          "Multiply"             "divide"            "Divide"             "maximum"           "Maximum"             "minimum"           "Minimum"             "compatimesb"       "(1 - A) * B"             "apluscompatimesb"  "A + (1 - A) * B"             "sdfunion"          "SDF Union"             "sdfintersect"      "SDF Intersection"             "sdfdifference"     "SDF Difference"             "replacewithactive" "Replace A with Active B"             "topounion"         "Activity Union"             "topointersect"     "Activity Intersection"             "topodifference"    "Activity Difference"         }         parmtag { "autoscope" "0000000000000000" }     } ' $_obj_grout_slice_plane_isVdbMerge
+opparm -V 17.0.416 $_obj_grout_slice_plane_isVdbMerge grouptype ( prims ) operation ( add )
+opcomment -c 'Created from Gallery Entry: htVdbMerge\n\nCustomized Subnetwork Sop node.' $_obj_grout_slice_plane_isVdbMerge
+opcolor -c 0.15000000596046448 0.34999999403953552 0.75 $_obj_grout_slice_plane_isVdbMerge
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge
+opcf $_obj_grout_slice_plane_isVdbMerge
+
+# Node $_obj_grout_slice_plane_isVdbMerge_keep_pts_1 (Sop/blast)
+set _obj_grout_slice_plane_isVdbMerge_keep_pts_1 = `run("opadd -e -n -v blast keep_pts_1")`
+oplocate -x `$arg2 + -1.1187100000000001` -y `$arg3 + 3.4596300000000002` $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+chblockbegin
+chadd -t 0 0 $_obj_grout_slice_plane_isVdbMerge_keep_pts_1 grouptype
+chkey -t 0 -v 3 -m 0 -a 0 -A 0 -T a  -F 'ch("../grouptype")' $_obj_grout_slice_plane_isVdbMerge_keep_pts_1/grouptype
+chblockend
+opparm -V 17.0.416 $_obj_grout_slice_plane_isVdbMerge_keep_pts_1 group ( 0 ) grouptype ( grouptype ) negate ( on )
+opcolor -c 0.5 0.60000002384185791 0.60000002384185791 $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+
+# Node $_obj_grout_slice_plane_isVdbMerge_rm_pts_1 (Sop/blast)
+set _obj_grout_slice_plane_isVdbMerge_rm_pts_1 = `run("opadd -e -n -v blast rm_pts_1")`
+oplocate -x `$arg2 + 0.85475500000000004` -y `$arg3 + 3.4055300000000002` $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+chblockbegin
+chadd -t 0 0 $_obj_grout_slice_plane_isVdbMerge_rm_pts_1 grouptype
+chkey -t 0 -v 3 -m 0 -a 0 -A 0 -T a  -F 'ch("../keep_pts_1/grouptype")' $_obj_grout_slice_plane_isVdbMerge_rm_pts_1/grouptype
+chblockend
+opparm -V 17.0.416 $_obj_grout_slice_plane_isVdbMerge_rm_pts_1 group ( 0 ) grouptype ( grouptype )
+opcolor -c 0.5 0.60000002384185791 0.60000002384185791 $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+
+# Node $_obj_grout_slice_plane_isVdbMerge_vdbcombine2 (Sop/vdbcombine)
+set _obj_grout_slice_plane_isVdbMerge_vdbcombine2 = `run("opadd -e -n -v vdbcombine vdbcombine2")`
+oplocate -x `$arg2 + 0.074784900000000001` -y `$arg3 + 2.57883` $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+chblockbegin
+chadd -t 0 0 $_obj_grout_slice_plane_isVdbMerge_vdbcombine2 operation
+chkey -t 0 -v 11 -m 0 -a 0 -A 0 -T a  -F 'ch("../operation")' $_obj_grout_slice_plane_isVdbMerge_vdbcombine2/operation
+chblockend
+opparm -V 17.0.416 $_obj_grout_slice_plane_isVdbMerge_vdbcombine2 collation ( flattenbtoa ) operation ( operation )
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+
+# Node $_obj_grout_slice_plane_isVdbMerge_IN (Sop/null)
+set _obj_grout_slice_plane_isVdbMerge_IN = `run("opadd -e -n -v null IN")`
+oplocate -x `$arg2 + -1.11759e-08` -y `$arg3 + 4.8419999999999996` $_obj_grout_slice_plane_isVdbMerge_IN
+opcolor -c 0.090000003576278687 0.43000000715255737 0.46000000834465027 $_obj_grout_slice_plane_isVdbMerge_IN
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge_IN
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge_IN
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge_IN
+
+# Node $_obj_grout_slice_plane_isVdbMerge_OUT (Sop/output)
+set _obj_grout_slice_plane_isVdbMerge_OUT = `run("opadd -e -n -v output OUT")`
+oplocate -x `$arg2 + 0.074784900000000001` -y `$arg3 + 1.22437` $_obj_grout_slice_plane_isVdbMerge_OUT
+opcolor -c 0.85000002384185791 0.05000000074505806 0.05000000074505806 $_obj_grout_slice_plane_isVdbMerge_OUT
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_grout_slice_plane_isVdbMerge_OUT
+opexprlanguage -s hscript $_obj_grout_slice_plane_isVdbMerge_OUT
+opuserdata -n '___Version___' -v '17.0.416' $_obj_grout_slice_plane_isVdbMerge_OUT
+oporder -e keep_pts_1 rm_pts_1 vdbcombine2 IN OUT 
+opcf ..
+opset -p on $_obj_grout_slice_plane_isVdbMerge
+
+opcf $arg1
+opcf $_obj_grout_slice_plane_isVdbMerge
+opwire -n $_obj_grout_slice_plane_isVdbMerge_IN -0 $_obj_grout_slice_plane_isVdbMerge_keep_pts_1
+opwire -n $_obj_grout_slice_plane_isVdbMerge_IN -0 $_obj_grout_slice_plane_isVdbMerge_rm_pts_1
+opwire -n $_obj_grout_slice_plane_isVdbMerge_keep_pts_1 -0 $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+opwire -n $_obj_grout_slice_plane_isVdbMerge_rm_pts_1 -1 $_obj_grout_slice_plane_isVdbMerge_vdbcombine2
+opwire -n -i 0 -0 $_obj_grout_slice_plane_isVdbMerge_IN
+opwire -n $_obj_grout_slice_plane_isVdbMerge_vdbcombine2 -0 $_obj_grout_slice_plane_isVdbMerge_OUT
+opcf ..
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_grout_slice_plane_isVdbMerge
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_grout_slice_plane_isVdbMerge
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="subnet19" label="isVolNoise" icon="SOP_subnet">
+    <helpURL>operator:Sop/subnet</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/subnet</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('subnet'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_wp1_isVolNoise (Sop/subnet)
+set _obj_geo1_wp1_isVolNoise = `run("opadd -e -n -v subnet isVolNoise")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_wp1_isVolNoise
+opspareds '    parm {         name    "label1"         baseparm         label   "Input #1 Label"         invisible         export  dialog     }     parm {         name    "label2"         baseparm         label   "Input #2 Label"         invisible         export  dialog     }     parm {         name    "label3"         baseparm         label   "Input #3 Label"         invisible         export  dialog     }     parm {         name    "label4"         baseparm         label   "Input #4 Label"         invisible         export  dialog     }     parm {         name    "bindeach"         label   "Bind Each to Density"         type    toggle         default { "off" }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "bindprimname1"         label   "Primitive Name"         type    string         default { "density" }         disablewhen "{ bindeach == 1 }"         parmtag { "autoscope" "0000000000000000" }     }     group {         name    "noise"         label   "noise"          parm {             name    "use_rest"             label   "Use Rest"             type    toggle             default { "off" }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "additive"             label   "Additive Turbulence"             type    toggle             default { "on" }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "timescale"             label   "Timescale"             type    float             default { "1" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "turbulence_freq"             label   "Turbulence Frequency"             type    float             default { "0.01" }             range   { 0 10 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "turbulence_scale"             label   "Turbulence Scale"             type    float             size    3             default { "1" "1" "1" }             range   { 0 10 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "srcmin"             label   "Turbulence Min Noise"             type    float             default { "-0.5" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "srcmax"             label   "Turbulence Max Noise"             type    float             default { "0.5" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "sharpness"             label   "Turbulence Sharpness"             type    float             default { "0.5" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "destmin"             label   "Turbulence Influence"             type    float             default { "0" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "seed"             label   "Turbulence Seed"             type    float             default { "0" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "amp"             label   "Turbulence Amplitude"             type    float             default { "0.1" }             range   { -1 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "rough"             label   "Turbulence Roughness"             type    float             default { "0.1" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "maxoctave"             label   "Turbulence Octaves"             type    integer             default { "2" }             range   { 0 32 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "enable_cells"             label   "Enable Cellular Noise"             type    toggle             default { "on" }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "change_on_noise"             label   "Adaptive Cells"             type    toggle             default { "on" }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "invert_cells"             label   "Invert Cells"             type    toggle             default { "off" }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "additive_cells"             label   "Additive Cells"             type    toggle             default { "on" }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "cell_min"             label   "Cell Minimum"             type    float             default { "0.101" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "cell_max"             label   "Cell Maximum"             type    float             default { "0.6" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "cell_sharpness"             label   "Cell Sharpness"             type    float             default { "1" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "cell_influence"             label   "Cell Influence"             type    float             default { "1" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "voronoi_noise_seed"             label   "Cell Seed"             type    float             default { "0" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "cell_frequency"             label   "Cell Frequency"             type    float             default { "6" }             range   { 0 10 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "cell_scale"             label   "Cell Scale"             type    float             size    3             default { "1" "1" "1" }             range   { 0 10 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "cell_distance"             label   "Cell Distance"             type    float             default { "2" }             range   { 0 1 }             parmtag { "autoscope" "0000000000000000" }         }         parm {             name    "clampoutput"             label   "Clamp Output"             type    toggle             default { "on" }             parmtag { "autoscope" "0000000000000000" }         }     }  ' $_obj_geo1_wp1_isVolNoise
+opparm -V 17.5.173 $_obj_geo1_wp1_isVolNoise bindeach ( on )
+opcolor -c 0.15000000596046448 0.34999999403953552 0.75 $_obj_geo1_wp1_isVolNoise
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isVolNoise
+opexprlanguage -s hscript $_obj_geo1_wp1_isVolNoise
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isVolNoise
+opcf $_obj_geo1_wp1_isVolNoise
+
+# Node $_obj_geo1_wp1_isVolNoise_vol_noise (Sop/volumevop)
+set _obj_geo1_wp1_isVolNoise_vol_noise = `run("opadd -e -n -v volumevop vol_noise")`
+oplocate -x `$arg2 + 0.027862697082586013` -y `$arg3 + 3.2864356906063401` $_obj_geo1_wp1_isVolNoise_vol_noise
+opspareds '    group {         name    "stdswitcher3"         label   "Vex Setup"          parm {             name    "vexsrc"             baseparm             label   "Vex Source"             export  all         }         parm {             name    "shoppath"             baseparm             label   "Shop Path"             export  all         }         parm {             name    "script"             baseparm             label   "Script"             export  all         }         parm {             name    "clear"             baseparm             label   "Re-load VEX Functions"             export  all         }         parm {             name    "vop_compiler"             baseparm             label   "Compiler"             export  none         }         parm {             name    "vop_forcecompile"             baseparm             label   "Force Compile"             export  none         }         parm {             name    "vex_cwdpath"             baseparm             label   "Evaluation Node Path"             export  none         }         parm {             name    "vex_outputmask"             baseparm             label   "Export Parameters"             export  none         }     }      group {         name    "stdswitcher3_1"         label   "Volume Bindings"          parm {             name    "vdb_signedflood"             baseparm             label   "Signed-Flood Fill Output SDF VDBs"             export  none         }         parm {             name    "autobind"             baseparm             label   "Autobind by Name"             export  none         }         parm {             name    "bindeach"             baseparm             label   "Bind Each to Density"             export  none         }         multiparm {             name    "bindings"             label    "Number of Bindings"             baseparm             default 0             disablewhen "{ autobind == 1 } { bindeach == 1 }"             parmtag { "multistartoffset" "1" }              parm {                 name    "bindprimname#"                 baseparm                 label   "Primitive Name"                 export  none             }             parm {                 name    "bindprim#"                 baseparm                 label   "Primitive"                 export  none             }             parm {                 name    "bindname#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }      }      parm {         name    "P"         label   "P"         type    float         invisible         size    3         default { "0" "0" "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "ix"         label   "IX"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "iy"         label   "IY"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "iz"         label   "IZ"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "resx"         label   "ResX"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "resy"         label   "ResY"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "resz"         label   "ResZ"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "dPdx"         label   "dPdx"         type    float         invisible         size    3         default { "0" "0" "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "dPdy"         label   "dPdy"         type    float         invisible         size    3         default { "0" "0" "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "dPdz"         label   "dPdz"         type    float         invisible         size    3         default { "0" "0" "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "center"         label   "Center"         type    float         invisible         size    3         default { "0" "0" "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "Time"         label   "Time"         type    float         invisible         default { "0" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "Timeinc"         label   "Timeinc"         type    float         invisible         default { "0" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "Frame"         label   "Frame"         type    float         invisible         default { "0" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "OpInput2"         label   "Second Input"         type    string         invisible         default { "" }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "OpInput3"         label   "Third Input"         type    string         invisible         default { "" }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "OpInput4"         label   "Fourth Input"         type    string         invisible         default { "" }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "OpInput1"         label   "First Input"         type    string         invisible         default { "" }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "density"         label   "density"         type    float         invisible         default { "0" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "vex_multithread"         baseparm         label   "Enable Multithreading"         export  none     }     parm {         name    "vex_geometrygenerator"         baseparm         label   "Only Output Created Geometry"         export  none     }     parm {         name    "creator"         label   "createdbyigorsi 20190825"         type    label         invisible         default { "" }     } ' $_obj_geo1_wp1_isVolNoise_vol_noise
+opparm $_obj_geo1_wp1_isVolNoise_vol_noise  bindings ( 1 )
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_vol_noise bindeach
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../bindeach")' $_obj_geo1_wp1_isVolNoise_vol_noise/bindeach
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_vol_noise bindprimname1
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'chs("../bindprimname1")' $_obj_geo1_wp1_isVolNoise_vol_noise/bindprimname1
+chblockend
+opparm -V 17.5.173 $_obj_geo1_wp1_isVolNoise_vol_noise stdswitcher ( 1 1 ) vexsrc ( shop ) shoppath ( ../volume_noise/scalarvolumenoise1 ) vdb_signedflood ( off ) autobind ( off ) bindeach ( bindeach ) bindings ( 1 ) bindprimname1 ( bindprimname1 ) bindname1 ( density ) stdswitcher3 ( 1 1 )
+opcolor -c 0 0.20000000298023224 0.60000002384185791 $_obj_geo1_wp1_isVolNoise_vol_noise
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isVolNoise_vol_noise
+opexprlanguage -s hscript $_obj_geo1_wp1_isVolNoise_vol_noise
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isVolNoise_vol_noise
+opcf $_obj_geo1_wp1_isVolNoise_vol_noise
+
+# Node $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopglobal1 (Vop/volumevopglobal)
+set _obj_geo1_wp1_isVolNoise_vol_noise_volumevopglobal1 = `run("opadd -e -n -v volumevopglobal volumevopglobal1")`
+oplocate -x `$arg2 + -0.47275099999999998` -y `$arg3 + 2.5251999999999999` $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopglobal1
+opspareds '    parm {         name    "creator"         label   "createdbyigorsi 20190825"         type    label         invisible         default { "" }     } ' $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopglobal1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopglobal1
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopglobal1
+opexprlanguage -s hscript $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopglobal1
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopglobal1
+
+# Node $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopoutput1 (Vop/volumevopoutput)
+set _obj_geo1_wp1_isVolNoise_vol_noise_volumevopoutput1 = `run("opadd -e -n -v volumevopoutput volumevopoutput1")`
+oplocate -x `$arg2 + 7.1834300000000004` -y `$arg3 + 2.48468` $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopoutput1
+opspareds '    parm {         name    "sum"         baseparm         label   "sum"         invisible         export  none     }     parm {         name    "creator"         label   "createdbyigorsi 20190825"         type    label         invisible         default { "" }     } ' $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopoutput1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopoutput1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopoutput1
+opexprlanguage -s hscript $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopoutput1
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopoutput1
+opcf ..
+opcf ..
+opcf $_obj_geo1_wp1_isVolNoise
+opcf $_obj_geo1_wp1_isVolNoise_vol_noise
+oporder -e volumevopglobal1 volumevopoutput1 
+opcf ..
+
+# Node $_obj_geo1_wp1_isVolNoise_volume_noise (Sop/shopnet)
+set _obj_geo1_wp1_isVolNoise_volume_noise = `run("opadd -e -n -v shopnet volume_noise")`
+oplocate -x `$arg2 + 2.8555856625234668` -y `$arg3 + 3.4877270401487364` $_obj_geo1_wp1_isVolNoise_volume_noise
+opspareds '    parm {         name    "use_rest"         label   "Use Rest"         type    toggle         default { [ "off" hscript-expr ] }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "additive"         label   "Additive Turbulence"         type    toggle         default { [ "off" hscript-expr ] }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "timescale"         label   "Timescale"         type    float         default { "1" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "turbulence_freq"         label   "Turbulence Frequency"         type    float         default { "1" }         range   { 0 10 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "turbulence_scale"         label   "Turbulence Scale"         type    float         size    3         default { "1" "1" "1" }         range   { 0 10 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "srcmin"         label   "Turbulence Min Noise"         type    float         default { "-0.5" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "srcmax"         label   "Turbulence Max Noise"         type    float         default { "0.5" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "sharpness"         label   "Turbulence Sharpness"         type    float         default { "0.5" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "destmin"         label   "Turbulence Influence"         type    float         default { "0" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "seed"         label   "Turbulence Seed"         type    float         default { "0" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "amp"         label   "Turbulence Amplitude"         type    float         default { "0" }         range   { -1 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "rough"         label   "Turbulence Roughness"         type    float         default { "0.1" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "maxoctave"         label   "Turbulence Octaves"         type    integer         default { "2" }         range   { 0 32 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "enable_cells"         label   "Enable Cellular Noise"         type    toggle         default { [ "on" hscript-expr ] }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "change_on_noise"         label   "Adaptive Cells"         type    toggle         default { [ "on" hscript-expr ] }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "invert_cells"         label   "Invert Cells"         type    toggle         default { [ "on" hscript-expr ] }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "additive_cells"         label   "Additive Cells"         type    toggle         default { [ "on" hscript-expr ] }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "cell_min"         label   "Cell Minimum"         type    float         default { "0.4" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "cell_max"         label   "Cell Maximum"         type    float         default { "0.6" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "cell_sharpness"         label   "Cell Sharpness"         type    float         default { "0.6492" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "cell_influence"         label   "Cell Influence"         type    float         default { "1" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "voronoi_noise_seed"         label   "Cell Seed"         type    float         default { "0" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "cell_frequency"         label   "Cell Frequency"         type    float         default { "2.467" }         range   { 0 10 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "cell_scale"         label   "Cell Scale"         type    float         size    3         default { "1" "1" "1" }         range   { 0 10 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "cell_distance"         label   "Cell Distance"         type    float         default { "0.4874" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "clampoutput"         label   "Clamp Output"         type    toggle         default { [ "on" hscript-expr ] }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "creator"         label   "createdbyigorsi 20190825"         type    label         invisible         default { "" }     } ' $_obj_geo1_wp1_isVolNoise_volume_noise
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise use_rest
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../use_rest")' $_obj_geo1_wp1_isVolNoise_volume_noise/use_rest
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise additive
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../additive")' $_obj_geo1_wp1_isVolNoise_volume_noise/additive
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise timescale
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../timescale")' $_obj_geo1_wp1_isVolNoise_volume_noise/timescale
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise turbulence_freq
+chkey -t 0 -v 0.01 -m 0 -a 0 -A 0 -T a  -F 'ch("../turbulence_freq")' $_obj_geo1_wp1_isVolNoise_volume_noise/turbulence_freq
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise turbulence_scale1
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../turbulence_scale1")' $_obj_geo1_wp1_isVolNoise_volume_noise/turbulence_scale1
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise turbulence_scale2
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../turbulence_scale2")' $_obj_geo1_wp1_isVolNoise_volume_noise/turbulence_scale2
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise turbulence_scale3
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../turbulence_scale3")' $_obj_geo1_wp1_isVolNoise_volume_noise/turbulence_scale3
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise srcmin
+chkey -t 0 -v -0.5 -m 0 -a 0 -A 0 -T a  -F 'ch("../srcmin")' $_obj_geo1_wp1_isVolNoise_volume_noise/srcmin
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise srcmax
+chkey -t 0 -v 0.5 -m 0 -a 0 -A 0 -T a  -F 'ch("../srcmax")' $_obj_geo1_wp1_isVolNoise_volume_noise/srcmax
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise sharpness
+chkey -t 0 -v 0.5 -m 0 -a 0 -A 0 -T a  -F 'ch("../sharpness")' $_obj_geo1_wp1_isVolNoise_volume_noise/sharpness
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise destmin
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../destmin")' $_obj_geo1_wp1_isVolNoise_volume_noise/destmin
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise seed
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../seed")' $_obj_geo1_wp1_isVolNoise_volume_noise/seed
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise amp
+chkey -t 0 -v 0.10000000000000001 -m 0 -a 0 -A 0 -T a  -F 'ch("../amp")' $_obj_geo1_wp1_isVolNoise_volume_noise/amp
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise rough
+chkey -t 0 -v 0.10000000000000001 -m 0 -a 0 -A 0 -T a  -F 'ch("../rough")' $_obj_geo1_wp1_isVolNoise_volume_noise/rough
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise maxoctave
+chkey -t 0 -v 2 -m 0 -a 0 -A 0 -T a  -F 'ch("../maxoctave")' $_obj_geo1_wp1_isVolNoise_volume_noise/maxoctave
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise enable_cells
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../enable_cells")' $_obj_geo1_wp1_isVolNoise_volume_noise/enable_cells
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise change_on_noise
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../change_on_noise")' $_obj_geo1_wp1_isVolNoise_volume_noise/change_on_noise
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise invert_cells
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../invert_cells")' $_obj_geo1_wp1_isVolNoise_volume_noise/invert_cells
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise additive_cells
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../additive_cells")' $_obj_geo1_wp1_isVolNoise_volume_noise/additive_cells
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise cell_min
+chkey -t 0 -v 0.10100000000000001 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_min")' $_obj_geo1_wp1_isVolNoise_volume_noise/cell_min
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise cell_max
+chkey -t 0 -v 0.59999999999999998 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_max")' $_obj_geo1_wp1_isVolNoise_volume_noise/cell_max
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise cell_sharpness
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_sharpness")' $_obj_geo1_wp1_isVolNoise_volume_noise/cell_sharpness
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise cell_influence
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_influence")' $_obj_geo1_wp1_isVolNoise_volume_noise/cell_influence
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise voronoi_noise_seed
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../voronoi_noise_seed")' $_obj_geo1_wp1_isVolNoise_volume_noise/voronoi_noise_seed
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise cell_frequency
+chkey -t 0 -v 6 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_frequency")' $_obj_geo1_wp1_isVolNoise_volume_noise/cell_frequency
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise cell_scale1
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_scale1")' $_obj_geo1_wp1_isVolNoise_volume_noise/cell_scale1
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise cell_scale2
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_scale2")' $_obj_geo1_wp1_isVolNoise_volume_noise/cell_scale2
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise cell_scale3
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_scale3")' $_obj_geo1_wp1_isVolNoise_volume_noise/cell_scale3
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise cell_distance
+chkey -t 0 -v 2 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_distance")' $_obj_geo1_wp1_isVolNoise_volume_noise/cell_distance
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise clampoutput
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../clampoutput")' $_obj_geo1_wp1_isVolNoise_volume_noise/clampoutput
+chblockend
+opparm -V 17.5.173 $_obj_geo1_wp1_isVolNoise_volume_noise use_rest ( use_rest ) additive ( additive ) timescale ( timescale ) turbulence_freq ( turbulence_freq ) turbulence_scale ( turbulence_scale1 turbulence_scale2 turbulence_scale3 ) srcmin ( srcmin ) srcmax ( srcmax ) sharpness ( sharpness ) destmin ( destmin ) seed ( seed ) amp ( amp ) rough ( rough ) maxoctave ( maxoctave ) enable_cells ( enable_cells ) change_on_noise ( change_on_noise ) invert_cells ( invert_cells ) additive_cells ( additive_cells ) cell_min ( cell_min ) cell_max ( cell_max ) cell_sharpness ( cell_sharpness ) cell_influence ( cell_influence ) voronoi_noise_seed ( voronoi_noise_seed ) cell_frequency ( cell_frequency ) cell_scale ( cell_scale1 cell_scale2 cell_scale3 ) cell_distance ( cell_distance ) clampoutput ( clampoutput )
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_geo1_wp1_isVolNoise_volume_noise
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isVolNoise_volume_noise
+opexprlanguage -s hscript $_obj_geo1_wp1_isVolNoise_volume_noise
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isVolNoise_volume_noise
+opcf $_obj_geo1_wp1_isVolNoise_volume_noise
+
+# Node $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 (Shop/scalarvolumenoise)
+set _obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 = `run("opadd -e -n -v scalarvolumenoise scalarvolumenoise1")`
+oplocate -x `$arg2 + 4.8963200000000002` -y `$arg3 + 2.1233300000000002` $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1
+opspareds '    parm {         name    "use_rest"         baseparm         label   "Use Rest"         export  none     }     parm {         name    "additive"         baseparm         label   "Additive Turbulence"         export  none     }     parm {         name    "timescale"         baseparm         label   "Timescale"         export  none     }     parm {         name    "turbulence_freq"         baseparm         label   "Turbulence Frequency"         export  none     }     parm {         name    "turbulence_scale"         baseparm         label   "Turbulence Scale"         export  none     }     parm {         name    "srcmin"         baseparm         label   "Turbulence Min Noise"         export  none     }     parm {         name    "srcmax"         baseparm         label   "Turbulence Max Noise"         export  none     }     parm {         name    "sharpness"         baseparm         label   "Turbulence Sharpness"         export  none     }     parm {         name    "destmin"         baseparm         label   "Turbulence Influence"         export  none     }     parm {         name    "seed"         baseparm         label   "Turbulence Seed"         export  none     }     parm {         name    "amp"         baseparm         label   "Turbulence Amplitude"         export  none     }     parm {         name    "rough"         baseparm         label   "Turbulence Roughness"         export  none     }     parm {         name    "maxoctave"         baseparm         label   "Turbulence Octaves"         export  none     }     parm {         name    "enable_cells"         baseparm         label   "Enable Cellular Noise"         export  none     }     parm {         name    "change_on_noise"         baseparm         label   "Adaptive Cells"         export  none     }     parm {         name    "invert_cells"         baseparm         label   "Invert Cells"         export  none     }     parm {         name    "additive_cells"         baseparm         label   "Additive Cells"         export  none     }     parm {         name    "cell_min"         baseparm         label   "Cell Minimum"         export  none     }     parm {         name    "cell_max"         baseparm         label   "Cell Maximum"         export  none     }     parm {         name    "cell_sharpness"         baseparm         label   "Cell Sharpness"         export  none     }     parm {         name    "cell_influence"         baseparm         label   "Cell Influence"         export  none     }     parm {         name    "voronoi_noise_seed"         baseparm         label   "Cell Seed"         export  none     }     parm {         name    "cell_frequency"         baseparm         label   "Cell Frequency"         export  none     }     parm {         name    "cell_scale"         baseparm         label   "Cell Scale"         export  none     }     parm {         name    "cell_distance"         baseparm         label   "Cell Distance"         export  none     }     parm {         name    "clampoutput"         baseparm         label   "Clamp Output"         export  none     }     parm {         name    "creator"         label   "createdbyigorsi 20190825"         type    label         invisible         default { "" }     } ' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 use_rest
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../use_rest")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/use_rest
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 additive
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../additive")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/additive
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 timescale
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../timescale")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/timescale
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 turbulence_freq
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../turbulence_freq")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/turbulence_freq
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 turbulence_scale1
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../turbulence_scale1")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/turbulence_scale1
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 turbulence_scale2
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../turbulence_scale2")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/turbulence_scale2
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 turbulence_scale3
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../turbulence_scale3")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/turbulence_scale3
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 srcmin
+chkey -t 0 -v -0.5 -m 0 -a 0 -A 0 -T a  -F 'ch("../srcmin")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/srcmin
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 srcmax
+chkey -t 0 -v 0.5 -m 0 -a 0 -A 0 -T a  -F 'ch("../srcmax")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/srcmax
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 sharpness
+chkey -t 0 -v 0.5 -m 0 -a 0 -A 0 -T a  -F 'ch("../sharpness")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/sharpness
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 destmin
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../destmin")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/destmin
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 seed
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../seed")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/seed
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 amp
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../amp")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/amp
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 rough
+chkey -t 0 -v 0.10000000000000001 -m 0 -a 0 -A 0 -T a  -F 'ch("../rough")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/rough
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 maxoctave
+chkey -t 0 -v 2 -m 0 -a 0 -A 0 -T a  -F 'ch("../maxoctave")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/maxoctave
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 enable_cells
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../enable_cells")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/enable_cells
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 change_on_noise
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../change_on_noise")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/change_on_noise
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 invert_cells
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../invert_cells")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/invert_cells
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 additive_cells
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../additive_cells")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/additive_cells
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 cell_min
+chkey -t 0 -v 0.40000000000000002 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_min")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/cell_min
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 cell_max
+chkey -t 0 -v 0.59999999999999998 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_max")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/cell_max
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 cell_sharpness
+chkey -t 0 -v 0.6492 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_sharpness")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/cell_sharpness
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 cell_influence
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_influence")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/cell_influence
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 voronoi_noise_seed
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../voronoi_noise_seed")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/voronoi_noise_seed
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 cell_frequency
+chkey -t 0 -v 2.4670000000000001 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_frequency")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/cell_frequency
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 cell_scale1
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_scale1")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/cell_scale1
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 cell_scale2
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_scale2")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/cell_scale2
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 cell_scale3
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_scale3")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/cell_scale3
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 cell_distance
+chkey -t 0 -v 0.4874 -m 0 -a 0 -A 0 -T a  -F 'ch("../cell_distance")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/cell_distance
+chadd -t 0 0 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 clampoutput
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../clampoutput")' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1/clampoutput
+chblockend
+opparm $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1 use_rest ( use_rest ) additive ( additive ) timescale ( timescale ) turbulence_freq ( turbulence_freq ) turbulence_scale ( turbulence_scale1 turbulence_scale2 turbulence_scale3 ) srcmin ( srcmin ) srcmax ( srcmax ) sharpness ( sharpness ) destmin ( destmin ) seed ( seed ) amp ( amp ) rough ( rough ) maxoctave ( maxoctave ) enable_cells ( enable_cells ) change_on_noise ( change_on_noise ) invert_cells ( invert_cells ) additive_cells ( additive_cells ) cell_min ( cell_min ) cell_max ( cell_max ) cell_sharpness ( cell_sharpness ) cell_influence ( cell_influence ) voronoi_noise_seed ( voronoi_noise_seed ) cell_frequency ( cell_frequency ) cell_scale ( cell_scale1 cell_scale2 cell_scale3 ) cell_distance ( cell_distance ) clampoutput ( clampoutput )
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1
+opexprlanguage -s hscript $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isVolNoise_volume_noise_scalarvolumenoise1
+opcf ..
+
+# Node $_obj_geo1_wp1_isVolNoise_null1 (Sop/null)
+set _obj_geo1_wp1_isVolNoise_null1 = `run("opadd -e -n -v null null1")`
+oplocate -x `$arg2 + -1.1175871006408045e-08` -y `$arg3 + 4.9228710395792765` $_obj_geo1_wp1_isVolNoise_null1
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isVolNoise_null1
+opexprlanguage -s hscript $_obj_geo1_wp1_isVolNoise_null1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isVolNoise_null1
+
+# Node $_obj_geo1_wp1_isVolNoise_OUT (Sop/output)
+set _obj_geo1_wp1_isVolNoise_OUT = `run("opadd -e -n -v output OUT")`
+oplocate -x `$arg2 + 0.027862697082586041` -y `$arg3 + 2.1637719268272182` $_obj_geo1_wp1_isVolNoise_OUT
+opcolor -c 0.85000002384185791 0.05000000074505806 0.05000000074505806 $_obj_geo1_wp1_isVolNoise_OUT
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isVolNoise_OUT
+opexprlanguage -s hscript $_obj_geo1_wp1_isVolNoise_OUT
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isVolNoise_OUT
+oporder -e vol_noise volume_noise null1 OUT 
+opcf ..
+opset -p on $_obj_geo1_wp1_isVolNoise
+
+opcf $arg1
+opwire -n $_obj_geo1_wp1_name1 -0 $_obj_geo1_wp1_isVolNoise
+opcf $_obj_geo1_wp1_isVolNoise
+opwire -n $_obj_geo1_wp1_isVolNoise_null1 -0 $_obj_geo1_wp1_isVolNoise_vol_noise
+opcf $_obj_geo1_wp1_isVolNoise_vol_noise
+opwire -n -o 1 $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopglobal1 -0 $_obj_geo1_wp1_isVolNoise_vol_noise_volumevopoutput1
+opcf ..
+opcf $_obj_geo1_wp1_isVolNoise_volume_noise
+opcf ..
+opwire -n -i 0 -0 $_obj_geo1_wp1_isVolNoise_null1
+opwire -n $_obj_geo1_wp1_isVolNoise_vol_noise -0 $_obj_geo1_wp1_isVolNoise_OUT
+opcf ..
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_wp1_isVolNoise
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_wp1_isVolNoise
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="subnet20" label="isCreateVelocityVol" icon="SOP_subnet">
+    <helpURL>operator:Sop/subnet</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/subnet</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('subnet'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol (Sop/subnet)
+set _obj_geo1_wp1_isCreateVelocityVol = `run("opadd -e -n -v subnet isCreateVelocityVol")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_wp1_isCreateVelocityVol
+opspareds '    parm {         name    "label1"         baseparm         label   "Input #1 Label"         invisible         export  all     }     parm {         name    "label2"         baseparm         label   "Input #2 Label"         invisible         export  all     }     parm {         name    "label3"         baseparm         label   "Input #3 Label"         invisible         export  all     }     parm {         name    "label4"         baseparm         label   "Input #4 Label"         invisible         export  all     }     parm {         name    "keep_only"         label   "keep_only"         type    string         default { "@name=density" }         menutoggle {             [ "opmenu -l blast1 group" ]         }         parmtag { "autoscope" "0000000000000000" }         parmtag { "script_action" "import soputils\\nkwargs[\'geometrytype\'] = kwargs[\'node\'].parmTuple(\'grouptype\')\\nkwargs[\'inputindex\'] = 0\\nsoputils.selectGroupParm(kwargs)" }         parmtag { "script_action_help" "Select geometry from an available viewport.\\nShift-click to turn on Select Groups." }         parmtag { "script_action_icon" "BUTTONS_reselect" }     }     parm {         name    "rename"         label   "Rename"         type    toggle         default { "0" }         range   { 0 10 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "name"         label   "Name"         type    string         default { "vel" }         hidewhen "{ rename == 0 }"         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "zero_vector"         label   "zero_vector"         type    toggle         default { "0" }         range   { 0 10 }         parmtag { "autoscope" "0000000000000000" }     } ' $_obj_geo1_wp1_isCreateVelocityVol
+opcolor -c 0.15000000596046448 0.34999999403953552 0.75 $_obj_geo1_wp1_isCreateVelocityVol
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol
+opcf $_obj_geo1_wp1_isCreateVelocityVol
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_vol_x (Sop/attribwrangle)
+set _obj_geo1_wp1_isCreateVelocityVol_vol_x = `run("opadd -e -n -v attribwrangle vol_x")`
+oplocate -x `$arg2 + -2.3131200000000001` -y `$arg3 + 0.94450804189984161` $_obj_geo1_wp1_isCreateVelocityVol_vol_x
+opparm $_obj_geo1_wp1_isCreateVelocityVol_vol_x  bindings ( 0 ) groupbindings ( 0 )
+opparm $_obj_geo1_wp1_isCreateVelocityVol_vol_x class ( primitive ) snippet ( 'string temp_name = detail(0,"__temp_name");\ns@name = temp_name+".x";' )
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_vol_x
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_vol_x
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isCreateVelocityVol_vol_x
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_name_choice (Sop/attribwrangle)
+set _obj_geo1_wp1_isCreateVelocityVol_name_choice = `run("opadd -e -n -v attribwrangle name_choice")`
+oplocate -x `$arg2 + -0.018057000000000004` -y `$arg3 + 2.8643380418998414` $_obj_geo1_wp1_isCreateVelocityVol_name_choice
+opspareds '    group {         name    "folder1"         label   "Code"          parm {             name    "group"             baseparm             label   "Group"             export  none             bindselector points "Modify Points"                 "Select the points to affect and press Enter to complete."                 0 1 0xffffffff 0 grouptype 0         }         parm {             name    "grouptype"             baseparm             label   "Group Type"             export  none         }         parm {             name    "class"             baseparm             label   "Run Over"             export  none         }         parm {             name    "vex_numcount"             baseparm             label   "Number Count"             export  none         }         parm {             name    "vex_threadjobsize"             baseparm             label   "Thread Job Size"             export  none         }         parm {             name    "snippet"             baseparm             label   "VEXpression"             export  all         }         parm {             name    "exportlist"             baseparm             label   "Attributes to Create"             export  none         }         parm {             name    "vex_strict"             baseparm             label   "Enforce Prototypes"             export  none         }     }      group {         name    "folder1_1"         label   "Bindings"          parm {             name    "autobind"             baseparm             label   "Autobind by Name"             export  none         }         multiparm {             name    "bindings"             label    "Number of Bindings"             baseparm             default 0             parmtag { "autoscope" "0000000000000000" }             parmtag { "multistartoffset" "1" }              parm {                 name    "bindname#"                 baseparm                 label   "Attribute Name"                 export  none             }             parm {                 name    "bindparm#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "groupautobind"             baseparm             label   "Autobind Groups by Name"             export  none         }         multiparm {             name    "groupbindings"             label    "Group Bindings"             baseparm             default 0             parmtag { "autoscope" "0000000000000000" }             parmtag { "multistartoffset" "1" }              parm {                 name    "bindgroupname#"                 baseparm                 label   "Group Name"                 export  none             }             parm {                 name    "bindgroupparm#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "vex_cwdpath"             baseparm             label   "Evaluation Node Path"             export  none         }         parm {             name    "vex_outputmask"             baseparm             label   "Export Parameters"             export  none         }         parm {             name    "vex_updatenmls"             baseparm             label   "Update Normals If Displaced"             export  none         }         parm {             name    "vex_matchattrib"             baseparm             label   "Attribute to Match"             export  none         }         parm {             name    "vex_inplace"             baseparm             label   "Compute Results In Place"             export  none         }         parm {             name    "vex_selectiongroup"             baseparm             label   "Output Selection Group"             export  none         }     }      parm {         name    "rename"         label   "Rename"         type    integer         default { "0" }         range   { 0 10 }     }     parm {         name    "name"         label   "Name"         type    string         default { "" }     } ' $_obj_geo1_wp1_isCreateVelocityVol_name_choice
+opparm $_obj_geo1_wp1_isCreateVelocityVol_name_choice  bindings ( 0 ) groupbindings ( 0 )
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_name_choice rename
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../rename")' $_obj_geo1_wp1_isCreateVelocityVol_name_choice/rename
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_name_choice name
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'chs("../name")' $_obj_geo1_wp1_isCreateVelocityVol_name_choice/name
+chblockend
+opparm $_obj_geo1_wp1_isCreateVelocityVol_name_choice class ( detail ) snippet ( 'if(chi("rename"))\n{s@__temp_name = chs("name");}\nelse\n{s@__temp_name = string(prim(0,"name",0));}' ) rename ( rename ) name ( name )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_name_choice
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_name_choice
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isCreateVelocityVol_name_choice
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_vol_y (Sop/attribwrangle)
+set _obj_geo1_wp1_isCreateVelocityVol_vol_y = `run("opadd -e -n -v attribwrangle vol_y")`
+oplocate -x `$arg2 + 0.104614` -y `$arg3 + 0.94450804189984161` $_obj_geo1_wp1_isCreateVelocityVol_vol_y
+opparm $_obj_geo1_wp1_isCreateVelocityVol_vol_y  bindings ( 0 ) groupbindings ( 0 )
+opparm $_obj_geo1_wp1_isCreateVelocityVol_vol_y class ( primitive ) snippet ( 'string temp_name = detail(0,"__temp_name");\ns@name = temp_name+".y";' )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_vol_y
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_vol_y
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isCreateVelocityVol_vol_y
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_vol_z (Sop/attribwrangle)
+set _obj_geo1_wp1_isCreateVelocityVol_vol_z = `run("opadd -e -n -v attribwrangle vol_z")`
+oplocate -x `$arg2 + 2.5600000000000001` -y `$arg3 + 0.94450804189984161` $_obj_geo1_wp1_isCreateVelocityVol_vol_z
+opparm $_obj_geo1_wp1_isCreateVelocityVol_vol_z  bindings ( 0 ) groupbindings ( 0 )
+opparm $_obj_geo1_wp1_isCreateVelocityVol_vol_z class ( primitive ) snippet ( 'string temp_name = detail(0,"__temp_name");\ns@name = temp_name+".z";' )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_vol_z
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_vol_z
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isCreateVelocityVol_vol_z
+opcf ..
+opcf $_obj_geo1_wp1_isCreateVelocityVol
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_null1 (Sop/null)
+set _obj_geo1_wp1_isCreateVelocityVol_null1 = `run("opadd -e -n -v null null1")`
+oplocate -x `$arg2 + -0.018057` -y `$arg3 + 4.9333999999999998` $_obj_geo1_wp1_isCreateVelocityVol_null1
+opset -d off -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_null1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_null1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_null1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_merge1 (Sop/merge)
+set _obj_geo1_wp1_isCreateVelocityVol_merge1 = `run("opadd -e -n -v merge merge1")`
+oplocate -x `$arg2 + 0.19874643516341584` -y `$arg3 + -1.4953839371502378` $_obj_geo1_wp1_isCreateVelocityVol_merge1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_merge1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_merge1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_merge1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_blast1 (Sop/blast)
+set _obj_geo1_wp1_isCreateVelocityVol_blast1 = `run("opadd -e -n -v blast blast1")`
+oplocate -x `$arg2 + -0.018057000000000038` -y `$arg3 + 3.9333999880790707` $_obj_geo1_wp1_isCreateVelocityVol_blast1
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_blast1 group
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'chs("../keep_only")' $_obj_geo1_wp1_isCreateVelocityVol_blast1/group
+chblockend
+opparm -V 17.5.173 $_obj_geo1_wp1_isCreateVelocityVol_blast1 group ( group ) negate ( on )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_blast1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_blast1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_blast1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_OUT (Sop/output)
+set _obj_geo1_wp1_isCreateVelocityVol_OUT = `run("opadd -e -n -v output OUT")`
+oplocate -x `$arg2 + 0.19874643516341584` -y `$arg3 + -2.7749719857763537` $_obj_geo1_wp1_isCreateVelocityVol_OUT
+opcolor -c 0.85000002384185791 0.05000000074505806 0.05000000074505806 $_obj_geo1_wp1_isCreateVelocityVol_OUT
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_OUT
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_OUT
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_OUT
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler (Sop/subnet)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler = `run("opadd -e -n -v subnet enabler")`
+oplocate -x `$arg2 + -2.3131200000000001` -y `$arg3 + -0.024658571313149295` $_obj_geo1_wp1_isCreateVelocityVol_enabler
+opspareds '    parm {         name    "label1"         baseparm         label   "Input #1 Label"         invisible         export  all     }     parm {         name    "label2"         baseparm         label   "Input #2 Label"         invisible         export  all     }     parm {         name    "label3"         baseparm         label   "Input #3 Label"         invisible         export  all     }     parm {         name    "label4"         baseparm         label   "Input #4 Label"         invisible         export  all     }     parm {         name    "enable"         label   "enable"         type    float         default { "0" }         range   { 0 10 }     } ' $_obj_geo1_wp1_isCreateVelocityVol_enabler
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_enabler enable
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../zero_vector")' $_obj_geo1_wp1_isCreateVelocityVol_enabler/enable
+chblockend
+opcolor -c 0.15000000596046448 0.34999999403953552 0.75 $_obj_geo1_wp1_isCreateVelocityVol_enabler
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler
+opcf $_obj_geo1_wp1_isCreateVelocityVol_enabler
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler_IN (Sop/null)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler_IN = `run("opadd -e -n -v null IN")`
+oplocate -x `$arg2 + -5.9547390547429977` -y `$arg3 + -0.098416356690489315` $_obj_geo1_wp1_isCreateVelocityVol_enabler_IN
+opcolor -c 0.090000003576278687 0.43000000715255737 0.46000000834465027 $_obj_geo1_wp1_isCreateVelocityVol_enabler_IN
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler_IN
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler_IN
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler_IN
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler_OUT (Sop/output)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler_OUT = `run("opadd -e -n -v output OUT")`
+oplocate -x `$arg2 + -5.9547390454297968` -y `$arg3 + -5.6378590955812848` $_obj_geo1_wp1_isCreateVelocityVol_enabler_OUT
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_enabler_OUT outputidx
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'max(opdigits(".")-1,0)' $_obj_geo1_wp1_isCreateVelocityVol_enabler_OUT/outputidx
+chblockend
+opcolor -c 0.85000002384185791 0.05000000074505806 0.05000000074505806 $_obj_geo1_wp1_isCreateVelocityVol_enabler_OUT
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler_OUT
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler_OUT
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler_OUT
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN (Sop/object_merge)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN = `run("opadd -e -n -v object_merge MRG_IN")`
+oplocate -x `$arg2 + -6.0513851495191009` -y `$arg3 + -1.2496640376009733` $_obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN
+opparm $_obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN  numobj ( 1 )
+opparm -V 17.5.173 $_obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN xformtype ( none ) objpath1 ( ../IN )
+opcolor -c 0.11999999731779099 0.43000000715255737 0.36000001430511475 $_obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler_switch1 (Sop/switch)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler_switch1 = `run("opadd -e -n -v switch switch1")`
+oplocate -x `$arg2 + -5.9547390547429977` -y `$arg3 + -4.4465780955812848` $_obj_geo1_wp1_isCreateVelocityVol_enabler_switch1
+chblockbegin
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isCreateVelocityVol_enabler_switch1 input
+chkey -t 40.791666666666664 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../enable")' $_obj_geo1_wp1_isCreateVelocityVol_enabler_switch1/input
+chblockend
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler_switch1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler_switch1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler_switch1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler_null1 (Sop/null)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler_null1 = `run("opadd -e -n -v null null1")`
+oplocate -x `$arg2 + -4.7422655275904813` -y `$arg3 + -3.3073332935626563` $_obj_geo1_wp1_isCreateVelocityVol_enabler_null1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler_null1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler_null1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler_null1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1 (Sop/volumemix)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1 = `run("opadd -e -n -v volumemix volumemix1")`
+oplocate -x `$arg2 + -4.7422655275904813` -y `$arg3 + -2.3571679280509392` $_obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1 expr
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F '$V' $_obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1/expr
+chblockend
+opparm -V 17.5.173 $_obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1 dstpremul ( 0 ) srcpremul ( 0 ) postmul ( 0 )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1
+oporder -e IN OUT MRG_IN switch1 null1 volumemix1 
+opcf ..
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler1 (Sop/subnet)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler1 = `run("opadd -e -n -v subnet enabler1")`
+oplocate -x `$arg2 + 0.19874643516341592` -y `$arg3 + -0.055491970021087161` $_obj_geo1_wp1_isCreateVelocityVol_enabler1
+opspareds '    parm {         name    "label1"         baseparm         label   "Input #1 Label"         invisible         export  all     }     parm {         name    "label2"         baseparm         label   "Input #2 Label"         invisible         export  all     }     parm {         name    "label3"         baseparm         label   "Input #3 Label"         invisible         export  all     }     parm {         name    "label4"         baseparm         label   "Input #4 Label"         invisible         export  all     }     parm {         name    "enable"         label   "enable"         type    float         default { "0" }         range   { 0 10 }     } ' $_obj_geo1_wp1_isCreateVelocityVol_enabler1
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_enabler1 enable
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../enabler/enable")' $_obj_geo1_wp1_isCreateVelocityVol_enabler1/enable
+chblockend
+opcolor -c 0.15000000596046448 0.34999999403953552 0.75 $_obj_geo1_wp1_isCreateVelocityVol_enabler1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler1
+opcf $_obj_geo1_wp1_isCreateVelocityVol_enabler1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler1_IN (Sop/null)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler1_IN = `run("opadd -e -n -v null IN")`
+oplocate -x `$arg2 + -5.9547400000000001` -y `$arg3 + -0.098416400000000001` $_obj_geo1_wp1_isCreateVelocityVol_enabler1_IN
+opcolor -c 0.090000003576278687 0.43000000715255737 0.46000000834465027 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_IN
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler1_IN
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler1_IN
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler1_IN
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler1_OUT (Sop/output)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler1_OUT = `run("opadd -e -n -v output OUT")`
+oplocate -x `$arg2 + -5.9547400000000001` -y `$arg3 + -5.6378599999999999` $_obj_geo1_wp1_isCreateVelocityVol_enabler1_OUT
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_OUT outputidx
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'max(opdigits(".")-1,0)' $_obj_geo1_wp1_isCreateVelocityVol_enabler1_OUT/outputidx
+chblockend
+opcolor -c 0.85000002384185791 0.05000000074505806 0.05000000074505806 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_OUT
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler1_OUT
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler1_OUT
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler1_OUT
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN (Sop/object_merge)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN = `run("opadd -e -n -v object_merge MRG_IN")`
+oplocate -x `$arg2 + -6.0513899999999996` -y `$arg3 + -1.24966` $_obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN
+opparm $_obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN  numobj ( 1 )
+opparm -V 17.5.173 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN xformtype ( none ) objpath1 ( ../IN )
+opcolor -c 0.11999999731779099 0.43000000715255737 0.36000001430511475 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1 (Sop/switch)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1 = `run("opadd -e -n -v switch switch1")`
+oplocate -x `$arg2 + -5.9547400000000001` -y `$arg3 + -4.44658` $_obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1
+chblockbegin
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1 input
+chkey -t 40.791666666666664 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../enable")' $_obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1/input
+chblockend
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler1_null1 (Sop/null)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler1_null1 = `run("opadd -e -n -v null null1")`
+oplocate -x `$arg2 + -4.7422700000000004` -y `$arg3 + -3.3073299999999999` $_obj_geo1_wp1_isCreateVelocityVol_enabler1_null1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler1_null1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler1_null1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler1_null1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1 (Sop/volumemix)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1 = `run("opadd -e -n -v volumemix volumemix1")`
+oplocate -x `$arg2 + -4.7422700000000004` -y `$arg3 + -2.35717` $_obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1 expr
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F '$V' $_obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1/expr
+chblockend
+opparm -V 17.5.173 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1 dstpremul ( 0 ) srcpremul ( 0 ) postmul ( 0 )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1
+oporder -e IN OUT MRG_IN switch1 null1 volumemix1 
+opcf ..
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler2 (Sop/subnet)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler2 = `run("opadd -e -n -v subnet enabler2")`
+oplocate -x `$arg2 + 2.5600000000000005` -y `$arg3 + -0.024658571313149302` $_obj_geo1_wp1_isCreateVelocityVol_enabler2
+opspareds '    parm {         name    "label1"         baseparm         label   "Input #1 Label"         invisible         export  all     }     parm {         name    "label2"         baseparm         label   "Input #2 Label"         invisible         export  all     }     parm {         name    "label3"         baseparm         label   "Input #3 Label"         invisible         export  all     }     parm {         name    "label4"         baseparm         label   "Input #4 Label"         invisible         export  all     }     parm {         name    "enable"         label   "enable"         type    float         default { "0" }         range   { 0 10 }     } ' $_obj_geo1_wp1_isCreateVelocityVol_enabler2
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_enabler2 enable
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../enabler/enable")' $_obj_geo1_wp1_isCreateVelocityVol_enabler2/enable
+chblockend
+opcolor -c 0.15000000596046448 0.34999999403953552 0.75 $_obj_geo1_wp1_isCreateVelocityVol_enabler2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler2
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler2
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler2
+opcf $_obj_geo1_wp1_isCreateVelocityVol_enabler2
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler2_IN (Sop/null)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler2_IN = `run("opadd -e -n -v null IN")`
+oplocate -x `$arg2 + -5.9547400000000001` -y `$arg3 + -0.098416400000000001` $_obj_geo1_wp1_isCreateVelocityVol_enabler2_IN
+opcolor -c 0.090000003576278687 0.43000000715255737 0.46000000834465027 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_IN
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler2_IN
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler2_IN
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler2_IN
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler2_OUT (Sop/output)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler2_OUT = `run("opadd -e -n -v output OUT")`
+oplocate -x `$arg2 + -5.9547400000000001` -y `$arg3 + -5.6378599999999999` $_obj_geo1_wp1_isCreateVelocityVol_enabler2_OUT
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_OUT outputidx
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'max(opdigits(".")-1,0)' $_obj_geo1_wp1_isCreateVelocityVol_enabler2_OUT/outputidx
+chblockend
+opcolor -c 0.85000002384185791 0.05000000074505806 0.05000000074505806 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_OUT
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler2_OUT
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler2_OUT
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler2_OUT
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN (Sop/object_merge)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN = `run("opadd -e -n -v object_merge MRG_IN")`
+oplocate -x `$arg2 + -6.0513899999999996` -y `$arg3 + -1.24966` $_obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN
+opparm $_obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN  numobj ( 1 )
+opparm -V 17.5.173 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN xformtype ( none ) objpath1 ( ../IN )
+opcolor -c 0.11999999731779099 0.43000000715255737 0.36000001430511475 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1 (Sop/switch)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1 = `run("opadd -e -n -v switch switch1")`
+oplocate -x `$arg2 + -5.9547400000000001` -y `$arg3 + -4.44658` $_obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1
+chblockbegin
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1 input
+chkey -t 40.791666666666664 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../enable")' $_obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1/input
+chblockend
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler2_null1 (Sop/null)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler2_null1 = `run("opadd -e -n -v null null1")`
+oplocate -x `$arg2 + -4.7422700000000004` -y `$arg3 + -3.3073299999999999` $_obj_geo1_wp1_isCreateVelocityVol_enabler2_null1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler2_null1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler2_null1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler2_null1
+
+# Node $_obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1 (Sop/volumemix)
+set _obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1 = `run("opadd -e -n -v volumemix volumemix1")`
+oplocate -x `$arg2 + -4.7422700000000004` -y `$arg3 + -2.35717` $_obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1 expr
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F '$V' $_obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1/expr
+chblockend
+opparm -V 17.5.173 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1 dstpremul ( 0 ) srcpremul ( 0 ) postmul ( 0 )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1
+opexprlanguage -s hscript $_obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1
+oporder -e IN OUT MRG_IN switch1 null1 volumemix1 
+opcf ..
+oporder -e null1 vol_x name_choice vol_y vol_z merge1 blast1 OUT enabler enabler1 enabler2 
+opcf ..
+opset -p on $_obj_geo1_wp1_isCreateVelocityVol
+
+opcf $arg1
+opwire -n $_obj_geo1_wp1_vdbfrompolygons2 -0 $_obj_geo1_wp1_isCreateVelocityVol
+opcf $_obj_geo1_wp1_isCreateVelocityVol
+opwire -n -i 0 -0 $_obj_geo1_wp1_isCreateVelocityVol_null1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_name_choice -0 $_obj_geo1_wp1_isCreateVelocityVol_vol_x
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_blast1 -0 $_obj_geo1_wp1_isCreateVelocityVol_name_choice
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_name_choice -0 $_obj_geo1_wp1_isCreateVelocityVol_vol_y
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_name_choice -0 $_obj_geo1_wp1_isCreateVelocityVol_vol_z
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler -0 $_obj_geo1_wp1_isCreateVelocityVol_merge1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler1 -1 $_obj_geo1_wp1_isCreateVelocityVol_merge1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler2 -2 $_obj_geo1_wp1_isCreateVelocityVol_merge1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_null1 -0 $_obj_geo1_wp1_isCreateVelocityVol_blast1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_merge1 -0 $_obj_geo1_wp1_isCreateVelocityVol_OUT
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_vol_x -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler
+opcf $_obj_geo1_wp1_isCreateVelocityVol_enabler
+opwire -n -i 0 -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler_IN
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler_switch1 -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler_OUT
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler_switch1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler_null1 -1 $_obj_geo1_wp1_isCreateVelocityVol_enabler_switch1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1 -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler_null1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler_MRG_IN -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler_volumemix1
+opcf ..
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_vol_y -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler1
+opcf $_obj_geo1_wp1_isCreateVelocityVol_enabler1
+opwire -n -i 0 -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_IN
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1 -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_OUT
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler1_null1 -1 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_switch1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1 -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_null1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler1_MRG_IN -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler1_volumemix1
+opcf ..
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_vol_z -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler2
+opcf $_obj_geo1_wp1_isCreateVelocityVol_enabler2
+opwire -n -i 0 -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_IN
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1 -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_OUT
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler2_null1 -1 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_switch1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1 -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_null1
+opwire -n $_obj_geo1_wp1_isCreateVelocityVol_enabler2_MRG_IN -0 $_obj_geo1_wp1_isCreateVelocityVol_enabler2_volumemix1
+opcf ..
+opcf ..
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_wp1_isCreateVelocityVol
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_wp1_isCreateVelocityVol
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="subnet21" label="isRasterizePts" icon="SOP_subnet">
+    <helpURL>operator:Sop/subnet</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/subnet</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('subnet'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_wp1_isRasterizePts (Sop/subnet)
+set _obj_geo1_wp1_isRasterizePts = `run("opadd -e -n -v subnet isRasterizePts")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_wp1_isRasterizePts
+opspareds '    parm {         name    "label1"         baseparm         label   "Input #1 Label"         invisible         export  all     }     parm {         name    "label2"         baseparm         label   "Input #2 Label"         invisible         export  all     }     parm {         name    "label3"         baseparm         label   "Input #3 Label"         invisible         export  all     }     parm {         name    "label4"         baseparm         label   "Input #4 Label"         invisible         export  all     }     parm {         name    "voxelsize"         label   "Voxel Size"         type    float         default { "0.1" }         range   { 1e-05! 5 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "sepparm2"         label   "Separator"         type    separator         default { "" }     }     parm {         name    "radiusscale"         label   "Point Radius Scale"         type    float         default { "1" }         range   { 0! 2 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "useworldspaceunits"         label   "Use World Space for Band"         type    toggle         default { "on" }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "bandwidth"         label   "Half-Band"         type    float         default { "0.3" }         range   { 1e-05! 10 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "sepparm"         label   "Separator"         type    separator         default { "" }     }     parm {         name    "rad"         label   "Rad"         type    float         default { "1" }         range   { 0 1 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "pts"         label   "Pts"         type    integer         default { "1" }         range   { 0 10 }         parmtag { "autoscope" "0000000000000000" }     } ' $_obj_geo1_wp1_isRasterizePts
+opparm -V 17.5.173 $_obj_geo1_wp1_isRasterizePts bandwidth ( 0.02 )
+opcolor -c 0.15000000596046448 0.34999999403953552 0.75 $_obj_geo1_wp1_isRasterizePts
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isRasterizePts
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts
+opcf $_obj_geo1_wp1_isRasterizePts
+
+# Node $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart (Sop/attribwrangle)
+set _obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart = `run("opadd -e -n -v attribwrangle keep_onlt_neseccart")`
+oplocate -x `$arg2 + 0.097992200000000002` -y `$arg3 + -0.51497800000000005` $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart
+opparm $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart  bindings ( 0 ) groupbindings ( 0 )
+opparm $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart snippet ( 'string name = prim(1,"name",0);\nfloat val = point(0,name,@ptnum);\nif (val>0)\n{}\nelse\n{removepoint(0,@ptnum);}\nf@density = val;\n' )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart
+
+# Node $_obj_geo1_wp1_isRasterizePts_dens (Sop/attribwrangle)
+set _obj_geo1_wp1_isRasterizePts_dens = `run("opadd -e -n -v attribwrangle dens")`
+oplocate -x `$arg2 + -0.78967200000000004` -y `$arg3 + -1.9565300000000001` $_obj_geo1_wp1_isRasterizePts_dens
+opparm $_obj_geo1_wp1_isRasterizePts_dens  bindings ( 0 ) groupbindings ( 0 )
+opparm $_obj_geo1_wp1_isRasterizePts_dens snippet ( 'f@density=1;' )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_dens
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_dens
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isRasterizePts_dens
+
+# Node $_obj_geo1_wp1_isRasterizePts_correct_val (Sop/volumewrangle)
+set _obj_geo1_wp1_isRasterizePts_correct_val = `run("opadd -e -n -v volumewrangle correct_val")`
+oplocate -x `$arg2 + 0.406163` -y `$arg3 + -4.0720599999999996` $_obj_geo1_wp1_isRasterizePts_correct_val
+opspareds '    group {         name    "folder1"         label   "Code"          parm {             name    "group"             baseparm             label   "Group"             export  none         }         parm {             name    "bindeach"             baseparm             label   "Bind Each Volume to Density"             export  none         }         parm {             name    "snippet"             baseparm             label   "VEXpression"             export  all         }         parm {             name    "exportlist"             baseparm             label   "Volumes to Write to"             export  none         }         parm {             name    "vex_strict"             baseparm             label   "Enforce Prototypes"             export  none         }     }      group {         name    "folder1_1"         label   "Bindings"          parm {             name    "autobind"             baseparm             label   "Autobind by Name"             export  none         }         multiparm {             name    "bindings"             label    "Number of Bindings"             baseparm             default 0             parmtag { "autoscope" "0000000000000000" }             parmtag { "multistartoffset" "1" }              parm {                 name    "bindprimname#"                 baseparm                 label   "Primitive Name"                 export  none             }             parm {                 name    "bindprim#"                 baseparm                 label   "Primitive"                 export  none             }             parm {                 name    "bindname#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "vex_geometrygenerator"             baseparm             label   "Only Output Created Geometry"             export  none         }         parm {             name    "vdb_signedflood"             baseparm             label   "Signed-Flood Fill Output SDF VDBs"             export  none         }         parm {             name    "vex_cwdpath"             baseparm             label   "Evaluation Node Path"             export  none         }         parm {             name    "vex_outputmask"             baseparm             label   "Export Parameters"             export  none         }     }      parm {         name    "rad"         label   "Rad"         type    float         default { "0" }         range   { 0 1 }     }     parm {         name    "pts"         label   "Pts"         type    integer         default { "0" }         range   { 0 10 }     } ' $_obj_geo1_wp1_isRasterizePts_correct_val
+opparm $_obj_geo1_wp1_isRasterizePts_correct_val  bindings ( 0 )
+chblockbegin
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_correct_val rad
+chkey -t 40.791666666666664 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../rad")' $_obj_geo1_wp1_isRasterizePts_correct_val/rad
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_correct_val pts
+chkey -t 40.791666666666664 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../pts")' $_obj_geo1_wp1_isRasterizePts_correct_val/pts
+chblockend
+opparm $_obj_geo1_wp1_isRasterizePts_correct_val snippet ( 'int h = pcopen(1,"P",v@P,chf("rad"),chi("pts"));\nfloat val = pcfilter(h,"density");\nf@density*=val;' ) rad ( rad ) pts ( pts )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_correct_val
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_correct_val
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isRasterizePts_correct_val
+
+# Node $_obj_geo1_wp1_isRasterizePts_name (Sop/attribwrangle)
+set _obj_geo1_wp1_isRasterizePts_name = `run("opadd -e -n -v attribwrangle name")`
+oplocate -x `$arg2 + 0.406163` -y `$arg3 + -5.79453` $_obj_geo1_wp1_isRasterizePts_name
+opparm $_obj_geo1_wp1_isRasterizePts_name  bindings ( 0 ) groupbindings ( 0 )
+opparm $_obj_geo1_wp1_isRasterizePts_name class ( primitive ) snippet ( 'string name = prim(1,"name",0);\ns@name = name;' )
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_name
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_name
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isRasterizePts_name
+
+# Node $_obj_geo1_wp1_isRasterizePts_attribwrangle1 (Sop/attribwrangle)
+set _obj_geo1_wp1_isRasterizePts_attribwrangle1 = `run("opadd -e -n -v attribwrangle attribwrangle1")`
+oplocate -x `$arg2 + 3.7672500000000002` -y `$arg3 + -3.46875` $_obj_geo1_wp1_isRasterizePts_attribwrangle1
+opparm $_obj_geo1_wp1_isRasterizePts_attribwrangle1  bindings ( 0 ) groupbindings ( 0 )
+opparm $_obj_geo1_wp1_isRasterizePts_attribwrangle1 snippet ( 'v@v = {1,1,1};' )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b on $_obj_geo1_wp1_isRasterizePts_attribwrangle1
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_attribwrangle1
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_isRasterizePts_attribwrangle1
+opcf ..
+opcf $_obj_geo1_wp1_isRasterizePts
+
+# Node $_obj_geo1_wp1_isRasterizePts_null1 (Sop/null)
+set _obj_geo1_wp1_isRasterizePts_null1 = `run("opadd -e -n -v null null1")`
+oplocate -x `$arg2 + -1.11759e-08` -y `$arg3 + 3.5735000000000001` $_obj_geo1_wp1_isRasterizePts_null1
+opset -d off -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_null1
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_null1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_null1
+
+# Node $_obj_geo1_wp1_isRasterizePts_vdb1 (Sop/vdb)
+set _obj_geo1_wp1_isRasterizePts_vdb1 = `run("opadd -e -n -v vdb vdb1")`
+oplocate -x `$arg2 + -3.0068199999999998` -y `$arg3 + 3.7161400000000002` $_obj_geo1_wp1_isRasterizePts_vdb1
+opparm $_obj_geo1_wp1_isRasterizePts_vdb1  ngrids ( 4 )
+opparm -V 17.5.173 $_obj_geo1_wp1_isRasterizePts_vdb1 ngrids ( 4 ) name1 ( density ) name2 ( fuel ) name3 ( temperature ) name4 ( temperature_s )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_vdb1
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_vdb1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_vdb1
+
+# Node $_obj_geo1_wp1_isRasterizePts_foreach_end1 (Sop/block_end)
+set _obj_geo1_wp1_isRasterizePts_foreach_end1 = `run("opadd -e -n -v block_end foreach_end1")`
+oplocate -x `$arg2 + -1.60555` -y `$arg3 + -7.8586999999999998` $_obj_geo1_wp1_isRasterizePts_foreach_end1
+opparm -V 17.5.173 $_obj_geo1_wp1_isRasterizePts_foreach_end1 itermethod ( pieces ) method ( merge ) class ( primitive ) useattrib ( off ) attrib ( it ) blockpath ( ../foreach_begin1 ) templatepath ( ../foreach_begin1 ) multithread ( on )
+opcolor -c 0.75 0.40000000596046448 0 $_obj_geo1_wp1_isRasterizePts_foreach_end1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_foreach_end1
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_foreach_end1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_foreach_end1
+
+# Node $_obj_geo1_wp1_isRasterizePts_foreach_begin1 (Sop/block_begin)
+set _obj_geo1_wp1_isRasterizePts_foreach_begin1 = `run("opadd -e -n -v block_begin foreach_begin1")`
+oplocate -x `$arg2 + -2.84015` -y `$arg3 + 0.94887100000000002` $_obj_geo1_wp1_isRasterizePts_foreach_begin1
+opparm -V 17.5.173 $_obj_geo1_wp1_isRasterizePts_foreach_begin1 method ( piece ) blockpath ( ../foreach_end1 )
+opcolor -c 0.75 0.40000000596046448 0 $_obj_geo1_wp1_isRasterizePts_foreach_begin1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_foreach_begin1
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_foreach_begin1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_foreach_begin1
+
+# Node $_obj_geo1_wp1_isRasterizePts_foreach_begin2 (Sop/block_begin)
+set _obj_geo1_wp1_isRasterizePts_foreach_begin2 = `run("opadd -e -n -v block_begin foreach_begin2")`
+oplocate -x `$arg2 + 0.102592` -y `$arg3 + 0.94887100000000002` $_obj_geo1_wp1_isRasterizePts_foreach_begin2
+opparm -V 17.5.173 $_obj_geo1_wp1_isRasterizePts_foreach_begin2 method ( input ) blockpath ( ../foreach_end1 )
+opcolor -c 0.75 0.40000000596046448 0 $_obj_geo1_wp1_isRasterizePts_foreach_begin2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_foreach_begin2
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_foreach_begin2
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_foreach_begin2
+
+# Node $_obj_geo1_wp1_isRasterizePts_compile_end1 (Sop/compile_end)
+set _obj_geo1_wp1_isRasterizePts_compile_end1 = `run("opadd -e -n -v compile_end compile_end1")`
+oplocate -x `$arg2 + -1.60555` -y `$arg3 + -9.3554499999999994` $_obj_geo1_wp1_isRasterizePts_compile_end1
+opcolor -c 0.75 0.75 0 $_obj_geo1_wp1_isRasterizePts_compile_end1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_compile_end1
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_compile_end1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_compile_end1
+
+# Node $_obj_geo1_wp1_isRasterizePts_compile_begin1 (Sop/compile_begin)
+set _obj_geo1_wp1_isRasterizePts_compile_begin1 = `run("opadd -e -n -v compile_begin compile_begin1")`
+oplocate -x `$arg2 + -3.0147699999999999` -y `$arg3 + 1.9375199999999999` $_obj_geo1_wp1_isRasterizePts_compile_begin1
+opparm -V 17.5.173 $_obj_geo1_wp1_isRasterizePts_compile_begin1 blockpath ( ../compile_end1 )
+opcolor -c 0.75 0.75 0 $_obj_geo1_wp1_isRasterizePts_compile_begin1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_compile_begin1
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_compile_begin1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_compile_begin1
+
+# Node $_obj_geo1_wp1_isRasterizePts_compile_begin2 (Sop/compile_begin)
+set _obj_geo1_wp1_isRasterizePts_compile_begin2 = `run("opadd -e -n -v compile_begin compile_begin2")`
+oplocate -x `$arg2 + 0.0016000000000000001` -y `$arg3 + 1.9375199999999999` $_obj_geo1_wp1_isRasterizePts_compile_begin2
+opparm -V 17.5.173 $_obj_geo1_wp1_isRasterizePts_compile_begin2 blockpath ( ../compile_end1 )
+opcolor -c 0.75 0.75 0 $_obj_geo1_wp1_isRasterizePts_compile_begin2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_compile_begin2
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_compile_begin2
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_compile_begin2
+
+# Node $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1 (Sop/vdbfromparticles)
+set _obj_geo1_wp1_isRasterizePts_vdbfromparticles1 = `run("opadd -e -n -v vdbfromparticles vdbfromparticles1")`
+oplocate -x `$arg2 + -0.63162399999999996` -y `$arg3 + -2.9369200000000002` $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1
+opparm $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1  numattrib ( 0 )
+chblockbegin
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1 voxelsize
+chkey -t 40.791666666666664 -v 0.10000000000000001 -m 0 -a 0 -A 0 -T a  -F 'ch("../voxelsize")' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1/voxelsize
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1 radiusscale
+chkey -t 40.791666666666664 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../radiusscale")' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1/radiusscale
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1 useworldspaceunits
+chkey -t 40.791666666666664 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../useworldspaceunits")' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1/useworldspaceunits
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1 bandwidth
+chkey -t 40.791666666666664 -v 0.30000000447034836 -m 0 -a 0 -A 0 -T a  -F 'ch("../bandwidth")' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1/bandwidth
+chblockend
+opparm -V 17.5.173 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1 voxelsize ( voxelsize ) builddistance ( off ) buildfog ( on ) radiusscale ( radiusscale ) minvoxelradius ( 0.001 ) useworldspaceunits ( useworldspaceunits ) bandwidth ( bandwidth )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1
+
+# Node $_obj_geo1_wp1_isRasterizePts_null2 (Sop/null)
+set _obj_geo1_wp1_isRasterizePts_null2 = `run("opadd -e -n -v null null2")`
+oplocate -x `$arg2 + -2.07131` -y `$arg3 + -4.07606` $_obj_geo1_wp1_isRasterizePts_null2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_null2
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_null2
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_null2
+
+# Node $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2 (Sop/vdbfromparticles)
+set _obj_geo1_wp1_isRasterizePts_vdbfromparticles2 = `run("opadd -e -n -v vdbfromparticles vdbfromparticles2")`
+oplocate -x `$arg2 + 3.8914499999999999` -y `$arg3 + -6.3055899999999996` $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2
+opparm $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2  numattrib ( 1 )
+chblockbegin
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2 voxelsize
+chkey -t 40.791666666666664 -v 0.10000000000000001 -m 0 -a 0 -A 0 -T a  -F 'ch("../vdbfromparticles1/voxelsize")' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2/voxelsize
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2 radiusscale
+chkey -t 40.791666666666664 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../vdbfromparticles1/radiusscale")' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2/radiusscale
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2 useworldspaceunits
+chkey -t 40.791666666666664 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../vdbfromparticles1/useworldspaceunits")' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2/useworldspaceunits
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2 bandwidthvoxels
+chkey -t 40.791666666666664 -v 3 -m 0 -a 0 -A 0 -T a  -F 'ch("../vdbfromparticles1/bandwidth")' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2/bandwidthvoxels
+chadd -t 40.791666666666664 40.791666666666664 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2 bandwidth
+chkey -t 40.791666666666664 -v 0.10000000149011612 -m 0 -a 0 -A 0 -T a  -F 'ch("../vdbfromparticles1/bandwidth")' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2/bandwidth
+chblockend
+opparm -V 17.5.173 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2 voxelsize ( voxelsize ) builddistance ( off ) radiusscale ( radiusscale ) minvoxelradius ( 0.001 ) useworldspaceunits ( useworldspaceunits ) bandwidthvoxels ( bandwidthvoxels ) bandwidth ( bandwidth ) numattrib ( 1 ) attribute1 ( v ) attributevdbname1 ( v ) vectype1 ( "contravariant relative" )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2
+
+# Node $_obj_geo1_wp1_isRasterizePts_merge1 (Sop/merge)
+set _obj_geo1_wp1_isRasterizePts_merge1 = `run("opadd -e -n -v merge merge1")`
+oplocate -x `$arg2 + 3.8914499999999999` -y `$arg3 + -9.7865900000000003` $_obj_geo1_wp1_isRasterizePts_merge1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_merge1
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_merge1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_merge1
+
+# Node $_obj_geo1_wp1_isRasterizePts_OUT (Sop/output)
+set _obj_geo1_wp1_isRasterizePts_OUT = `run("opadd -e -n -v output OUT")`
+oplocate -x `$arg2 + 3.8925999999999998` -y `$arg3 + -11.512` $_obj_geo1_wp1_isRasterizePts_OUT
+opcolor -c 0.85000002384185791 0.05000000074505806 0.05000000074505806 $_obj_geo1_wp1_isRasterizePts_OUT
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_isRasterizePts_OUT
+opexprlanguage -s hscript $_obj_geo1_wp1_isRasterizePts_OUT
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_isRasterizePts_OUT
+oporder -e null1 vdb1 foreach_end1 foreach_begin1 foreach_begin2 compile_end1 compile_begin1 compile_begin2 keep_onlt_neseccart dens vdbfromparticles1 correct_val name null2 vdbfromparticles2 attribwrangle1 merge1 OUT 
+opcf ..
+opset -p on $_obj_geo1_wp1_isRasterizePts
+
+opcf $arg1
+opcf $_obj_geo1_wp1_isRasterizePts
+opwire -n -i 0 -0 $_obj_geo1_wp1_isRasterizePts_null1
+opwire -n $_obj_geo1_wp1_isRasterizePts_name -0 $_obj_geo1_wp1_isRasterizePts_foreach_end1
+opwire -n $_obj_geo1_wp1_isRasterizePts_compile_begin1 -0 $_obj_geo1_wp1_isRasterizePts_foreach_begin1
+opwire -n $_obj_geo1_wp1_isRasterizePts_compile_begin2 -0 $_obj_geo1_wp1_isRasterizePts_foreach_begin2
+opwire -n $_obj_geo1_wp1_isRasterizePts_foreach_end1 -0 $_obj_geo1_wp1_isRasterizePts_compile_end1
+opwire -n $_obj_geo1_wp1_isRasterizePts_vdb1 -0 $_obj_geo1_wp1_isRasterizePts_compile_begin1
+opwire -n $_obj_geo1_wp1_isRasterizePts_null1 -0 $_obj_geo1_wp1_isRasterizePts_compile_begin2
+opwire -n $_obj_geo1_wp1_isRasterizePts_foreach_begin2 -0 $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart
+opwire -n $_obj_geo1_wp1_isRasterizePts_foreach_begin1 -1 $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart
+opwire -n $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart -0 $_obj_geo1_wp1_isRasterizePts_dens
+opwire -n $_obj_geo1_wp1_isRasterizePts_dens -0 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1
+opwire -n $_obj_geo1_wp1_isRasterizePts_vdbfromparticles1 -0 $_obj_geo1_wp1_isRasterizePts_correct_val
+opwire -n $_obj_geo1_wp1_isRasterizePts_keep_onlt_neseccart -1 $_obj_geo1_wp1_isRasterizePts_correct_val
+opwire -n $_obj_geo1_wp1_isRasterizePts_correct_val -0 $_obj_geo1_wp1_isRasterizePts_name
+opwire -n $_obj_geo1_wp1_isRasterizePts_null2 -1 $_obj_geo1_wp1_isRasterizePts_name
+opwire -n $_obj_geo1_wp1_isRasterizePts_foreach_begin1 -0 $_obj_geo1_wp1_isRasterizePts_null2
+opwire -n $_obj_geo1_wp1_isRasterizePts_attribwrangle1 -0 $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2
+opwire -n $_obj_geo1_wp1_isRasterizePts_null1 -0 $_obj_geo1_wp1_isRasterizePts_attribwrangle1
+opwire -n $_obj_geo1_wp1_isRasterizePts_compile_end1 -0 $_obj_geo1_wp1_isRasterizePts_merge1
+opwire -n $_obj_geo1_wp1_isRasterizePts_vdbfromparticles2 -1 $_obj_geo1_wp1_isRasterizePts_merge1
+opwire -n $_obj_geo1_wp1_isRasterizePts_merge1 -0 $_obj_geo1_wp1_isRasterizePts_OUT
+opcf ..
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_wp1_isRasterizePts
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_wp1_isRasterizePts
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+</shelfDocument>

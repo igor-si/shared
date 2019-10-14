@@ -57,3 +57,6 @@ def saveFileTo(path=None,copymode="versions"):
 
 def test():
     saveFileTo()
+
+
+    n=hou.pwd();nn=hou.node(n.path()+"/CONTROL");nn.parm("test").pressButton()

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <tool name="selToPts" label="selToPts" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[]]></script>
+  </tool>
+
+  <toolshelf name="issop_shelf" label="ISSop">
+    <memberTool name="ptsFromSelection"/>
+    <memberTool name="OObjectMerge"/>
+    <memberTool name="vexifyGeo"/>
+    <memberTool name="addUpdateComment"/>
+    <memberTool name="splitGeoByAttribute"/>
+    <memberTool name="splitGeoAndVexify"/>
+  </toolshelf>
+
+  <tool name="ptsFromSelection" label="ptsFromSelection" icon="PLASMA_App">
+    <toolMenuContext name="viewer">
+      <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+      <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import issop_utils
+reload (issop_utils)
+issop_utils.ptsFromSelection()]]></script>
+  </tool>
+
+  <tool name="OObjectMerge" label="OObjectMerge" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import issop_utils
+reload (issop_utils)
+issop_utils.quickObjectMerge()]]></script>
+  </tool>
+
+  <tool name="vexifyGeo" label="vexifyGeo" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import issop_utils
+reload (issop_utils)
+issop_utils.vexifyGeometry()]]></script>
+  </tool>
+
+  <tool name="addUpdateComment" label="addUpdateComment" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+      <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import issop_utils
+reload (issop_utils)
+issop_utils.addUpdateComment()
+
+]]></script>
+  </tool>
+
+  <tool name="splitGeoByAttribute" label="splitGeoByAttribute" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import issop_utils
+reload (issop_utils)
+issop_utils.splitGeoByAttribute()
+
+]]></script>
+  </tool>
+
+  <tool name="splitGeoAndVexify" label="splitGeoAndVexify" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[from isutils.scripts import issop_utils
+reload (issop_utils)
+issop_utils.splitGeoAndVexify()
+
+]]></script>
+  </tool>
+</shelfDocument>
