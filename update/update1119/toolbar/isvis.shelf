@@ -1,0 +1,2298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <tool name="visOrient" label="visOrient" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_visOrient (Sop/visualize)
+set _obj_geo1_visOrient = `run("opadd -e -n -v visualize visOrient")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_visOrient
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_geo1_visOrient
+opparm $_obj_geo1_visOrient  num_visualizers ( 1 )
+opparm $_obj_geo1_visOrient num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n   "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"orient"\n      },\n    "name":{\n              "type":"string",\n              "value":"orient"\n      },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\nstyle\\t[ 0\\tlocks=0 ]\\t(\\t\\"axes\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\torient\\t)\\nvisibility\\t[ 0\\tlocks=0 ]\\t(\\t\\"always\\"\\t)\\ndecorradius\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ngroup\\t[ 0\\tlocks=0 ]\\t(\\t\\"\\"\\t)\\npointsize\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\nlengthscale\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nunitlength\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nnormalize\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\narrowheads\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nvectorcoloring\\t[ 0\\tlocks=0 ]\\t(\\t\\"fixed\\"\\t)\\ncolorattrib\\t[ 0\\tlocks=0 ]\\t(\\tCd\\t)\\nramptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"false\\"\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"min-max\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nmarkercolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t1\\t)\\ntrail\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t0.5\\t)\\ntextcolor\\t[ 0\\tlocks=0 ]\\t(\\t0.25\\t0.75\\t0.75\\t)\\nfontsize\\t[ 0\\tlocks=0 ]\\t(\\t\\"guidefont\\"\\t)\\nxcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nycolor\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t1\\t)\\nzcolor\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t1\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t1\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\n}\\n"},\n   \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_marker"\n  }\n}\n' )
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_visOrient
+opexprlanguage -s hscript $_obj_geo1_visOrient
+opuserdata -n '___Version___' -v '' $_obj_geo1_visOrient
+opset -p on $_obj_geo1_visOrient
+
+opcf $arg1
+opwire -n $_obj_geo1_attribwrangle1 -0 $_obj_geo1_visOrient
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_visOrient
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_visOrient
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visV" label="visV" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_visV (Sop/visualize)
+set _obj_geo1_visV = `run("opadd -e -n -v visualize visV")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_visV
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_geo1_visV
+opparm $_obj_geo1_visV  num_visualizers ( 1 )
+opparm $_obj_geo1_visV num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n        "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"v"\n   },\n    "name":{\n              "type":"string",\n              "value":"v"\n   },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\nstyle\\t[ 0\\tlocks=0 ]\\t(\\t\\"vector\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tv\\t)\\nvisibility\\t[ 0\\tlocks=0 ]\\t(\\t\\"always\\"\\t)\\ndecorradius\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ngroup\\t[ 0\\tlocks=0 ]\\t(\\t\\"\\"\\t)\\npointsize\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\nlengthscale\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nunitlength\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nnormalize\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\narrowheads\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\nvectorcoloring\\t[ 0\\tlocks=0 ]\\t(\\t\\"fixed\\"\\t)\\ncolorattrib\\t[ 0\\tlocks=0 ]\\t(\\tCd\\t)\\nramptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"false\\"\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"min-max\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nmarkercolor\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t0.90000000000000002\\t1\\t)\\ntrail\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t0.5\\t)\\ntextcolor\\t[ 0\\tlocks=0 ]\\t(\\t0.25\\t0.75\\t0.75\\t)\\nfontsize\\t[ 0\\tlocks=0 ]\\t(\\t\\"guidefont\\"\\t)\\nxcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nycolor\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t1\\t)\\nzcolor\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t1\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t1\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\n}\\n"},\n     \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_marker"\n  }\n}\n' )
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_visV
+opexprlanguage -s hscript $_obj_geo1_visV
+opuserdata -n '___Version___' -v '' $_obj_geo1_visV
+opset -p on $_obj_geo1_visV
+
+opcf $arg1
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_visV
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_visV
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <toolshelf name="isvis_shelf" label="ISVis">
+    <memberTool name="visNameToggle"/>
+    <memberTool name="visVToggle"/>
+    <memberTool name="visItToggle"/>
+    <memberTool name="visOrientToggle"/>
+    <memberTool name="visV"/>
+    <memberTool name="visW"/>
+    <memberTool name="visVecD"/>
+    <memberTool name="visOrient"/>
+    <memberTool name="visProb"/>
+    <memberTool name="visIt"/>
+    <memberTool name="visPiece"/>
+    <memberTool name="visName"/>
+    <memberTool name="visAttractionweight"/>
+    <memberTool name="visCluster"/>
+    <memberTool name="visSegment"/>
+    <memberTool name="visDist"/>
+    <memberTool name="visConstraintsAsSpheres"/>
+    <memberTool name="visSpeed"/>
+  </toolshelf>
+
+  <tool name="visNameToggle" label="visNameToggle" icon="NETWORKS_mat">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+      <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[import hou
+vis_name = 'name'
+try:
+    vis = [x for x in hou.viewportVisualizers.visualizers() if x.name()==vis_name ][0]
+    desktop = hou.ui.curDesktop() 
+    desktop_scenes = [t for t in desktop.paneTabs() if t.type() == hou.paneTabType.SceneViewer]
+    
+    for s in desktop_scenes:
+        for geo_view in s.viewports():
+            check = vis.isActive(viewport=geo_view)
+            vis.setIsActive(not check,viewport=geo_view)
+except:pass]]></script>
+  </tool>
+
+  <tool name="visVToggle" label="visVToggle" icon="NETWORKS_mat">
+    <toolMenuContext name="network">
+      <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[import hou
+vis_name = 'v'
+try:
+    vis = [x for x in hou.viewportVisualizers.visualizers() if x.name()==vis_name ][0]
+    desktop = hou.ui.curDesktop() 
+    desktop_scenes = [t for t in desktop.paneTabs() if t.type() == hou.paneTabType.SceneViewer]
+    
+    for s in desktop_scenes:
+        for geo_view in s.viewports():
+            check = vis.isActive(viewport=geo_view)
+            vis.setIsActive(not check,viewport=geo_view)
+except:pass]]></script>
+  </tool>
+
+  <tool name="visItToggle" label="visItToggle" icon="NETWORKS_mat">
+    <toolMenuContext name="network">
+      <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[import hou
+vis_name = 'it'
+try:
+    vis = [x for x in hou.viewportVisualizers.visualizers() if x.name()==vis_name ][0]
+    desktop = hou.ui.curDesktop() 
+    desktop_scenes = [t for t in desktop.paneTabs() if t.type() == hou.paneTabType.SceneViewer]
+    
+    for s in desktop_scenes:
+        for geo_view in s.viewports():
+            check = vis.isActive(viewport=geo_view)
+            vis.setIsActive(not check,viewport=geo_view)
+except:pass]]></script>
+  </tool>
+
+  <tool name="visOrientToggle" label="visOrientToggle" icon="NETWORKS_mat">
+    <script scriptType="python"><![CDATA[import hou
+vis_name = 'orient'
+try:
+    vis = [x for x in hou.viewportVisualizers.visualizers() if x.name()==vis_name ][0]
+    desktop = hou.ui.curDesktop() 
+    desktop_scenes = [t for t in desktop.paneTabs() if t.type() == hou.paneTabType.SceneViewer]
+    
+    for s in desktop_scenes:
+        for geo_view in s.viewports():
+            check = vis.isActive(viewport=geo_view)
+            vis.setIsActive(not check,viewport=geo_view)
+except:pass]]></script>
+  </tool>
+
+  <tool name="visDist" label="visDist" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_grout_slice_plane_isGrout_visDist (Sop/visualize)
+set _obj_grout_slice_plane_isGrout_visDist = `run("opadd -e -n -v visualize visDist")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_grout_slice_plane_isGrout_visDist
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_grout_slice_plane_isGrout_visDist
+opparm $_obj_grout_slice_plane_isGrout_visDist  num_visualizers ( 1 )
+opparm $_obj_grout_slice_plane_isGrout_visDist num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n        "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"dist"\n        },\n    "name":{\n              "type":"string",\n              "value":"dist"\n        },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\ncolortype\\t[ 0\\tlocks=0 ]\\t(\\t\\"attribramped\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tdist\\t)\\nuvattrib\\t[ 0\\tlocks=0 ]\\t(\\tuv\\t)\\ndistortiontype\\t[ 0\\tlocks=0 ]\\t(\\t\\"global\\"\\t)\\nrangesection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\nconstcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nusethreevtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorthreevtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t)\\nusefourvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorfourvtx\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t0.69999999999999996\\t1\\t)\\nusenvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolornvtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nrandseed\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nvalsep\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nrampsection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramppreset\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t9.9341077586245774e-09\\t9.9341077586245774e-09\\t0.02500000037252903\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0.89999997615814209\\t0\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\n}\\n"},\n      \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_color"\n   }\n}\n' )
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_grout_slice_plane_isGrout_visDist
+opexprlanguage -s hscript $_obj_grout_slice_plane_isGrout_visDist
+opuserdata -n '___Version___' -v '' $_obj_grout_slice_plane_isGrout_visDist
+opset -p on $_obj_grout_slice_plane_isGrout_visDist
+
+opcf $arg1
+opwire -n $_obj_grout_slice_plane_isGrout_attribwrangle4 -0 $_obj_grout_slice_plane_isGrout_visDist
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_grout_slice_plane_isGrout_visDist
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_grout_slice_plane_isGrout_visDist
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visSpeed" label="visSpeed" icon="SOP_attribwrangle">
+    <helpURL>operator:Sop/attribwrangle</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/attribwrangle</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('attribwrangle'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_pt_sim_visSpeed (Sop/attribwrangle)
+set _obj_pt_sim_visSpeed = `run("opadd -e -n -v attribwrangle visSpeed")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_pt_sim_visSpeed
+opspareds '    group {         name    "folder1"         label   "Code"          parm {             name    "group"             baseparm             label   "Group"             export  none             bindselector points "Modify Points"                 "Select the points to affect and press Enter to complete."                 0 1 0xffffffff 0 grouptype 0         }         parm {             name    "grouptype"             baseparm             label   "Group Type"             export  none         }         parm {             name    "class"             baseparm             label   "Run Over"             export  none         }         parm {             name    "vex_numcount"             baseparm             label   "Number Count"             export  none         }         parm {             name    "vex_threadjobsize"             baseparm             label   "Thread Job Size"             export  none         }         parm {             name    "snippet"             baseparm             label   "VEXpression"             export  all         }         parm {             name    "exportlist"             baseparm             label   "Attributes to Create"             export  none         }         parm {             name    "vex_strict"             baseparm             label   "Enforce Prototypes"             export  none         }     }      group {         name    "folder1_1"         label   "Bindings"          parm {             name    "autobind"             baseparm             label   "Autobind by Name"             export  none         }         multiparm {             name    "bindings"             label    "Number of Bindings"             baseparm             default 0             parmtag { "autoscope" "0000000000000000" }             parmtag { "multistartoffset" "1" }              parm {                 name    "bindname#"                 baseparm                 label   "Attribute Name"                 export  none             }             parm {                 name    "bindparm#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "groupautobind"             baseparm             label   "Autobind Groups by Name"             export  none         }         multiparm {             name    "groupbindings"             label    "Group Bindings"             baseparm             default 0             parmtag { "autoscope" "0000000000000000" }             parmtag { "multistartoffset" "1" }              parm {                 name    "bindgroupname#"                 baseparm                 label   "Group Name"                 export  none             }             parm {                 name    "bindgroupparm#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "vex_cwdpath"             baseparm             label   "Evaluation Node Path"             export  none         }         parm {             name    "vex_outputmask"             baseparm             label   "Export Parameters"             export  none         }         parm {             name    "vex_updatenmls"             baseparm             label   "Update Normals If Displaced"             export  none         }         parm {             name    "vex_matchattrib"             baseparm             label   "Attribute to Match"             export  none         }     }      parm {         name    "speed_min"         label   "Speed Min"         type    float         default { "0" }         range   { 0 1 }     }     parm {         name    "speed_max"         label   "Speed Max"         type    float         default { "0" }         range   { 0 1 }     }     parm {         name    "Cd"         label   "Cd"         type    ramp_rgb         default { "2" }         range   { 1! 10 }     }     parm {         name    "vex_inplace"         baseparm         label   "Compute Results In Place"         export  none     }     parm {         name    "vex_selectiongroup"         baseparm         label   "Output Selection Group"         export  none     } ' $_obj_pt_sim_visSpeed
+opparm $_obj_pt_sim_visSpeed  bindings ( 0 ) groupbindings ( 0 ) Cd ( 3 )
+opparm $_obj_pt_sim_visSpeed snippet ( 'float speed_min = chf("speed_min");\nfloat speed_max = chf("speed_max");\nv@Cd = chramp("Cd",fit(length(v@v),speed_min,speed_max,0,1));' ) speed_max ( 1 ) Cd ( 3 ) Cd1c ( 0 0 0.89999997615814209 ) Cd2pos ( 0.5 ) Cd2c ( 0 0.90000000000000002 0.90000000000000002 ) Cd3pos ( 1 ) Cd3c ( 1 1 1 )
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_pt_sim_visSpeed
+opexprlanguage -s hscript $_obj_pt_sim_visSpeed
+opuserdata -n '___Version___' -v '' $_obj_pt_sim_visSpeed
+opset -p on $_obj_pt_sim_visSpeed
+
+opcf $arg1
+opwire -n $_obj_pt_sim_isFilecache -0 $_obj_pt_sim_visSpeed
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_pt_sim_visSpeed
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_pt_sim_visSpeed
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visConstraintsAsSpheres" label="visConstraintsAsSpheres" icon="SOP_subnet">
+    <helpURL>operator:Sop/subnet</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/subnet</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('subnet'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres (Sop/subnet)
+set _obj_geo1_wp1_visConstraintsAsSpheres = `run("opadd -e -n -v subnet visConstraintsAsSpheres")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_wp1_visConstraintsAsSpheres
+opspareds '    parm {         name    "label1"         baseparm         label   "Input #1 Label"         invisible         export  all     }     parm {         name    "label2"         baseparm         label   "Input #2 Label"         invisible         export  all     }     parm {         name    "label3"         baseparm         label   "Input #3 Label"         invisible         export  all     }     parm {         name    "label4"         baseparm         label   "Input #4 Label"         invisible         export  all     }     parm {         name    "valf_1"         label   "Constant Value"         type    float         default { "0.1" }         range   { 0 10 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "Cd_tint"         label   "Cd_tint"         type    float         default { "0.2" }         range   { 0 10 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres
+opparm -V 17.5.173 $_obj_geo1_wp1_visConstraintsAsSpheres Cd_tint ( 0.71999999999999997 )
+opcolor -c 0.15000000596046448 0.34999999403953552 0.75 $_obj_geo1_wp1_visConstraintsAsSpheres
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_visConstraintsAsSpheres
+opcf $_obj_geo1_wp1_visConstraintsAsSpheres
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple (Sop/attribexpression)
+set _obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple = `run("opadd -e -n -v attribexpression pscaleSimple")`
+oplocate -x `$arg2 + -1.7708299999999999` -y `$arg3 + -1.2511099999999999` $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple
+opspareds '    parm {         name    "bindgroup"         baseparm         label   "Group"         export  none     }     parm {         name    "bindgrouptype"         baseparm         label   "Group Type"         export  none     }     group {         name    "folder1"         label   "VEXpressions"          parm {             name    "bindclass"             baseparm             label   "Attribute Class"             export  none         }         multiparm {             name    "expressions"             label    "Attribute VEXpressions"             baseparm             default 1              parm {                 name    "enable#"                 baseparm                 label   "Enable"                 nolabel                 export  none             }             parm {                 name    "preset#"                 baseparm                 label   "Attribute"                 export  none             }             parm {                 name    "name#"                 baseparm                 label   "Name"                 export  none             }             parm {                 name    "type#"                 baseparm                 label   "Type"                 export  none             }             parm {                 name    "vali_#"                 baseparm                 label   "Constant Value"                 export  none             }             parm {                 name    "valf_#"                 baseparm                 label   "Constant Value"                 export  none             }             parm {                 name    "valv3_#"                 baseparm                 label   "Constant Value"                 export  none             }             parm {                 name    "valv4_#"                 baseparm                 label   "Constant Value"                 export  none             }             parm {                 name    "valm3_#"                 baseparm                 label   "Constant Value"                 export  none             }             parm {                 name    "valm4_#"                 baseparm                 label   "Constant Value"                 export  none             }             parm {                 name    "valc_#"                 baseparm                 label   "Constant Value"                 export  none             }             parm {                 name    "vals_#"                 baseparm                 label   "Constant Value"                 export  none             }             parm {                 name    "snippet#"                 baseparm                 label   "VEXpression"                 export  none             }         }      }      group {         name    "folder1_1"         label   "Bindings"          parm {             name    "vex_cwdpath"             baseparm             label   "Evaluation Node Path"             export  none         }         parm {             name    "vex_matchattrib"             baseparm             label   "Attribute to Match"             export  none         }         parm {             name    "includes"             baseparm             label   "Include Files"             export  none         }         parm {             name    "vex_updatenmls"             baseparm             label   "Update Normals If Displaced"             export  none         }     }      group {         name    "folder1_2"         label   "Generated Code"          parm {             name    "updatecode"             baseparm             label   "Update Code"             export  none         }         parm {             name    "generatedcode"             baseparm             label   "Generated Code"             export  none         }     }      parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple
+opparm $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple  expressions ( 1 )
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple valf_1
+chkey -t 0 -v 0.10000000000000001 -m 0 -a 0 -A 0 -T a  -F 'ch("../valf_1")' $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple/valf_1
+chblockend
+opparm $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple preset1 ( pscale ) name1 ( pscale ) type1 ( float ) valf_1 ( valf_1 ) snippet1 ( value )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1 (Sop/attribrandomize)
+set _obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1 = `run("opadd -e -n -v attribrandomize attribrandomize1")`
+oplocate -x `$arg2 + -1.11759e-08` -y `$arg3 + -0.28209499999999998` $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1
+opspareds '    parm {         name    "group"         baseparm         label   "Group"         export  none         bindselector uvselect "Randomize Attribute Values"             "Select the geometry whose attribute values should be randomized, and press Enter to complete."             0 1 all 0 grouptype 0     }     parm {         name    "grouptype"         baseparm         label   "Group Type"         export  none     }     parm {         name    "class"         baseparm         label   "Attribute Class"         export  none     }     parm {         name    "name"         baseparm         label   "Attribute Name"         export  none     }     parm {         name    "operation"         baseparm         label   "Operation"         export  none     }     parm {         name    "scale"         baseparm         label   "Global Scale"         export  none     }     group {         name    "folder1"         label   "Distribution"          parm {             name    "distribution"             baseparm             label   "Distribution"             export  none         }         parm {             name    "dimensions"             baseparm             label   "Dimensions"             export  none         }         parm {             name    "allsame"             baseparm             label   "Use first dimension\'s parameters for all"             export  none         }         parm {             name    "constvalue"             baseparm             label   "Value"             export  none         }         parm {             name    "valuea"             baseparm             label   "Value A"             export  none         }         parm {             name    "valueb"             baseparm             label   "Value B"             export  none         }         parm {             name    "probvalueb"             baseparm             label   "Probability of Value B"             export  none         }         parm {             name    "min"             baseparm             label   "Min Value"             export  none         }         parm {             name    "max"             baseparm             label   "Max Value"             export  none         }         parm {             name    "mindiscrete"             baseparm             label   "Min Value"             export  none         }         parm {             name    "maxdiscrete"             baseparm             label   "Max Value"             export  none         }         parm {             name    "stepsize"             baseparm             label   "Step Size"             export  none         }         parm {             name    "median"             baseparm             label   "Middle Value"             export  none         }         parm {             name    "onesidedmedian"             baseparm             label   "Middle Value"             export  none         }         parm {             name    "medianattrib"             baseparm             label   "Middle Value Attribute"             export  none         }         parm {             name    "stddev"             baseparm             label   "Scale Around Middle"             export  none         }         parm {             name    "onesidedstddev"             baseparm             label   "Spread Around Middle"             export  none         }         parm {             name    "usefit0to"             baseparm             label   "Use Fit Value 0 To"             nolabel             joinnext             export  none         }         parm {             name    "fit0to"             baseparm             label   "Fit Value 0 To"             export  none         }         parm {             name    "usefit1to"             baseparm             label   "Use Fit Value 1 To"             nolabel             joinnext             export  none         }         parm {             name    "fit1to"             baseparm             label   "Fit Value 1 To"             export  none         }         parm {             name    "ramp"             baseparm             label   "Custom Ramp"             export  none         }         parm {             name    "useminlimit"             baseparm             label   "Use Min Limit"             nolabel             joinnext             export  none         }         parm {             name    "minlimit"             baseparm             label   "Min Limit"             export  none         }         parm {             name    "useonesidedmin"             baseparm             label   "Use Min Limit"             nolabel             joinnext             export  none         }         parm {             name    "onesidedmin"             baseparm             label   "Min Limit"             export  none         }         parm {             name    "usemaxlimit"             baseparm             label   "Use Max Limit"             nolabel             joinnext             export  none         }         parm {             name    "maxlimit"             baseparm             label   "Max Limit"             export  none         }         parm {             name    "useconeangle"             baseparm             label   "Use Cone Angle"             nolabel             joinnext             export  none         }         parm {             name    "coneangle"             baseparm             label   "Cone Angle"             export  none         }         parm {             name    "usepowerbias"             baseparm             label   "Use Bias Toward Direction"             nolabel             joinnext             export  none         }         parm {             name    "powerbias"             baseparm             label   "Bias Toward Direction"             export  none         }         parm {             name    "direction"             baseparm             label   "Direction"             export  none         }         parm {             name    "directionattrib"             baseparm             label   "Direction Attribute"             export  none         }         group {             name    "folder2"             label   "Specific Values"             hidewhentab "{ distribution != discrete }"             hidewhen "{ distribution != discrete }"              parm {                 name    "valuetype"                 baseparm                 label   "Type"                 export  none             }             multiparm {                 name    "values"                 label    "Number of Values"                 baseparm                 default 4                 parmtag { "multistartoffset" "0" }                  parm {                     name    "strvalue#"                     baseparm                     label   "Value #"                     export  none                 }                 parm {                     name    "value#"                     baseparm                     label   "Value #"                     export  none                 }                 parm {                     name    "weight#"                     baseparm                     label   "Weight"                     export  none                 }             }          }          parm {             name    "normalize"             baseparm             label   "Normalize"             export  none         }     }      group {         name    "folder1_1"         label   "Options"          parm {             name    "visualize"             baseparm             label   "Visualize as Points"             nolabel             joinnext             export  none         }         parm {             name    "nvisualizepts"             baseparm             label   "Visualize as Points"             export  none         }         parm {             name    "usefractionattrib"             baseparm             label   "Use Fraction Attribute"             nolabel             joinnext             export  none         }         parm {             name    "fractionattrib"             baseparm             label   "Fraction Attribute"             export  none         }         parm {             name    "seed"             baseparm             label   "Global Seed"             export  none         }         parm {             name    "useseedattrib"             baseparm             label   "Use Seed Attribute"             nolabel             joinnext             export  none         }         parm {             name    "seedattrib"             baseparm             label   "Seed Attribute"             export  none         }     }      parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1
+opparm $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1  ramp ( 3 ) values ( 4 )
+chblockbegin
+chadd -t 0 0 $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1 scale
+chkey -t 0 -v 0.20000000000000001 -m 0 -a 0 -A 0 -T a  -F 'ch("../Cd_tint")' $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1/scale
+chblockend
+opparm $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1 operation ( add ) scale ( scale ) min ( -1 -1 -1 -1 ) seed ( 3297 ) ramp2pos ( 0.5 ) ramp2value ( 0.5 ) ramp3pos ( 1 ) ramp3value ( 1 )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1 (Sop/attribwrangle)
+set _obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1 = `run("opadd -e -n -v attribwrangle attribwrangle1")`
+oplocate -x `$arg2 + -1.11759e-08` -y `$arg3 + 1.82033` $_obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1
+opspareds '    group {         name    "folder1"         label   "Code"          parm {             name    "group"             baseparm             label   "Group"             export  none             bindselector points "Modify Points"                 "Select the points to affect and press Enter to complete."                 0 1 0xffffffff 0 grouptype 0         }         parm {             name    "grouptype"             baseparm             label   "Group Type"             export  none         }         parm {             name    "class"             baseparm             label   "Run Over"             export  none         }         parm {             name    "vex_numcount"             baseparm             label   "Number Count"             export  none         }         parm {             name    "vex_threadjobsize"             baseparm             label   "Thread Job Size"             export  none         }         parm {             name    "snippet"             baseparm             label   "VEXpression"             export  all         }         parm {             name    "exportlist"             baseparm             label   "Attributes to Create"             export  none         }         parm {             name    "vex_strict"             baseparm             label   "Enforce Prototypes"             export  none         }     }      group {         name    "folder1_1"         label   "Bindings"          parm {             name    "autobind"             baseparm             label   "Autobind by Name"             export  none         }         multiparm {             name    "bindings"             label    "Number of Bindings"             baseparm             default 0             parmtag { "autoscope" "0000000000000000" }             parmtag { "multistartoffset" "1" }              parm {                 name    "bindname#"                 baseparm                 label   "Attribute Name"                 export  none             }             parm {                 name    "bindparm#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "groupautobind"             baseparm             label   "Autobind Groups by Name"             export  none         }         multiparm {             name    "groupbindings"             label    "Group Bindings"             baseparm             default 0             parmtag { "autoscope" "0000000000000000" }             parmtag { "multistartoffset" "1" }              parm {                 name    "bindgroupname#"                 baseparm                 label   "Group Name"                 export  none             }             parm {                 name    "bindgroupparm#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "vex_cwdpath"             baseparm             label   "Evaluation Node Path"             export  none         }         parm {             name    "vex_outputmask"             baseparm             label   "Export Parameters"             export  none         }         parm {             name    "vex_updatenmls"             baseparm             label   "Update Normals If Displaced"             export  none         }         parm {             name    "vex_matchattrib"             baseparm             label   "Attribute to Match"             export  none         }         parm {             name    "vex_inplace"             baseparm             label   "Compute Results In Place"             export  none         }         parm {             name    "vex_selectiongroup"             baseparm             label   "Output Selection Group"             export  none         }     }      parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1
+opparm $_obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1  bindings ( 0 ) groupbindings ( 0 )
+opparm $_obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1 snippet ( 'v@Cd = {.5,.5,.5};' )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres_pointjitter1 (Sop/pointjitter)
+set _obj_geo1_wp1_visConstraintsAsSpheres_pointjitter1 = `run("opadd -e -n -v pointjitter pointjitter1")`
+oplocate -x `$arg2 + -1.11759e-08` -y `$arg3 + 0.82033` $_obj_geo1_wp1_visConstraintsAsSpheres_pointjitter1
+opspareds '    parm {         name    "group"         baseparm         label   "Group"         export  none     }     parm {         name    "useidattrib"         baseparm         label   "Use ID Attribute"         nolabel         joinnext         export  none     }     parm {         name    "idattrib"         baseparm         label   "Id Attribute"         export  none     }     parm {         name    "scale"         baseparm         label   "Scale"         export  none     }     parm {         name    "axisscale"         baseparm         label   "Axis Scales"         export  none     }     parm {         name    "seed"         baseparm         label   "Seed"         export  none     }     parm {         name    "usepscale"         baseparm         label   "Use PScale"         export  none     }     parm {         name    "updatenmls"         baseparm         label   "Update Normals"         export  none     }     parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres_pointjitter1
+opparm $_obj_geo1_wp1_visConstraintsAsSpheres_pointjitter1 scale ( 0.01 )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres_pointjitter1
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres_pointjitter1
+opuserdata -n '___Version___' -v '' $_obj_geo1_wp1_visConstraintsAsSpheres_pointjitter1
+opcf ..
+opcf $_obj_geo1_wp1_visConstraintsAsSpheres
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres_sphere1 (Sop/sphere)
+set _obj_geo1_wp1_visConstraintsAsSpheres_sphere1 = `run("opadd -e -n -v sphere sphere1")`
+oplocate -x `$arg2 + -4.3801699999999997` -y `$arg3 + -0.89696699999999996` $_obj_geo1_wp1_visConstraintsAsSpheres_sphere1
+opspareds '    parm {         name    "type"         baseparm         label   "Primitive Type"         export  all     }     parm {         name    "surftype"         baseparm         label   "Connectivity"         export  none     }     parm {         name    "rad"         baseparm         label   "Radius"         export  all     }     parm {         name    "t"         baseparm         label   "Center"         export  all     }     parm {         name    "r"         baseparm         label   "Rotate"         export  none     }     parm {         name    "scale"         baseparm         label   "Uniform Scale"         export  none     }     parm {         name    "orient"         baseparm         label   "Orientation"         export  none     }     parm {         name    "freq"         baseparm         label   "Frequency"         export  all     }     parm {         name    "rows"         baseparm         label   "Rows"         export  all     }     parm {         name    "cols"         baseparm         label   "Columns"         export  all     }     parm {         name    "orderu"         baseparm         label   "U Order"         export  none     }     parm {         name    "orderv"         baseparm         label   "V Order"         export  none     }     parm {         name    "imperfect"         baseparm         label   "Imperfect"         export  none     }     parm {         name    "upole"         baseparm         label   "Unique Points per Pole"         export  none     }     parm {         name    "accurate"         baseparm         label   "Accurate Bounds"         export  none     }     parm {         name    "triangularpoles"         baseparm         label   "Triangular Poles"         export  none     }     parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres_sphere1
+opset -d off -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres_sphere1
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres_sphere1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_visConstraintsAsSpheres_sphere1
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1 (Sop/copytopoints)
+set _obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1 = `run("opadd -e -n -v copytopoints copytopoints1")`
+oplocate -x `$arg2 + -2.84185` -y `$arg3 + -3.4438900000000001` $_obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1
+opspareds '    parm {         name    "sourcegroup"         baseparm         label   "Source Group"         export  none         bindselector prims "Copy Geometry"             "Select the geometry to copy and press Enter to complete."             0 1 0xffffffff 0 "" 0     }     parm {         name    "targetgroup"         baseparm         label   "Target Points"         export  none         bindselector ordered_points "Target Points"             "Now select the geometry on whose points to copy the data, if any, and press Enter to complete."             1 0 0xffffffff 0 "" 0     }     parm {         name    "showguide"         baseparm         label   "Show Guide Geometry"         export  none     }     parm {         name    "pack"         baseparm         label   "Pack and Instance"         export  none     }     parm {         name    "pivot"         baseparm         label   "Pivot Location"         export  none     }     parm {         name    "viewportlod"         baseparm         label   "Display As"         export  none     }     parm {         name    "transform"         baseparm         label   "Transform Using Point Orientations"         export  none     }     parm {         name    "doattr"         baseparm         label   "Copy Point Attributes"         export  none     }     parm {         name    "labelparm"         baseparm         label   "Label"         export  none     }     parm {         name    "setpt"         baseparm         label   "To Point"         joinnext         export  none     }     parm {         name    "mulpt"         baseparm         label   "Multiply Point"         nolabel         joinnext         export  none     }     parm {         name    "addpt"         baseparm         label   "Add Point"         nolabel         joinnext         export  none     }     parm {         name    "subpt"         baseparm         label   "Subtract Point"         nolabel         export  none     }     parm {         name    "setprim"         baseparm         label   "To Primitive"         joinnext         export  none     }     parm {         name    "mulprim"         baseparm         label   "Multiply Primitive"         nolabel         joinnext         export  none     }     parm {         name    "addprim"         baseparm         label   "Add Primitive"         nolabel         joinnext         export  none     }     parm {         name    "subprim"         baseparm         label   "Subtract Primitive"         nolabel         export  none     }     parm {         name    "setvtx"         baseparm         label   "To Vertex"         joinnext         export  none     }     parm {         name    "mulvtx"         baseparm         label   "Multiply Vertex"         nolabel         joinnext         export  none     }     parm {         name    "addvtx"         baseparm         label   "Add Vertex"         nolabel         joinnext         export  none     }     parm {         name    "subvtx"         baseparm         label   "Subtract Vertex"         nolabel         export  none     }     parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1
+opparm -V 17.5.173 $_obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1 setpt ( *,^v,^Alpha )
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres_IN (Sop/null)
+set _obj_geo1_wp1_visConstraintsAsSpheres_IN = `run("opadd -e -n -v null IN")`
+oplocate -x `$arg2 + -1.11759e-08` -y `$arg3 + 4.85968` $_obj_geo1_wp1_visConstraintsAsSpheres_IN
+opspareds '    parm {         name    "copyinput"         baseparm         label   "Copy Input (Note: Input will be still cooked if disabled)"         export  none     }     parm {         name    "cacheinput"         baseparm         label   "Cache Input"         export  none     }     parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres_IN
+opcolor -c 0.18799999356269836 0.52899998426437378 0.45899999141693115 $_obj_geo1_wp1_visConstraintsAsSpheres_IN
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres_IN
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres_IN
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_visConstraintsAsSpheres_IN
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres_attribute1 (Sop/attribute)
+set _obj_geo1_wp1_visConstraintsAsSpheres_attribute1 = `run("opadd -e -n -v attribute attribute1")`
+oplocate -x `$arg2 + -1.11759e-08` -y `$arg3 + 2.8203299999999998` $_obj_geo1_wp1_visConstraintsAsSpheres_attribute1
+opspareds '    group {         name    "stdswitcher6"         label   "Point"          parm {             name    "_label1_"             baseparm             label   " "             invisible             export  none         }         multiparm {             name    "ptrenames"             label    "Number of Renames"             baseparm             default 5             parmtag { "multistartoffset" "0" }              parm {                 name    "frompt#"                 baseparm                 label   "Attribute From/To"                 export  none             }             parm {                 name    "topt#"                 baseparm                 label   "To Attribute"                 nolabel                 export  none             }         }          parm {             name    "ptdel"             baseparm             label   "Delete Attributes"             export  none         }         parm {             name    "ptkeep"             baseparm             label   "Keep Attributes"             export  none         }     }      group {         name    "stdswitcher6_1"         label   "Vertex"          parm {             name    "_label2_"             baseparm             label   " "             invisible             export  none         }         multiparm {             name    "vtxrenames"             label    "Number of Renames"             baseparm             default 5             parmtag { "multistartoffset" "0" }              parm {                 name    "fromvtx#"                 baseparm                 label   "Attribute From/To"                 export  none             }             parm {                 name    "tovtx#"                 baseparm                 label   "To Attribute"                 nolabel                 export  none             }         }          parm {             name    "vtxdel"             baseparm             label   "Delete Attributes"             export  none         }         parm {             name    "vtxkeep"             baseparm             label   "Keep Attributes"             export  none         }     }      group {         name    "stdswitcher6_2"         label   "Primitive"          parm {             name    "_label3_"             baseparm             label   " "             invisible             export  none         }         multiparm {             name    "primrenames"             label    "Number of Renames"             baseparm             default 5             parmtag { "multistartoffset" "0" }              parm {                 name    "frompr#"                 baseparm                 label   "Attribute From/To"                 export  none             }             parm {                 name    "topr#"                 baseparm                 label   "To Attribute"                 nolabel                 export  none             }         }          parm {             name    "primdel"             baseparm             label   "Delete Attributes"             export  none         }         parm {             name    "primkeep"             baseparm             label   "Keep Attributes"             export  none         }     }      group {         name    "stdswitcher6_3"         label   "Detail"          parm {             name    "_label4_"             baseparm             label   " "             invisible             export  none         }         multiparm {             name    "detailrenames"             label    "Number of Renames"             baseparm             default 5             parmtag { "multistartoffset" "0" }              parm {                 name    "fromdtl#"                 baseparm                 label   "Attribute From/To"                 export  none             }             parm {                 name    "todtl#"                 baseparm                 label   "To Attribute"                 nolabel                 export  none             }         }          parm {             name    "dtldel"             baseparm             label   "Delete Attributes"             export  none         }         parm {             name    "dtlkeep"             baseparm             label   "Keep Attributes"             export  none         }     }      group {         name    "stdswitcher6_4"         label   "RenderMan"          parm {             name    "_label5_"             baseparm             label   "Houdini"             export  none         }         multiparm {             name    "rmanconversions"             label    "Number of RenderMan Conversions"             baseparm             default 5             parmtag { "multistartoffset" "0" }              parm {                 name    "hname#"                 baseparm                 label   "Houdini Name"                 nolabel                 export  none             }             parm {                 name    "riname#"                 baseparm                 label   "RenderMan Name"                 nolabel                 export  none             }             parm {                 name    "ritype#"                 baseparm                 label   "RenderMan Type"                 nolabel                 export  none             }             parm {                 name    "rioff#"                 baseparm                 label   "Attrib Offset"                 nolabel                 export  none             }         }          parm {             name    "ridefault"             baseparm             label   "Add Default Mappings"             export  none         }     }      parm {         name    "updatevar"         baseparm         label   "Update Local Variables"         export  none     }     parm {         name    "overwrite"         baseparm         label   "Overwrite Existing Attributes"         export  none     }     parm {         name    "encodenames"         baseparm         label   "Encode Invalid Attribute Names"         export  none     }     parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres_attribute1
+opparm $_obj_geo1_wp1_visConstraintsAsSpheres_attribute1  ptrenames ( 2 ) vtxrenames ( 5 ) primrenames ( 5 ) detailrenames ( 5 ) rmanconversions ( 5 )
+opparm -V 17.5.173 $_obj_geo1_wp1_visConstraintsAsSpheres_attribute1 ptrenames ( 2 ) frompt0 ( pscale ) topt0 ( __pscale_or ) frompt1 ( Cd ) topt1 ( __Cd_or )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres_attribute1
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres_attribute1
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_visConstraintsAsSpheres_attribute1
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres_OUT (Sop/output)
+set _obj_geo1_wp1_visConstraintsAsSpheres_OUT = `run("opadd -e -n -v output OUT")`
+oplocate -x `$arg2 + -1.11759e-08` -y `$arg3 + 3.85968` $_obj_geo1_wp1_visConstraintsAsSpheres_OUT
+opspareds '    parm {         name    "outputidx"         baseparm         label   "Output Index"         export  none     }     parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres_OUT
+opparm -V 17.5.173 $_obj_geo1_wp1_visConstraintsAsSpheres_OUT outputidx ( 1 )
+opcolor -c 0.85000002384185791 0.05000000074505806 0.05000000074505806 $_obj_geo1_wp1_visConstraintsAsSpheres_OUT
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres_OUT
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres_OUT
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_visConstraintsAsSpheres_OUT
+
+# Node $_obj_geo1_wp1_visConstraintsAsSpheres_output2 (Sop/output)
+set _obj_geo1_wp1_visConstraintsAsSpheres_output2 = `run("opadd -e -n -v output output2")`
+oplocate -x `$arg2 + -2.84185` -y `$arg3 + -4.8711200000000003` $_obj_geo1_wp1_visConstraintsAsSpheres_output2
+opspareds '    parm {         name    "outputidx"         baseparm         label   "Output Index"         export  none     }     parm {         name    "creator"         label   "createdbyigorsi 20190914"         type    label         invisible         default { "" }     }     parm {         name    "legend"         label   "ver1.0 | upd091418"         type    label         default { "" }     } ' $_obj_geo1_wp1_visConstraintsAsSpheres_output2
+opcolor -c 0 0 0 $_obj_geo1_wp1_visConstraintsAsSpheres_output2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_geo1_wp1_visConstraintsAsSpheres_output2
+opexprlanguage -s hscript $_obj_geo1_wp1_visConstraintsAsSpheres_output2
+opuserdata -n '___Version___' -v '17.5.173' $_obj_geo1_wp1_visConstraintsAsSpheres_output2
+oporder -e sphere1 copytopoints1 IN attribute1 pscaleSimple OUT output2 attribrandomize1 attribwrangle1 pointjitter1 
+opcf ..
+opset -p on $_obj_geo1_wp1_visConstraintsAsSpheres
+
+opcf $arg1
+opwire -n $_obj_geo1_wp1_OUT_CONSTRAINTS -0 $_obj_geo1_wp1_visConstraintsAsSpheres
+opcf $_obj_geo1_wp1_visConstraintsAsSpheres
+opwire -n $_obj_geo1_wp1_visConstraintsAsSpheres_sphere1 -0 $_obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1
+opwire -n $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple -1 $_obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1
+opwire -n -i 0 -0 $_obj_geo1_wp1_visConstraintsAsSpheres_IN
+opwire -n $_obj_geo1_wp1_visConstraintsAsSpheres_OUT -0 $_obj_geo1_wp1_visConstraintsAsSpheres_attribute1
+opwire -n $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1 -0 $_obj_geo1_wp1_visConstraintsAsSpheres_pscaleSimple
+opwire -n $_obj_geo1_wp1_visConstraintsAsSpheres_IN -0 $_obj_geo1_wp1_visConstraintsAsSpheres_OUT
+opwire -n $_obj_geo1_wp1_visConstraintsAsSpheres_copytopoints1 -0 $_obj_geo1_wp1_visConstraintsAsSpheres_output2
+opwire -n $_obj_geo1_wp1_visConstraintsAsSpheres_pointjitter1 -0 $_obj_geo1_wp1_visConstraintsAsSpheres_attribrandomize1
+opwire -n $_obj_geo1_wp1_visConstraintsAsSpheres_attribute1 -0 $_obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1
+opwire -n $_obj_geo1_wp1_visConstraintsAsSpheres_attribwrangle1 -0 $_obj_geo1_wp1_visConstraintsAsSpheres_pointjitter1
+opcf ..
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_wp1_visConstraintsAsSpheres
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_wp1_visConstraintsAsSpheres
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visW" label="visW" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_visW (Sop/visualize)
+set _obj_geo1_visW = `run("opadd -e -n -v visualize visW")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_visW
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_geo1_visW
+opparm $_obj_geo1_visW  num_visualizers ( 1 )
+opparm $_obj_geo1_visW num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n        "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"w"\n   },\n    "name":{\n              "type":"string",\n              "value":"w"\n   },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\nstyle\\t[ 0\\tlocks=0 ]\\t(\\t\\"vector\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tw\\t)\\nvisibility\\t[ 0\\tlocks=0 ]\\t(\\t\\"always\\"\\t)\\ndecorradius\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ngroup\\t[ 0\\tlocks=0 ]\\t(\\t\\"\\"\\t)\\npointsize\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\nlengthscale\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nunitlength\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nnormalize\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\narrowheads\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\nvectorcoloring\\t[ 0\\tlocks=0 ]\\t(\\t\\"fixed\\"\\t)\\ncolorattrib\\t[ 0\\tlocks=0 ]\\t(\\tCd\\t)\\nramptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"false\\"\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"min-max\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nmarkercolor\\t[ 0\\tlocks=0 ]\\t(\\t0.45000000000000001\\t0\\t0.90000000000000002\\t1\\t)\\ntrail\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t0.5\\t)\\ntextcolor\\t[ 0\\tlocks=0 ]\\t(\\t0.25\\t0.75\\t0.75\\t)\\nfontsize\\t[ 0\\tlocks=0 ]\\t(\\t\\"guidefont\\"\\t)\\nxcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nycolor\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t1\\t)\\nzcolor\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t1\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t1\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\n}\\n"},\n   \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_marker"\n  }\n}\n' )
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_visW
+opexprlanguage -s hscript $_obj_geo1_visW
+opuserdata -n '___Version___' -v '' $_obj_geo1_visW
+opset -p on $_obj_geo1_visW
+
+opcf $arg1
+opwire -n $_obj_geo1_curlNoiseVelVop -0 $_obj_geo1_visW
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_visW
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_visW
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visVecD" label="visVecD" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_visVecD (Sop/visualize)
+set _obj_geo1_visVecD = `run("opadd -e -n -v visualize visVecD")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_visVecD
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_geo1_visVecD
+opparm $_obj_geo1_visVecD  num_visualizers ( 1 )
+opparm $_obj_geo1_visVecD num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n     "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"vecD"\n        },\n    "name":{\n              "type":"string",\n              "value":"vecD"\n        },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\nstyle\\t[ 0\\tlocks=0 ]\\t(\\t\\"vector\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tvecD\\t)\\nvisibility\\t[ 0\\tlocks=0 ]\\t(\\t\\"always\\"\\t)\\ndecorradius\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ngroup\\t[ 0\\tlocks=0 ]\\t(\\t\\"\\"\\t)\\npointsize\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\nlengthscale\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nunitlength\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nnormalize\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\narrowheads\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\nvectorcoloring\\t[ 0\\tlocks=0 ]\\t(\\t\\"fixed\\"\\t)\\ncolorattrib\\t[ 0\\tlocks=0 ]\\t(\\tCd\\t)\\nramptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"false\\"\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"min-max\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nmarkercolor\\t[ 0\\tlocks=0 ]\\t(\\t0.90000000000000002\\t0.45000000000000001\\t0\\t1\\t)\\ntrail\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t0.5\\t)\\ntextcolor\\t[ 0\\tlocks=0 ]\\t(\\t0.25\\t0.75\\t0.75\\t)\\nfontsize\\t[ 0\\tlocks=0 ]\\t(\\t\\"guidefont\\"\\t)\\nxcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nycolor\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t1\\t)\\nzcolor\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t1\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t1\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\n}\\n"},\n        \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_marker"\n  }\n}\n' )
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_visVecD
+opexprlanguage -s hscript $_obj_geo1_visVecD
+opuserdata -n '___Version___' -v '' $_obj_geo1_visVecD
+opset -p on $_obj_geo1_visVecD
+
+opcf $arg1
+opwire -n $_obj_geo1_attribwrangle2 -0 $_obj_geo1_visVecD
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_visVecD
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_visVecD
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visProb" label="visProb" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_visProb (Sop/visualize)
+set _obj_geo1_visProb = `run("opadd -e -n -v visualize visProb")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_visProb
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_geo1_visProb
+opparm $_obj_geo1_visProb  num_visualizers ( 1 )
+opparm $_obj_geo1_visProb num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n     "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"prob"\n        },\n    "name":{\n              "type":"string",\n              "value":"prob"\n        },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\ncolortype\\t[ 0\\tlocks=0 ]\\t(\\t\\"attribramped\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tprob\\t)\\nuvattrib\\t[ 0\\tlocks=0 ]\\t(\\tuv\\t)\\ndistortiontype\\t[ 0\\tlocks=0 ]\\t(\\t\\"global\\"\\t)\\nrangesection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\nconstcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nusethreevtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorthreevtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t)\\nusefourvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorfourvtx\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t0.69999999999999996\\t1\\t)\\nusenvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolornvtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nrandseed\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nvalsep\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nrampsection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramppreset\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t9.9341077586245774e-09\\t9.9341077586245774e-09\\t0.02500000037252903\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\n}\\n"},\n        \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_color"\n   }\n}\n' )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_visProb
+opexprlanguage -s hscript $_obj_geo1_visProb
+opuserdata -n '___Version___' -v '' $_obj_geo1_visProb
+opset -p on $_obj_geo1_visProb
+
+opcf $arg1
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_visProb
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_visProb
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visIt" label="visIt" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_visIt (Sop/visualize)
+set _obj_geo1_visIt = `run("opadd -e -n -v visualize visIt")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_visIt
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_geo1_visIt
+opparm $_obj_geo1_visIt  num_visualizers ( 1 )
+opparm $_obj_geo1_visIt num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n       "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"it"\n  },\n    "name":{\n              "type":"string",\n              "value":"it"\n  },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\ncolortype\\t[ 0\\tlocks=0 ]\\t(\\t\\"attribrandom\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"primitive\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tit\\t)\\nuvattrib\\t[ 0\\tlocks=0 ]\\t(\\tuv\\t)\\ndistortiontype\\t[ 0\\tlocks=0 ]\\t(\\t\\"global\\"\\t)\\nrangesection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\nconstcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nusethreevtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorthreevtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t)\\nusefourvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorfourvtx\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t0.69999999999999996\\t1\\t)\\nusenvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolornvtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nrandseed\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nvalsep\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nrampsection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramppreset\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t9.9341077586245774e-09\\t9.9341077586245774e-09\\t0.02500000037252903\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\n}\\n"},\n     \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_color"\n   }\n}\n' )
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_visIt
+opexprlanguage -s hscript $_obj_geo1_visIt
+opuserdata -n '___Version___' -v '' $_obj_geo1_visIt
+opset -p on $_obj_geo1_visIt
+
+opcf $arg1
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_visIt
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_visIt
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visPiece" label="visPiece" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_edge_fracture_pig_visPiece (Sop/visualize)
+set _obj_edge_fracture_pig_visPiece = `run("opadd -e -n -v visualize visPiece")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_edge_fracture_pig_visPiece
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_edge_fracture_pig_visPiece
+opparm $_obj_edge_fracture_pig_visPiece  num_visualizers ( 1 )
+opparm $_obj_edge_fracture_pig_visPiece num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n       "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"piece"\n       },\n    "name":{\n              "type":"string",\n              "value":"piece"\n       },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\ncolortype\\t[ 0\\tlocks=0 ]\\t(\\t\\"attribrandom\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tpiece\\t)\\nuvattrib\\t[ 0\\tlocks=0 ]\\t(\\tuv\\t)\\ndistortiontype\\t[ 0\\tlocks=0 ]\\t(\\t\\"global\\"\\t)\\nrangesection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\nconstcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nusethreevtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorthreevtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t)\\nusefourvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorfourvtx\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t0.69999999999999996\\t1\\t)\\nusenvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolornvtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nrandseed\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nvalsep\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nrampsection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramppreset\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t1\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\n}\\n"},\n        \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_color"\n   }\n}\n' )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_edge_fracture_pig_visPiece
+opexprlanguage -s hscript $_obj_edge_fracture_pig_visPiece
+opuserdata -n '___Version___' -v '' $_obj_edge_fracture_pig_visPiece
+opset -p on $_obj_edge_fracture_pig_visPiece
+
+opcf $arg1
+opwire -n $_obj_edge_fracture_pig_edgefracture1 -0 $_obj_edge_fracture_pig_visPiece
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_edge_fracture_pig_visPiece
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_edge_fracture_pig_visPiece
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visName" label="visName" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_visName (Sop/visualize)
+set _obj_geo1_visName = `run("opadd -e -n -v visualize visName")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_visName
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_geo1_visName
+opparm $_obj_geo1_visName  num_visualizers ( 1 )
+opparm $_obj_geo1_visName num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n     "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"name"\n        },\n    "name":{\n              "type":"string",\n              "value":"name"\n        },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\ncolortype\\t[ 0\\tlocks=0 ]\\t(\\t\\"attribrandom\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"primitive\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tname\\t)\\nuvattrib\\t[ 0\\tlocks=0 ]\\t(\\tuv\\t)\\ndistortiontype\\t[ 0\\tlocks=0 ]\\t(\\t\\"global\\"\\t)\\nrangesection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\nconstcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nusethreevtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorthreevtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t)\\nusefourvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorfourvtx\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t0.69999999999999996\\t1\\t)\\nusenvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolornvtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nrandseed\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nvalsep\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nrampsection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramppreset\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t9.9341077586245774e-09\\t9.9341077586245774e-09\\t0.02500000037252903\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\n}\\n"},\n   \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_color"\n   }\n}\n' )
+opset -d off -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_visName
+opexprlanguage -s hscript $_obj_geo1_visName
+opuserdata -n '___Version___' -v '' $_obj_geo1_visName
+opset -p on $_obj_geo1_visName
+
+opcf $arg1
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_visName
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_visName
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visAttractionweight" label="visAttractionweight" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_tube1_visAttractionweight (Sop/visualize)
+set _obj_tube1_visAttractionweight = `run("opadd -e -n -v visualize visAttractionweight")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_tube1_visAttractionweight
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_tube1_visAttractionweight
+opparm $_obj_tube1_visAttractionweight  num_visualizers ( 1 )
+opparm $_obj_tube1_visAttractionweight num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n        "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"attractionweight"\n    },\n    "name":{\n              "type":"string",\n              "value":"attractionweight"\n    },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\ncolortype\\t[ 0\\tlocks=0 ]\\t(\\t\\"attribramped\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"point\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tattractionweight\\t)\\nuvattrib\\t[ 0\\tlocks=0 ]\\t(\\tuv\\t)\\ndistortiontype\\t[ 0\\tlocks=0 ]\\t(\\t\\"global\\"\\t)\\nrangesection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"min-max\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\nconstcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nusethreevtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorthreevtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t)\\nusefourvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorfourvtx\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t0.69999999999999996\\t1\\t)\\nusenvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolornvtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nrandseed\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nvalsep\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nrampsection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramppreset\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t0.89999997615814209\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\n}\\n"},\n       \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_color"\n   }\n}\n' )
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_tube1_visAttractionweight
+opexprlanguage -s hscript $_obj_tube1_visAttractionweight
+opuserdata -n '___Version___' -v '' $_obj_tube1_visAttractionweight
+opset -p on $_obj_tube1_visAttractionweight
+
+opcf $arg1
+opwire -n $_obj_tube1_dio_simple_vellum -0 $_obj_tube1_visAttractionweight
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_tube1_visAttractionweight
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_tube1_visAttractionweight
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visCluster" label="visCluster" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_example_cluster_visCluster (Sop/visualize)
+set _obj_example_cluster_visCluster = `run("opadd -e -n -v visualize visCluster")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_example_cluster_visCluster
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_example_cluster_visCluster
+opparm $_obj_example_cluster_visCluster  num_visualizers ( 1 )
+opparm $_obj_example_cluster_visCluster num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n       "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"cluster"\n     },\n    "name":{\n              "type":"string",\n              "value":"cluster"\n     },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\ncolortype\\t[ 0\\tlocks=0 ]\\t(\\t\\"attribrandom\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"primitive\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tcluster\\t)\\nuvattrib\\t[ 0\\tlocks=0 ]\\t(\\tuv\\t)\\ndistortiontype\\t[ 0\\tlocks=0 ]\\t(\\t\\"global\\"\\t)\\nrangesection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\nconstcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nusethreevtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorthreevtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t)\\nusefourvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorfourvtx\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t0.69999999999999996\\t1\\t)\\nusenvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolornvtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nrandseed\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nvalsep\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nrampsection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramppreset\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t9.9341077586245774e-09\\t9.9341077586245774e-09\\t0.02500000037252903\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"monotonecubic\\"\\t)\\n}\\n"},\n        \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_color"\n   }\n}\n' )
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_example_cluster_visCluster
+opexprlanguage -s hscript $_obj_example_cluster_visCluster
+opuserdata -n '___Version___' -v '' $_obj_example_cluster_visCluster
+opset -p on $_obj_example_cluster_visCluster
+
+opcf $arg1
+opwire -n $_obj_example_cluster_rbdcluster1 -0 $_obj_example_cluster_visCluster
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_example_cluster_visCluster
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_example_cluster_visCluster
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="visSegment" label="visSegment" icon="SOP_visualize">
+    <helpURL>operator:Sop/visualize</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/visualize</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('visualize'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_visSegment (Sop/visualize)
+set _obj_geo1_visSegment = `run("opadd -e -n -v visualize visSegment")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_visSegment
+opspareds '    parm {         name    "setvisualizers"         baseparm         label   "Update Visualizers"         export  none     }     parm {         name    "clearvisualizers"         baseparm         label   "Clear Incoming Visualizers"         export  none     }     parm {         name    "wireframe"         baseparm         label   "Wireframe"         export  none     }     parm {         name    "lit"         baseparm         label   "Lighting"         export  none     }     parm {         name    "showpoints"         baseparm         label   "Show Points"         export  none     }     parm {         name    "setcuspangle"         baseparm         label   "Set Cusp Angle"         nolabel         joinnext         export  none     }     parm {         name    "cuspangle"         baseparm         label   "Cusp Angle"         export  none     }     parm {         name    "node_vis_enabled"         label   "Visualization Enabled"         type    toggle         invisible         default { "1" }     }     multiparm {         name    "num_visualizers"         label    "Visualizers"         invisible         default 0         parmtag { "multistartoffset" "0" }          parm {             name    "vis_active#"             label   "Active #"             type    toggle             invisible             default { "0" }         }         parm {             name    "vis_data#"             label   "Raw Data #"             type    string             invisible             nolabel             default { "" }             parmtag { "editor" "1" }         }     }  ' $_obj_geo1_visSegment
+opparm $_obj_geo1_visSegment  num_visualizers ( 1 )
+opparm $_obj_geo1_visSegment num_visualizers ( 1 ) vis_active0 ( on ) vis_data0 ( '{\n  "flags":{\n             "type":"int",\n         "value":27\n    },\n    "icon":{\n              "type":"string",\n              "value":"VIEW_visualization_color"\n    },\n    "label":{\n             "type":"string",\n              "value":"segment"\n     },\n    "name":{\n              "type":"string",\n              "value":"segment"\n     },\n    "parameters":{\n                "type":"string",\n              "value":"{\\nversion 0.8\\ncolortype\\t[ 0\\tlocks=0 ]\\t(\\t\\"attribrandom\\"\\t)\\nclass\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nattrib\\t[ 0\\tlocks=0 ]\\t(\\tsegment\\t)\\nuvattrib\\t[ 0\\tlocks=0 ]\\t(\\tuv\\t)\\ndistortiontype\\t[ 0\\tlocks=0 ]\\t(\\t\\"global\\"\\t)\\nrangesection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrangespec\\t[ 0\\tlocks=0 ]\\t(\\t\\"auto\\"\\t)\\nminscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nmaxscalar\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncenterscalar\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nwidthscalar\\t[ 0\\tlocks=0 ]\\t(\\t2\\t)\\nclamptype\\t[ 0\\tlocks=0 ]\\t(\\t\\"edge\\"\\t)\\nconstcolor\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t1\\t)\\nusethreevtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorthreevtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t0\\t)\\nusefourvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolorfourvtx\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t0.69999999999999996\\t1\\t)\\nusenvtxcolor\\t[ 0\\tlocks=0 ]\\t(\\t\\"on\\"\\t)\\ncolornvtx\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ntreatasscalar\\t[ 0\\tlocks=0 ]\\t(\\t\\"off\\"\\t)\\nusing\\t[ 0\\tlocks=0 ]\\t(\\t\\"comp\\"\\t)\\ncomponent\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nrefvec\\t[ 0\\tlocks=0 ]\\t(\\t0\\t1\\t0\\t)\\nrandseed\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\nvalsep\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\nrampsection\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramppreset\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp\\t[ 0\\tlocks=0 ]\\t(\\t3\\t)\\ncolorramp1pos\\t[ 0\\tlocks=0 ]\\t(\\t0\\t)\\ncolorramp1c\\t[ 0\\tlocks=0 ]\\t(\\t0\\t0\\t1\\t)\\ncolorramp1interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp2pos\\t[ 0\\tlocks=0 ]\\t(\\t0.5\\t)\\ncolorramp2c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t1\\t1\\t)\\ncolorramp2interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\ncolorramp3pos\\t[ 0\\tlocks=0 ]\\t(\\t1\\t)\\ncolorramp3c\\t[ 0\\tlocks=0 ]\\t(\\t1\\t0\\t0\\t)\\ncolorramp3interp\\t[ 0\\tlocks=0 ]\\t(\\t\\"linear\\"\\t)\\n}\\n"},\n      \n      "scope":{\n             "type":"int",\n         "value":2\n     },\n    "type":{\n              "type":"string",\n              "value":"vis_color"\n   }\n}\n' )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_visSegment
+opexprlanguage -s hscript $_obj_geo1_visSegment
+opuserdata -n '___Version___' -v '' $_obj_geo1_visSegment
+opset -p on $_obj_geo1_visSegment
+
+opcf $arg1
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_visSegment
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_visSegment
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+</shelfDocument>

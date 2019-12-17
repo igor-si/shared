@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="iscolor_shelf" label="ISColor">
+    <memberTool name="itemB+"/>
+    <memberTool name="itemB-"/>
+    <memberTool name="itemH+"/>
+    <memberTool name="itemH-"/>
+    <memberTool name="itemSat+"/>
+    <memberTool name="itemSat-"/>
+    <memberTool name="transferColor"/>
+    <memberTool name="randomNetworkboxColor"/>
+  </toolshelf>
+
+  <tool name="itemB+" label="itemB+" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import iscolor_utils
+reload(iscolor_utils)
+iscolor_utils.changeNodeColor(brightness_mode=1)]]></script>
+  </tool>
+
+  <tool name="itemB-" label="itemB-" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import iscolor_utils
+reload(iscolor_utils)
+iscolor_utils.changeNodeColor(brightness_mode=2)]]></script>
+  </tool>
+
+  <tool name="itemH+" label="itemH+" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import iscolor_utils
+reload(iscolor_utils)
+iscolor_utils.changeNodeColor(hue_mode=1)]]></script>
+  </tool>
+
+  <tool name="itemH-" label="itemH-" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import iscolor_utils
+reload(iscolor_utils)
+iscolor_utils.changeNodeColor(hue_mode=2)]]></script>
+  </tool>
+
+  <tool name="transferColor" label="transferColor" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import iscolor_utils
+reload(iscolor_utils)
+iscolor_utils.transferNodeColor()]]></script>
+  </tool>
+
+  <tool name="itemSat+" label="itemSat+" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import iscolor_utils
+reload(iscolor_utils)
+iscolor_utils.changeNodeColor(sat_mode=1)]]></script>
+  </tool>
+
+  <tool name="itemSat-" label="itemSat-" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import iscolor_utils
+reload(iscolor_utils)
+iscolor_utils.changeNodeColor(sat_mode=2)]]></script>
+  </tool>
+
+  <tool name="randomNetworkboxColor" label="randomNetworkboxColor" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[from isutils.scripts import iscolor_utils
+reload(iscolor_utils)
+iscolor_utils.randomNetworkboxColor()]]></script>
+  </tool>
+</shelfDocument>

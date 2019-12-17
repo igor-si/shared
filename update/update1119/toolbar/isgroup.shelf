@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="ISGroup" label="ISGroup">
+    <memberTool name="isGroupSideByN"/>
+    <memberTool name="isGroupPromote"/>
+  </toolshelf>
+
+  <tool name="isGroupPromote" label="isGroupPromote" icon="SOP_groupcreate">
+    <helpURL>operator:Sop/subnet</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/subnet</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('subnet'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_edge_displacement_subnet1_isGroupPromote (Sop/subnet)
+set _obj_edge_displacement_subnet1_isGroupPromote = `run("opadd -e -n -v subnet isGroupPromote")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_edge_displacement_subnet1_isGroupPromote
+opspareds '    parm {         name    "label1"         baseparm         label   "Input #1 Label"         invisible         export  dialog     }     parm {         name    "label2"         baseparm         label   "Input #2 Label"         invisible         export  dialog     }     parm {         name    "label3"         baseparm         label   "Input #3 Label"         invisible         export  dialog     }     parm {         name    "label4"         baseparm         label   "Input #4 Label"         invisible         export  dialog     }     parm {         name    "iterations"         label   "Iterations"         type    integer         default { "2" }         range   { 0 10 }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "group1"         label   "Group"         type    string         default { "" }         menutoggle {             [ "opmenu -l grouppromote1 group1" ]         }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "fromtype1"         label   "Convert From"         type    ordinal         default { "points" }         menu {             "auto"      "Auto"             "prims"     "Primitives"             "points"    "Points"             "edges"     "Edges"             "vertices"  "Vertices"         }         parmtag { "autoscope" "0000000000000000" }     }     parm {         name    "totype1"         label   "To"         type    ordinal         default { "prims" }         menu {             "prims"     "Primitives"             "points"    "Points"             "edges"     "Edges"             "vertices"  "Vertices"         }         parmtag { "autoscope" "0000000000000000" }     } ' $_obj_edge_displacement_subnet1_isGroupPromote
+opparm -V 17.0.416 $_obj_edge_displacement_subnet1_isGroupPromote iterations ( 1 ) group1 ( inside )
+opcolor -c 0.15000000596046448 0.34999999403953552 0.75 $_obj_edge_displacement_subnet1_isGroupPromote
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_edge_displacement_subnet1_isGroupPromote
+opexprlanguage -s hscript $_obj_edge_displacement_subnet1_isGroupPromote
+opuserdata -n '___Version___' -v '17.0.416' $_obj_edge_displacement_subnet1_isGroupPromote
+opcf $_obj_edge_displacement_subnet1_isGroupPromote
+
+# Node $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1 (Sop/grouppromote)
+set _obj_edge_displacement_subnet1_isGroupPromote_grouppromote1 = `run("opadd -e -n -v grouppromote grouppromote1")`
+oplocate -x `$arg2 + -0.13495499999999999` -y `$arg3 + 2.9776799999999999` $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1
+opparm $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1  promotions ( 1 )
+chblockbegin
+chadd -t 0 0 $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1 fromtype1
+chkey -t 0 -v 2 -m 0 -a 0 -A 0 -T a  -F 'ch("../fromtype1")' $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1/fromtype1
+chadd -t 0 0 $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1 totype1
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../totype1")' $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1/totype1
+chadd -t 0 0 $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1 group1
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'chs("../group1")' $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1/group1
+chblockend
+opparm -V 17.0.416 $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1 fromtype1 ( fromtype1 ) totype1 ( totype1 ) group1 ( group1 )
+opset -d off -r on -h on -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1
+opexprlanguage -s hscript $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1
+
+# Node $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1 (Sop/block_end)
+set _obj_edge_displacement_subnet1_isGroupPromote_foreach_end1 = `run("opadd -e -n -v block_end foreach_end1")`
+oplocate -x `$arg2 + -0.032203679607158031` -y `$arg3 + 0.20364842269490124` $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1
+chblockbegin
+chadd -t 0 0 $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1 iterations
+chkey -t 0 -v 2 -m 0 -a 0 -A 0 -T a  -F 'ch("../iterations")' $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1/iterations
+chblockend
+opparm -V 17.0.416 $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1 itermethod ( count ) iterations ( iterations ) class ( primitive ) attrib ( it ) blockpath ( ../foreach_begin1 ) templatepath ( ../foreach_begin1 )
+opcolor -c 0.75 0.40000000596046448 0 $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1
+opexprlanguage -s hscript $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1
+
+# Node $_obj_edge_displacement_subnet1_isGroupPromote_foreach_begin1 (Sop/block_begin)
+set _obj_edge_displacement_subnet1_isGroupPromote_foreach_begin1 = `run("opadd -e -n -v block_begin foreach_begin1")`
+oplocate -x `$arg2 + -0.13495533386236547` -y `$arg3 + 3.9632705018153289` $_obj_edge_displacement_subnet1_isGroupPromote_foreach_begin1
+opparm -V 17.0.416 $_obj_edge_displacement_subnet1_isGroupPromote_foreach_begin1 blockpath ( ../foreach_end1 )
+opcolor -c 0.75 0.40000000596046448 0 $_obj_edge_displacement_subnet1_isGroupPromote_foreach_begin1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_edge_displacement_subnet1_isGroupPromote_foreach_begin1
+opexprlanguage -s hscript $_obj_edge_displacement_subnet1_isGroupPromote_foreach_begin1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_edge_displacement_subnet1_isGroupPromote_foreach_begin1
+
+# Node $_obj_edge_displacement_subnet1_isGroupPromote_foreach_count1 (Sop/block_begin)
+set _obj_edge_displacement_subnet1_isGroupPromote_foreach_count1 = `run("opadd -e -n -v block_begin foreach_count1")`
+oplocate -x `$arg2 + 4.0210007765087186` -y `$arg3 + 3.9632705018153289` $_obj_edge_displacement_subnet1_isGroupPromote_foreach_count1
+opparm -V 17.0.416 $_obj_edge_displacement_subnet1_isGroupPromote_foreach_count1 method ( metadata ) blockpath ( ../foreach_end1 )
+opcolor -c 0.75 0.40000000596046448 0 $_obj_edge_displacement_subnet1_isGroupPromote_foreach_count1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_edge_displacement_subnet1_isGroupPromote_foreach_count1
+opexprlanguage -s hscript $_obj_edge_displacement_subnet1_isGroupPromote_foreach_count1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_edge_displacement_subnet1_isGroupPromote_foreach_count1
+
+# Node $_obj_edge_displacement_subnet1_isGroupPromote_IN (Sop/null)
+set _obj_edge_displacement_subnet1_isGroupPromote_IN = `run("opadd -e -n -v null IN")`
+oplocate -x `$arg2 + -0.13495533386236541` -y `$arg3 + 4.9173709143587461` $_obj_edge_displacement_subnet1_isGroupPromote_IN
+opcolor -c 0.18799999356269836 0.52899998426437378 0.45899999141693115 $_obj_edge_displacement_subnet1_isGroupPromote_IN
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_edge_displacement_subnet1_isGroupPromote_IN
+opexprlanguage -s hscript $_obj_edge_displacement_subnet1_isGroupPromote_IN
+opuserdata -n '___Version___' -v '17.0.416' $_obj_edge_displacement_subnet1_isGroupPromote_IN
+
+# Node $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3 (Sop/grouppromote)
+set _obj_edge_displacement_subnet1_isGroupPromote_grouppromote3 = `run("opadd -e -n -v grouppromote grouppromote3")`
+oplocate -x `$arg2 + -0.13495499999999996` -y `$arg3 + 1.7061089292005269` $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3
+opparm $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3  promotions ( 1 )
+chblockbegin
+chadd -t 0 0 $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3 fromtype1
+chkey -t 0 -v 0 -m 0 -a 0 -A 0 -T a  -F 'ch("../grouppromote1/totype1")+1' $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3/fromtype1
+chadd -t 0 0 $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3 totype1
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch("../grouppromote1/fromtype1")-1' $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3/totype1
+chblockend
+opparm -V 17.0.416 $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3 fromtype1 ( fromtype1 ) totype1 ( totype1 ) group1 ( '`chs("../grouppromote1/group1")`' )
+opset -d off -r off -h on -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3
+opexprlanguage -s hscript $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3
+opuserdata -n '___Version___' -v '17.0.416' $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3
+
+# Node $_obj_edge_displacement_subnet1_isGroupPromote_OUT (Sop/output)
+set _obj_edge_displacement_subnet1_isGroupPromote_OUT = `run("opadd -e -n -v output OUT")`
+oplocate -x `$arg2 + -0.13495499999999996` -y `$arg3 + -1.7292372665154836` $_obj_edge_displacement_subnet1_isGroupPromote_OUT
+opcolor -c 0.85000002384185791 0.05000000074505806 0.05000000074505806 $_obj_edge_displacement_subnet1_isGroupPromote_OUT
+opset -d on -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_edge_displacement_subnet1_isGroupPromote_OUT
+opexprlanguage -s hscript $_obj_edge_displacement_subnet1_isGroupPromote_OUT
+opuserdata -n '___Version___' -v '17.0.416' $_obj_edge_displacement_subnet1_isGroupPromote_OUT
+oporder -e grouppromote1 foreach_end1 foreach_begin1 foreach_count1 IN grouppromote3 OUT 
+opcf ..
+opset -p on $_obj_edge_displacement_subnet1_isGroupPromote
+
+opcf $arg1
+opwire -n $_obj_edge_displacement_subnet1_null1 -0 $_obj_edge_displacement_subnet1_isGroupPromote
+opcf $_obj_edge_displacement_subnet1_isGroupPromote
+opwire -n $_obj_edge_displacement_subnet1_isGroupPromote_foreach_begin1 -0 $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1
+opwire -n $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3 -0 $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1
+opwire -n $_obj_edge_displacement_subnet1_isGroupPromote_IN -0 $_obj_edge_displacement_subnet1_isGroupPromote_foreach_begin1
+opwire -n -i 0 -0 $_obj_edge_displacement_subnet1_isGroupPromote_IN
+opwire -n $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote1 -0 $_obj_edge_displacement_subnet1_isGroupPromote_grouppromote3
+opwire -n $_obj_edge_displacement_subnet1_isGroupPromote_foreach_end1 -0 $_obj_edge_displacement_subnet1_isGroupPromote_OUT
+opcf ..
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_edge_displacement_subnet1_isGroupPromote
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_edge_displacement_subnet1_isGroupPromote
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="isGroupSideByN" label="isGroupSideByN" icon="SOP_attribwrangle">
+    <helpURL>operator:Sop/attribwrangle</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/attribwrangle</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('attribwrangle'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_geo1_isGroupSideByN (Sop/attribwrangle)
+set _obj_geo1_isGroupSideByN = `run("opadd -e -n -v attribwrangle isGroupSideByN")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_geo1_isGroupSideByN
+opparm $_obj_geo1_isGroupSideByN  bindings ( 0 ) groupbindings ( 0 )
+opparm $_obj_geo1_isGroupSideByN class ( primitive ) snippet ( 'vector N = v@N;\nvector ax = {1,0,0};\nvector ay = {0,1,0};\nvector az = {0,0,1};\nfloat thr = .34;\nif(dot(N,ax)>1-thr){s@geoside="xpos";}\nif(dot(N,ax)<-1+thr){s@geoside="xneg";}\nif(dot(N,ay)>1-thr){s@geoside="ypos";}\nif(dot(N,ay)<-1+thr){s@geoside="yneg";}\nif(dot(N,az)>1-thr){s@geoside="zpos";}\nif(dot(N,az)<-1+thr){s@geoside="zneg";}\n' )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_geo1_isGroupSideByN
+opexprlanguage -s hscript $_obj_geo1_isGroupSideByN
+opuserdata -n '___Version___' -v '' $_obj_geo1_isGroupSideByN
+opset -p on $_obj_geo1_isGroupSideByN
+
+opcf $arg1
+opwire -n $_obj_geo1_box2 -0 $_obj_geo1_isGroupSideByN
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_geo1_isGroupSideByN
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_geo1_isGroupSideByN
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+</shelfDocument>
